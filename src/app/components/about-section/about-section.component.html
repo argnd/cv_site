@@ -17,7 +17,7 @@
       aria-controls="about-expanded-content"
       (click)="toggleExpanded()"
     >
-      {{ isExpanded() ? 'Show less' : 'Read more' }}
+      {{ isExpanded() ? content().collapseLabel : content().expandLabel }}
     </button>
   }
   <p class="hero__meta">{{ content().email }}</p>

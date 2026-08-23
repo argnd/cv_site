@@ -6,9 +6,9 @@
 
   <nav class="hero__actions">
     <a class="link-glow" [href]="content().linkedinUrl" target="_blank" rel="noopener noreferrer">
-      <span>LinkedIn</span>
+      <span>{{ content().linkedinLabel }}</span>
     </a>
-    <a class="link-glow" href="#games"><span>Games</span></a>
+    <a class="link-glow" href="#games"><span>{{ content().gamesLinkLabel }}</span></a>
   </nav>
 
   <div class="scroll-cue" aria-hidden="true"><span></span></div>

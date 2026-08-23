@@ -1,4 +1,10 @@
 <div class="scene" [class.is-day]="!isNight">
+  <app-locale-selector
+    [currentLocale]="locale()"
+    [content]="appShellContent().localeSelector"
+    (localeChange)="setLocale($event)"
+  />
+
   <div class="sky" aria-hidden="true">
     <div class="sky__gradient"></div>
     <div class="sky__haze"></div>
@@ -63,7 +69,7 @@
     class="theme-toggle"
     role="switch"
     [attr.aria-checked]="!isNight"
-    aria-label="Toggle day and night mode"
+    [attr.aria-label]="appShellContent().themeToggleAriaLabel"
     (click)="toggleTheme()"
   >
     <span class="theme-toggle__track" aria-hidden="true"></span>
@@ -71,28 +77,28 @@
   </button>
 
   <main class="page">
-    <app-hero-section [content]="heroContent" />
+    <app-hero-section [content]="heroContent()" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-about-section [content]="aboutContent" />
+    <app-about-section [content]="aboutContent()" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-experience-section [content]="experienceContent" />
+    <app-experience-section [content]="experienceContent()" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-education-section [content]="educationContent" />
+    <app-education-section [content]="educationContent()" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-skills-section [content]="skillsContent" />
+    <app-skills-section [content]="skillsContent()" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-games-section [content]="gamesContent" />
+    <app-games-section [content]="gamesContent()" />
 
-    <app-footer-section [content]="footerContent" />
+    <app-footer-section [content]="footerContent()" />
   </main>
 </div>

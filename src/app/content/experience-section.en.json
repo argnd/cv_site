@@ -1,0 +1,92 @@
+{
+  "kicker": "Experience",
+  "title": "Professional experience",
+  "listAriaLabel": "Experience list",
+  "technicalEnvironmentLabel": "Technical environment",
+  "expandDetailsLabel": "Show details",
+  "collapseDetailsLabel": "Hide details",
+  "items": [
+    {
+      "role": "Senior Java / Spring Developer",
+      "company": "Ag2r La Mondiale - Freelance",
+      "period": "2023 - Present",
+      "location": "Esvres, France",
+      "mainData": "As part of a major internal information system overhaul, designed, modernized, and developed critical applications dedicated to inbound document management.",
+      "highlights": [
+        "Acquisition & modernization:\n• Rebuilt the Spring Batch / Spring Integration acquisition environment handling a critical flow of roughly 20 million documents per year.\n• Led a major technology migration from Java 8 to Java 21 and from Spring 4 to recent versions.\n• Improved maintainability by replacing XML configuration with the Spring Integration Java DSL.\n• Built high-performance business APIs with Spring Web and WebFlux.",
+        "Email processing & innovation:\n• Rewrote the application component dedicated to automated business email processing.\n• Implemented Microsoft Graph for mailbox connectivity and integrated Google Vertex AI for content analysis.",
+        "AI-assisted development & engineering practices:\n• Integrated AI into development workflows to increase productivity and improve code quality.\n• Defined and applied prompt engineering practices: strict scope framing, token usage optimization, and critical review of generated output.",
+        "Document management infrastructure & user portal:\n• Developed the batch and API infrastructure connected to the document management platform for insertion, retrieval, and large-scale extraction.\n• Contributed to interfaces enabling business users to access archived documents efficiently."
+      ],
+      "technicalEnvironment": [
+        "Java 21",
+        "Java 8",
+        "Spring ecosystem (Batch, Integration DSL, Web, WebFlux)",
+        "Google Vertex AI",
+        "Microsoft Graph API",
+        "Generative AI (AI-assisted development, prompt engineering)",
+        "Docker",
+        "CI/CD (Jenkins, CloudBees)",
+        "SonarQube",
+        "Git",
+        "Agile / SAFe methodologies"
+      ]
+    },
+    {
+      "role": "Full-Stack & IoT Developer - ADP",
+      "company": "Atos",
+      "period": "Jan. 2023 - Oct. 2023",
+      "location": "Tours, France",
+      "mainData": "Innovation assignment for Aéroports de Paris. Designed and built from scratch a complete real-time monitoring solution covering birds, aircraft, and noise pollution data.",
+      "highlights": [
+        "Front-end & mapping:\n• Built the web interface with Angular.\n• Integrated Leaflet for real-time flight map visualization.",
+        "Back-end & microservices:\n• Designed a reactive, high-performance back-end architecture with Java Quarkus and Node.js / Express.",
+        "Data processing:\n• Implemented batch processing with Spring Batch.\n• Leveraged Apache Druid for real-time data flow analysis.",
+        "IoT & embedded systems:\n• Developed and deployed services on Raspberry Pi devices running Unix / Bash to collect, process, and forward telemetry data to the application."
+      ],
+      "technicalEnvironment": [
+        "Java (Quarkus, Spring Batch)",
+        "JavaScript (Angular, Express.js)",
+        "Apache Druid",
+        "Leaflet (mapping)",
+        "IoT (Raspberry Pi)",
+        "Unix",
+        "Bash",
+        "Real-time architecture"
+      ]
+    },
+    {
+      "role": "Full-Stack Developer (Java / Angular) - MGEN",
+      "company": "Apside",
+      "period": "2021 - 2023",
+      "location": "Tours, France",
+      "mainData": "Within an Agile team, contributed to the complete redesign and continuous evolution of the MGEN.fr web portal, a high-traffic platform serving several million members.",
+      "highlights": [
+        "Redesign & development:\n• Designed and developed the new full-stack architecture with Spring Boot and Angular in a high-availability context.\n• Defined and documented REST API contracts with OpenAPI / Swagger.\n• Implemented and managed CI/CD pipelines with CloudBees.",
+        "Maintenance & continuous improvement:\n• Delivered enhancements on the legacy J2EE and PL/SQL architecture.\n• Reduced technical debt and improved code quality with CAST and SonarQube.\n• Provided production support and updated batch scripts to keep environments stable."
+      ],
+      "technicalEnvironment": [
+        "Java (J2EE, Spring Boot)",
+        "Angular",
+        "PL/SQL",
+        "REST API",
+        "OpenAPI",
+        "Swagger",
+        "CloudBees",
+        "CI/CD",
+        "SonarQube",
+        "CAST",
+        "Agile methodology"
+      ]
+    },
+    {
+      "role": "Management Controller",
+      "company": "Various companies",
+      "period": "2016 - 2020",
+      "location": "Paris, France",
+      "mainData": "",
+      "highlights": [],
+      "technicalEnvironment": []
+    }
+  ]
+}

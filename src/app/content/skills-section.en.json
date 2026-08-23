@@ -1,6 +1,6 @@
 {
-  "kicker": "Compétences",
-  "title": "Compétences techniques",
+  "kicker": "Skills",
+  "title": "Technical skills",
   "items": [
     "Java",
     "Java 8",
@@ -27,13 +27,13 @@
     "SQL",
     "Apache Druid",
     "Google Vertex AI",
-    "IA générative",
-    "Développement assisté par l'IA",
+    "Generative AI",
+    "AI-assisted development",
     "Prompt engineering",
-    "API Microsoft Graph",
+    "Microsoft Graph API",
     "Leaflet",
-    "Visualisation de données",
-    "Architecture temps réel",
+    "Data visualization",
+    "Real-time architecture",
     "IoT",
     "Raspberry Pi",
     "Unix",
@@ -45,7 +45,7 @@
     "SonarQube",
     "CAST",
     "Git",
-    "Méthodes Agile",
+    "Agile methodologies",
     "SAFe"
   ]
 }

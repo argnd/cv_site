@@ -1,0 +1,24 @@
+{
+  "kicker": "Education",
+  "title": "Education and qualifications",
+  "items": [
+    {
+      "degree": "Java training program",
+      "school": "CEFIM",
+      "period": "2021",
+      "details": "Web development, algorithms, databases, and data structures."
+    },
+    {
+      "degree": "Master's degree in Finance",
+      "school": "KEDGE Business School",
+      "period": "2017",
+      "details": "Finance, auditing, and accounting."
+    },
+    {
+      "degree": "University diploma in Business and Administration Management",
+      "school": "IUT Paris Descartes",
+      "period": "2015 - 2017",
+      "details": "Management, business analysis, operational steering, and quantitative tools."
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 
   @if (content().items.length > 0) {
     <div class="timeline">
-      <ol class="timeline__nav" role="tablist" aria-label="Experience list">
+      <ol class="timeline__nav" role="tablist" [attr.aria-label]="content().listAriaLabel">
         @for (experience of content().items; track experience.company; let i = $index) {
           <li>
             <button
@@ -30,7 +30,7 @@
         <p class="hero__meta">{{ selectedItem().company }} · {{ selectedItem().location }}</p>
         <p class="timeline__summary">{{ selectedItem().mainData }}</p>
         <div class="timeline__environment">
-          <h4>Technical environment</h4>
+          <h4>{{ content().technicalEnvironmentLabel }}</h4>
           <div class="timeline__tech-list">
             @for (technology of selectedItem().technicalEnvironment; track technology) {
               <span class="timeline__tech">{{ technology }}</span>
@@ -54,7 +54,7 @@
             aria-controls="experience-highlights"
             (click)="toggleHighlights()"
           >
-            {{ areHighlightsExpanded() ? 'Masquer les détails' : 'Afficher les détails' }}
+            {{ areHighlightsExpanded() ? content().collapseDetailsLabel : content().expandDetailsLabel }}
           </button>
         }
       </article>

@@ -1,27 +1,48 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
 import { ExperienceSectionComponent } from './components/experience-section/experience-section.component';
 import { FooterSectionComponent } from './components/footer-section/footer-section.component';
 import { GamesSectionComponent } from './components/games-section/games-section.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
+import { LocaleSelectorComponent } from './components/locale-selector/locale-selector.component';
 import { SkillsSectionComponent } from './components/skills-section/skills-section.component';
+import appShellEnData from './content/app-shell.en.json';
+import appShellData from './content/app-shell.json';
+import aboutSectionEnData from './content/about-section.en.json';
 import aboutSectionData from './content/about-section.json';
+import educationSectionEnData from './content/education-section.en.json';
 import educationSectionData from './content/education-section.json';
+import experienceSectionEnData from './content/experience-section.en.json';
 import experienceSectionData from './content/experience-section.json';
+import footerSectionEnData from './content/footer-section.en.json';
 import footerSectionData from './content/footer-section.json';
+import gamesSectionEnData from './content/games-section.en.json';
 import gamesSectionData from './content/games-section.json';
+import heroSectionEnData from './content/hero-section.en.json';
 import heroSectionData from './content/hero-section.json';
+import skillsSectionEnData from './content/skills-section.en.json';
 import skillsSectionData from './content/skills-section.json';
 import {
+  AppShellContent,
   AboutSectionContent,
   EducationSectionContent,
   ExperienceSectionContent,
   FooterSectionContent,
   GamesSectionContent,
   HeroSectionContent,
+  SupportedLocale,
   SkillsSectionContent,
 } from './content/content.models';
+
+function detectLocale(): SupportedLocale {
+  if (typeof navigator === 'undefined') {
+    return 'fr';
+  }
+
+  const browserLocales = navigator.languages && navigator.languages.length > 0 ? navigator.languages : [navigator.language];
+  return browserLocales.some((locale) => locale.toLowerCase().startsWith('fr')) ? 'fr' : 'en';
+}
 
 type ShootingStarConfig = {
   top: number;
@@ -64,19 +85,38 @@ function createShootingStar(config: ShootingStarConfig): ShootingStar {
     FooterSectionComponent,
     GamesSectionComponent,
     HeroSectionComponent,
+    LocaleSelectorComponent,
     SkillsSectionComponent,
   ],
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly heroContent: HeroSectionContent = heroSectionData;
-  protected readonly aboutContent: AboutSectionContent = aboutSectionData;
-  protected readonly experienceContent: ExperienceSectionContent = experienceSectionData;
-  protected readonly educationContent: EducationSectionContent = educationSectionData;
-  protected readonly skillsContent: SkillsSectionContent = skillsSectionData;
-  protected readonly gamesContent: GamesSectionContent = gamesSectionData;
-  protected readonly footerContent: FooterSectionContent = footerSectionData;
+  protected readonly locale = signal<SupportedLocale>(detectLocale());
+  protected readonly appShellContent = computed<AppShellContent>(() =>
+    this.locale() === 'fr' ? appShellData : appShellEnData,
+  );
+  protected readonly heroContent = computed<HeroSectionContent>(() =>
+    this.locale() === 'fr' ? heroSectionData : heroSectionEnData,
+  );
+  protected readonly aboutContent = computed<AboutSectionContent>(() =>
+    this.locale() === 'fr' ? aboutSectionData : aboutSectionEnData,
+  );
+  protected readonly experienceContent = computed<ExperienceSectionContent>(() =>
+    this.locale() === 'fr' ? experienceSectionData : experienceSectionEnData,
+  );
+  protected readonly educationContent = computed<EducationSectionContent>(() =>
+    this.locale() === 'fr' ? educationSectionData : educationSectionEnData,
+  );
+  protected readonly skillsContent = computed<SkillsSectionContent>(() =>
+    this.locale() === 'fr' ? skillsSectionData : skillsSectionEnData,
+  );
+  protected readonly gamesContent = computed<GamesSectionContent>(() =>
+    this.locale() === 'fr' ? gamesSectionData : gamesSectionEnData,
+  );
+  protected readonly footerContent = computed<FooterSectionContent>(() =>
+    this.locale() === 'fr' ? footerSectionData : footerSectionEnData,
+  );
 
   protected readonly heroStars = [
     { top: 8, left: 14, size: 2, delay: 0, duration: 4.6 },
@@ -112,7 +152,22 @@ export class App {
 
   protected isNight = true;
 
+  constructor() {
+    this.syncDocumentLanguage(this.locale());
+  }
+
   protected toggleTheme(): void {
     this.isNight = !this.isNight;
+  }
+
+  protected setLocale(locale: SupportedLocale): void {
+    this.locale.set(locale);
+    this.syncDocumentLanguage(locale);
+  }
+
+  private syncDocumentLanguage(locale: SupportedLocale): void {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = locale;
+    }
   }
 }

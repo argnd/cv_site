@@ -1,9 +1,24 @@
+export type SupportedLocale = 'fr' | 'en';
+
+export type LocaleSelectorContent = {
+  label: string;
+  frenchLabel: string;
+  englishLabel: string;
+};
+
+export type AppShellContent = {
+  themeToggleAriaLabel: string;
+  localeSelector: LocaleSelectorContent;
+};
+
 export type HeroSectionContent = {
   kicker: string;
   name: string;
   headline: string;
   location: string;
   linkedinUrl: string;
+  linkedinLabel: string;
+  gamesLinkLabel: string;
 };
 
 export type AboutSectionContent = {
@@ -14,6 +29,8 @@ export type AboutSectionContent = {
   bodyPrimary: string;
   /** Sanitized through Angular's innerHTML binding, allowing basic HTML formatting in JSON content. */
   bodyExpanded: string;
+  expandLabel: string;
+  collapseLabel: string;
 };
 
 export type ExperienceItem = {
@@ -29,6 +46,10 @@ export type ExperienceItem = {
 export type ExperienceSectionContent = {
   kicker: string;
   title: string;
+  listAriaLabel: string;
+  technicalEnvironmentLabel: string;
+  expandDetailsLabel: string;
+  collapseDetailsLabel: string;
   items: ExperienceItem[];
 };
 
