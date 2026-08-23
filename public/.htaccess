@@ -20,6 +20,16 @@ DirectoryIndex index.html
 
   # SPA fallback: hand every other URL to the Angular router.
   RewriteRule ^ index.html [L]
+
+  # Anti-hotlinking — ACTIVATE ONCE THE DOMAIN IS REGISTERED.
+  # Uncomment the two directives below and replace example.com with your domain.
+  # The host must be written literally: mod_rewrite does not reliably expand
+  # %{HTTP_HOST} inside a condition pattern, and a failed expansion here would
+  # block the site's own images.
+  # An empty Referer stays allowed, so direct hits and bookmarks keep working.
+  #
+  # RewriteCond %{HTTP_REFERER} ^https?://(?!(www\.)?example\.com/) [NC]
+  # RewriteRule \.(png|jpe?g|gif|webp|avif|svg|ico)$ - [F,NC]
 </IfModule>
 
 <IfModule mod_deflate.c>

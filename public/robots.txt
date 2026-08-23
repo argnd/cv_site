@@ -1,0 +1,38 @@
+# https://www.robotstxt.org/robotstxt.html
+
+# Search engines: fully welcome. This is a CV — being indexed is the point.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# AI training crawlers: declined. They account for a large share of the
+# traffic on small sites and bring no visitors back. Remove a block below if
+# you would rather appear in that assistant's answers.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: *
+Allow: /
+
+# Once the domain is registered, publish a sitemap here:
+# Sitemap: https://your-domain.tld/sitemap.xml
