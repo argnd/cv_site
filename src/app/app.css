@@ -917,6 +917,91 @@
 /* Layout                              */
 /* ---------------------------------- */
 
+/* ---------------------------------- */
+/* Hills (day only)                    */
+/* ---------------------------------- */
+
+.sky__hills {
+  position: absolute;
+  inset: auto 0 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__hills {
+  opacity: 1;
+}
+
+/* Each band overshoots the fold by --hill-sink so the parallax lift can never
+   drag its bottom edge into view, and overshoots left/right so the crest never
+   ends mid-screen. */
+.hill {
+  --hill-sink: 40px;
+  position: absolute;
+  left: -2%;
+  bottom: calc(-1 * var(--hill-sink));
+  width: 104%;
+  display: block;
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, 0px));
+}
+
+/* The path runs past the viewBox on every edge except the crest, so the root
+   SVG's own clip removes those strokes and only the skyline is inked. */
+.hill path {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hill--far {
+  height: calc(clamp(130px, 19vh, 190px) + var(--hill-sink));
+  --parallax-y: -8px;
+}
+
+.hill--far path {
+  fill: var(--hill-far, transparent);
+}
+
+.hill--mid {
+  height: calc(clamp(102px, 15vh, 150px) + var(--hill-sink));
+  --parallax-y: -16px;
+}
+
+.hill--mid path {
+  fill: var(--hill-mid, transparent);
+}
+
+.hill--near {
+  height: calc(clamp(74px, 11vh, 112px) + var(--hill-sink));
+  --parallax-y: -26px;
+}
+
+.hill--near path {
+  fill: var(--hill-near, transparent);
+}
+
+/* Scroll parallax for the drifting scenery. `translate` is a separate property
+   from `transform`, so it stacks on top of the drift/fly keyframes instead of
+   fighting them for the same slot — which is the only reason these can have
+   both an animation and a scroll offset. */
+.cloud {
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, -20px));
+}
+
+.cloud--far {
+  --parallax-y: -8px;
+}
+
+.bird-flock {
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, -14px));
+}
+
+/* ---------------------------------- */
+/* Page                                */
+/* ---------------------------------- */
+
 .page {
   position: relative;
   z-index: 1;
@@ -991,6 +1076,13 @@
      bird — hold the extended one, which is the pose a gliding bird has. */
   .bird__wing--mid {
     opacity: 1;
+  }
+
+  /* Scroll-driven motion is still motion — pin the scenery where it sits. */
+  .cloud,
+  .bird-flock,
+  .hill {
+    --parallax-y: 0px;
   }
 
   /* Falling rain is the entire point of this one, and a permanently parked
