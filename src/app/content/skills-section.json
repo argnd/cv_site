@@ -1,9 +1,5 @@
-[
-  "Angular",
-  "TypeScript",
-  "JavaScript",
-  "Node.js",
-  "REST APIs",
-  "SQL",
-  "Git"
-]
+{
+  "kicker": "Skills",
+  "title": "Technical skills",
+  "items": ["Angular", "TypeScript", "JavaScript", "Node.js", "REST APIs", "SQL", "Git"]
+}

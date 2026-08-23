@@ -1,20 +1,24 @@
-[
-  {
+{
+  "kicker": "Education",
+  "title": "Education and training",
+  "items": [
+    {
     "degree": "Master in Computer Science",
     "school": "University 1",
     "period": "2020 - 2022",
     "details": "Specialization in software engineering and distributed systems."
-  },
-  {
+    },
+    {
     "degree": "Bachelor in Information Technology",
     "school": "University 2",
     "period": "2017 - 2020",
     "details": "Foundations in web development, algorithms, and databases."
-  },
-  {
+    },
+    {
     "degree": "Technical Diploma",
     "school": "Institute 3",
     "period": "2015 - 2017",
     "details": "Applied programming, networking, and software project methods."
-  }
-]
+    }
+  ]
+}

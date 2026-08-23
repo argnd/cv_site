@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { EducationItem } from '../../content/content.models';
+import { EducationSectionContent } from '../../content/content.models';
 
 @Component({
   selector: 'app-education-section',
@@ -7,5 +7,5 @@ import { EducationItem } from '../../content/content.models';
   styleUrl: './education-section.component.css',
 })
 export class EducationSectionComponent {
-  readonly items = input.required<EducationItem[]>();
+  readonly content = input.required<EducationSectionContent>();
 }

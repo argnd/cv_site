@@ -1,8 +1,8 @@
 <section class="section skills" id="skills">
-  <p class="kicker">Skills</p>
-  <h2>Instruments of the craft</h2>
+  <p class="kicker">{{ content().kicker }}</p>
+  <h2>{{ content().title }}</h2>
   <p class="skills__list">
-    @for (skill of items(); track skill) {
+    @for (skill of content().items; track skill) {
       <span class="skill">{{ skill }}</span>
     }
   </p>

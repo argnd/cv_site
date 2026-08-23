@@ -1,9 +1,9 @@
 <section class="section education" id="education">
-  <p class="kicker">Education</p>
-  <h2>Foundations, charted</h2>
+  <p class="kicker">{{ content().kicker }}</p>
+  <h2>{{ content().title }}</h2>
 
   <div class="constellation-list">
-    @for (item of items(); track item.school) {
+    @for (item of content().items; track item.school) {
       <article class="constellation-item">
         <span class="constellation-item__mark" aria-hidden="true">✦</span>
         <div>

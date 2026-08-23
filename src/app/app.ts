@@ -15,11 +15,12 @@ import heroSectionData from './content/hero-section.json';
 import skillsSectionData from './content/skills-section.json';
 import {
   AboutSectionContent,
-  EducationItem,
-  ExperienceItem,
+  EducationSectionContent,
+  ExperienceSectionContent,
   FooterSectionContent,
   GamesSectionContent,
   HeroSectionContent,
+  SkillsSectionContent,
 } from './content/content.models';
 
 type ShootingStarConfig = {
@@ -71,9 +72,9 @@ function createShootingStar(config: ShootingStarConfig): ShootingStar {
 export class App {
   protected readonly heroContent: HeroSectionContent = heroSectionData;
   protected readonly aboutContent: AboutSectionContent = aboutSectionData;
-  protected readonly experiences: ExperienceItem[] = experienceSectionData;
-  protected readonly education: EducationItem[] = educationSectionData;
-  protected readonly skills: string[] = skillsSectionData;
+  protected readonly experienceContent: ExperienceSectionContent = experienceSectionData;
+  protected readonly educationContent: EducationSectionContent = educationSectionData;
+  protected readonly skillsContent: SkillsSectionContent = skillsSectionData;
   protected readonly gamesContent: GamesSectionContent = gamesSectionData;
   protected readonly footerContent: FooterSectionContent = footerSectionData;
 

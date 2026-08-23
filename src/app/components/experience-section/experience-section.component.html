@@ -1,11 +1,11 @@
 <section class="section experience" id="experience">
-  <p class="kicker">Experience</p>
-  <h2>Where the path has led</h2>
+  <p class="kicker">{{ content().kicker }}</p>
+  <h2>{{ content().title }}</h2>
 
-  @if (items().length > 0) {
+  @if (content().items.length > 0) {
     <div class="timeline">
       <ol class="timeline__nav" role="tablist" aria-label="Experience list">
-        @for (experience of items(); track experience.company; let i = $index) {
+        @for (experience of content().items; track experience.company; let i = $index) {
           <li>
             <button
               class="timeline__node"

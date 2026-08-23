@@ -1,5 +1,8 @@
-[
-  {
+{
+  "kicker": "Experience",
+  "title": "Professional experience",
+  "items": [
+    {
     "role": "Développeur Senior Java / Spring",
     "company": "Ag2r La Mondiale - Freelance",
     "period": "2023 - Present",
@@ -24,8 +27,8 @@
       "Git",
       "Methodologies Agile / SAFe"
     ]
-  },
-  {
+    },
+    {
     "role": "Développeur Full-Stack & IoT - ADP",
     "company": "Atos",
     "period": "Jan. 2023 - Oct. 2023",
@@ -47,8 +50,8 @@
       "Bash",
       "Architecture Temps Réel"
     ]
-  },
-  {
+    },
+    {
     "role": "Développeur Full-Stack (Java / Angular) - MGEN",
     "company": "Apside",
     "period": "2021 - 2023",
@@ -71,8 +74,8 @@
       "CAST",
       "Methode Agile"
     ]
-  },
-  {
+    },
+    {
     "role": "Contrôleur de gestion",
     "company": "Divers",
     "period": "2016 - 2020",
@@ -80,5 +83,6 @@
     "mainData": "",
     "highlights": [],
     "technicalEnvironment": []
-  }
-]
+    }
+  ]
+}

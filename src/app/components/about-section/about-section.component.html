@@ -1,6 +1,6 @@
 <section class="section about" id="about">
-  <p class="kicker">About</p>
-  <h2>Under a quiet sky</h2>
+  <p class="kicker">{{ content().kicker }}</p>
+  <h2>{{ content().title }}</h2>
   <div class="about__content about__content--primary" [innerHTML]="content().bodyPrimary"></div>
   @if (content().bodyExpanded) {
     @if (isExpanded()) {
