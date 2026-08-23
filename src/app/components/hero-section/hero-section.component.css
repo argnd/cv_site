@@ -26,12 +26,6 @@
   margin: 0 0 0.35rem;
 }
 
-.hero__meta {
-  font-size: 0.9rem;
-  color: var(--text-soft);
-  margin: 0;
-}
-
 .hero__actions {
   margin-top: 2.25rem;
   display: flex;
