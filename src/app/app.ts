@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { CelestialBodyComponent } from './components/celestial-body/celestial-body.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
@@ -41,7 +51,10 @@ function detectLocale(): SupportedLocale {
     return 'fr';
   }
 
-  const browserLocales = navigator.languages && navigator.languages.length > 0 ? navigator.languages : [navigator.language];
+  const browserLocales =
+    navigator.languages && navigator.languages.length > 0
+      ? navigator.languages
+      : [navigator.language];
   return browserLocales.some((locale) => locale.toLowerCase().startsWith('fr')) ? 'fr' : 'en';
 }
 
@@ -111,6 +124,157 @@ function generateShootingStars(count: number): ShootingStar[] {
     });
   });
 }
+
+/**
+ * Cloud silhouettes, in a `0 0 200 96` viewBox. Each one is the exact outline of
+ * a chain of overlapping circles resting on a shared flat baseline, so the lobes
+ * meet in true tangent-free arcs — no seams to hide, and the whole shape stays a
+ * handful of `A` commands rather than a sampled polyline. `faceAt` is the anchor
+ * the face group is translated to, picked per shape to sit on the body mass
+ * rather than drifting onto a lobe.
+ */
+const CLOUD_SHAPES = {
+  a: {
+    d: 'M34 88 A26 26 0 1 1 54.2 40.1 A34 34 0 0 1 120.4 33.6 A28 28 0 0 1 161.2 51.2 A20 20 0 0 1 176.7 88 Z',
+    faceAt: '95,63',
+  },
+  b: {
+    d: 'M42.1 88 A26 26 0 0 1 64.2 41.3 A34 34 0 1 1 131.8 41.3 A26 26 0 0 1 153.9 88 Z',
+    faceAt: '98,62',
+  },
+  c: {
+    d: 'M25.3 88 A20 20 0 1 1 44.5 53 A26 26 0 0 1 83.8 36 A28 28 0 0 1 134.5 40.9 A24 24 0 0 1 169.5 57.3 A17 17 0 1 1 183.7 88 Z',
+    faceAt: '100,64',
+  },
+  d: {
+    d: 'M40.8 88 A22 22 0 0 1 58.3 47.6 A28 28 0 0 1 111.2 39.7 A24 24 0 0 1 146.9 52.7 A20 20 0 0 1 164 88 Z',
+    faceAt: '100,64',
+  },
+  /** Asymmetric tower, rising toward the right. */
+  e: {
+    d: 'M44.7 88 A24 24 0 0 1 62 44.3 A30 30 0 0 1 105.6 19.3 A24 24 0 0 1 149.6 36.3 A28 28 0 0 1 168.4 88 Z',
+    faceAt: '92,66',
+  },
+  /** Two lobes only — the small, simple puff of the set. */
+  f: {
+    d: 'M56.1 88 A26 26 0 1 1 90 49.3 A30 30 0 1 1 128.8 88 Z',
+    faceAt: '95,66',
+  },
+  /** Heavy, flat-bottomed storm cloud — the one that rains. */
+  g: {
+    d: 'M36.4 88 A24 24 0 1 1 56.9 44.6 A30 30 0 0 1 109.3 33.1 A28 28 0 0 1 155.3 47.8 A22 22 0 0 1 173.2 88 Z',
+    faceAt: '100,64',
+  },
+} as const;
+
+type CloudFace = {
+  /** Round-capped zero-length segments — each renders as a dot pupil. */
+  eyes?: string;
+  eyeWidth?: number;
+  /** Closed/curved eyelids. Split from `eyes` so the two can carry different pen
+   * weights, which is what lets `wink` pair a 7.4 dot with a 3.4 lid. */
+  lids?: string;
+  brows?: string;
+  mouth: string;
+  /** Fills the mouth path instead of stroking it, closing an open curve into a
+   * solid shape — an open grin or a round "oh". */
+  mouthFilled?: boolean;
+};
+
+/** Expressions, in coordinates local to a shape's `faceAt` anchor. */
+const FACES = {
+  happy: { eyes: 'M-13 -2l.01 0M13 -2l.01 0', eyeWidth: 7.4, mouth: 'M-8 5Q0 13 8 5' },
+  closed: { lids: 'M-17 1Q-12 -6 -7 1M7 1Q12 -6 17 1', mouth: 'M-5 6Q0 11 5 6' },
+  sleepy: { lids: 'M-16 -2Q-11 4 -6 -2M6 -2Q11 4 16 -2', mouth: 'M-4 7Q0 10.5 4 7' },
+  oh: {
+    eyes: 'M-13 -3l.01 0M13 -3l.01 0',
+    eyeWidth: 7.4,
+    mouth: 'M0 4a3.4 4.6 0 1 0 .01 0',
+    mouthFilled: true,
+  },
+  wink: {
+    eyes: 'M13 -2l.01 0',
+    eyeWidth: 7.4,
+    lids: 'M-17 -1Q-12 -8 -7 -1',
+    mouth: 'M-8 5Q0 13 8 5',
+  },
+  grin: {
+    eyes: 'M-14 -3l.01 0M14 -3l.01 0',
+    eyeWidth: 7,
+    mouth: 'M-11 4Q0 16 11 4',
+    mouthFilled: true,
+  },
+  sad: {
+    eyes: 'M-12 0l.01 0M12 0l.01 0',
+    eyeWidth: 6.6,
+    /** Inner ends raised — the difference between worried and angry. */
+    brows: 'M-19 -9L-8 -13M19 -9L8 -13',
+    mouth: 'M-8 11Q0 3 8 11',
+  },
+} satisfies Record<string, CloudFace>;
+
+/** Teardrop: a point at the origin, straight down into a semicircular bottom. */
+const RAINDROP = 'M0 0Q3 5 3 7.4A3 3 0 1 1 -3 7.4Q-3 5 0 0Z';
+
+type FlockMember = {
+  /** Offset from the flock's leader, in px. */
+  dx: number;
+  dy: number;
+  width: number;
+  /** One full flap cycle: three beats plus a glide. Varied per bird so a flock
+   * doesn't beat in lockstep. */
+  flap: number;
+  /** Phase offset into that flap cycle, so the beats are staggered too. */
+  flapShift: number;
+  /** Phase offset for the vertical soar, so members wander independently. */
+  soar: number;
+};
+
+type Flock = {
+  /** Vertical position, in % of the viewport. */
+  top: number;
+  delay: number;
+  duration: number;
+  /** Where the flock parks when motion is reduced, in % of the viewport width. */
+  rest: number;
+  members: FlockMember[];
+};
+
+/** A cat sitting on the near hill, in the gutter beside the text column. */
+type HillCat = {
+  name: string;
+  /** Jojo is a brown tabby with white, so he also gets a bib, paws and stripes;
+   * Vivi is plain grey. */
+  tabby: boolean;
+  height: number;
+  /** Inset from the right edge of the viewport. */
+  right: number;
+};
+
+type Cloud = {
+  art: (typeof CLOUD_SHAPES)[keyof typeof CLOUD_SHAPES];
+  face: CloudFace;
+  /** Vertical position, in % of the viewport. */
+  top: number;
+  /** Multiplier on the base width. Sizing is width-driven rather than a CSS
+   * `scale()`, because an ancestor transform also shrinks the silhouette's
+   * "non-scaling" stroke — which would leave far clouds with a hairline. */
+  scale: number;
+  /** Drives fill, outline weight and opacity so size isn't the only depth cue. */
+  depth: 'near' | 'far';
+  /** Negative, so every cloud is already mid-flight on load instead of the sky
+   * starting empty and filling up over the next two minutes. */
+  delay: number;
+  duration: number;
+  /** Offsets the vertical bob so the clouds don't rise and fall in lockstep. */
+  bob: number;
+  /** Where the cloud parks when motion is reduced, in % of the viewport width. */
+  rest: number;
+  /** Spends most of its cycle parked off-screen rather than drifting the whole
+   * time, so it shows up as an occasional event instead of a fixture. */
+  rare?: boolean;
+  rain?: boolean;
+};
 
 @Component({
   selector: 'app-root',
@@ -182,31 +346,148 @@ export class App {
 
   protected readonly shootingStars: ShootingStar[] = generateShootingStars(3);
 
-  protected readonly birds = [
-    { top: 18, delay: 0, duration: 26 },
-    { top: 30, delay: 15, duration: 23 },
+  protected readonly flocks: Flock[] = [
+    {
+      top: 16,
+      delay: -4,
+      duration: 27,
+      rest: 30,
+      members: [
+        { dx: 0, dy: 0, width: 48, flap: 1.5, flapShift: 0, soar: 0 },
+        { dx: -40, dy: -23, width: 42, flap: 1.34, flapShift: -0.52, soar: -1.7 },
+        { dx: -43, dy: 21, width: 40, flap: 1.62, flapShift: -0.95, soar: -3.1 },
+      ],
+    },
+    {
+      top: 34,
+      delay: 13,
+      duration: 31,
+      rest: 68,
+      members: [{ dx: 0, dy: 0, width: 44, flap: 1.44, flapShift: -0.3, soar: -2.2 }],
+    },
   ];
 
-  protected readonly clouds = [
-    { top: 10, scale: 1, delay: 0, duration: 115 },
-    { top: 23, scale: 0.68, delay: 34, duration: 145 },
-    { top: 5, scale: 0.8, delay: 70, duration: 130 },
+  protected readonly hillCats: HillCat[] = [
+    { name: 'vivi', tabby: false, height: 56, right: 118 },
+    { name: 'jojo', tabby: true, height: 68, right: 40 },
+  ];
+
+  protected readonly clouds: Cloud[] = [
+    {
+      art: CLOUD_SHAPES.a,
+      face: FACES.happy,
+      top: 8,
+      scale: 1,
+      depth: 'near',
+      delay: -12,
+      duration: 118,
+      bob: 0,
+      rest: 14,
+    },
+    {
+      art: CLOUD_SHAPES.c,
+      face: FACES.sleepy,
+      top: 21,
+      scale: 0.6,
+      depth: 'far',
+      delay: -95,
+      duration: 172,
+      bob: -4.5,
+      rest: 63,
+    },
+    {
+      art: CLOUD_SHAPES.b,
+      face: FACES.closed,
+      top: 4,
+      scale: 0.72,
+      depth: 'far',
+      delay: -55,
+      duration: 150,
+      bob: -9,
+      rest: 88,
+    },
+    {
+      art: CLOUD_SHAPES.d,
+      face: FACES.oh,
+      top: 31,
+      scale: 0.88,
+      depth: 'near',
+      delay: -108,
+      duration: 130,
+      bob: -2,
+      rest: 36,
+    },
+    {
+      art: CLOUD_SHAPES.e,
+      face: FACES.wink,
+      top: 26,
+      scale: 0.78,
+      depth: 'near',
+      delay: -70,
+      duration: 141,
+      bob: -11,
+      rest: 50,
+    },
+    {
+      art: CLOUD_SHAPES.f,
+      face: FACES.grin,
+      top: 14,
+      scale: 0.52,
+      depth: 'far',
+      delay: -150,
+      duration: 190,
+      bob: -6.5,
+      rest: 76,
+    },
+    {
+      art: CLOUD_SHAPES.g,
+      face: FACES.sad,
+      top: 17,
+      scale: 0.92,
+      depth: 'near',
+      // `cloud-drift-rare` parks the cloud until 82% of its cycle, so the drift
+      // itself starts at 0.82 * 300s. Offsetting by that lands the first pass a
+      // few seconds after load — a rare cloud nobody ever sees is a wasted one —
+      // and every pass after that is one per 5-minute cycle.
+      delay: randomBetween(8, 45) - 246,
+      duration: 300,
+      bob: -3,
+      rest: 58,
+      rare: true,
+      rain: true,
+    },
+  ];
+
+  protected readonly raindropPath = RAINDROP;
+
+  /** Irregular delays so the fall reads as rain rather than a marching wave. */
+  protected readonly raindrops = [
+    { x: 52, delay: 0 },
+    { x: 72, delay: -0.34 },
+    { x: 92, delay: -0.13 },
+    { x: 112, delay: -0.45 },
+    { x: 132, delay: -0.22 },
+    { x: 152, delay: -0.07 },
   ];
 
   protected readonly isNight = signal(true);
 
-  /** Eased 0..1 scroll progress through the page, used to give the nebula a
-   * subtle parallax drift/rotation instead of sitting fully static while
-   * scrolling (the sky itself is `position: fixed`, so it needs its own cue). */
-  protected readonly scrollShift = signal(0);
+  private readonly skyRef = viewChild<ElementRef<HTMLElement>>('sky');
+
+  /* Captured here rather than inside `initScrollParallax`: that method runs
+     from an `afterNextRender` callback, which is outside the injection
+     context, so `inject()` would throw there. */
+  private readonly destroyRef = inject(DestroyRef);
 
   private scrollTarget = 0;
   private scrollCurrent = 0;
   private scrollRafId: number | null = null;
+  private lastFrameAt = 0;
 
   constructor() {
     this.syncDocumentLanguage(this.locale());
-    this.initScrollParallax();
+    effect(() => this.syncColorScheme(this.isNight()));
+    afterNextRender(() => this.initScrollParallax());
   }
 
   protected toggleTheme(): void {
@@ -224,15 +505,27 @@ export class App {
     }
   }
 
-  /** Tracks scroll progress (0..1) and eases it toward `scrollShift` on each
-   * frame via a self-terminating rAF loop, rather than writing scroll events
-   * straight to the signal — this smooths out the parallax so it glides
-   * instead of jittering with every scroll tick. */
-  private initScrollParallax(): void {
-    if (typeof window === 'undefined') {
+  /** Keeps the UA-level theme in step with the in-page one. Without this the
+   * root `color-scheme` stays `dark` in daylight, so scrollbars, form controls
+   * and the mobile browser chrome stay night-colored around a light page. */
+  private syncColorScheme(isNight: boolean): void {
+    if (typeof document === 'undefined') {
       return;
     }
 
+    document.documentElement.style.colorScheme = isNight ? 'dark' : 'light';
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', isNight ? '#05060d' : '#2ea8ec');
+  }
+
+  /** Eased 0..1 scroll progress through the page, giving the fixed sky its own
+   * parallax cue. The eased value is written **straight to the `.sky` element**
+   * rather than through a signal: a signal write per frame drags Angular's
+   * change detection into the animation loop for a value no template logic
+   * depends on. This is a pure paint concern, so it stays out of the framework.
+   */
+  private initScrollParallax(): void {
     const updateTarget = (): void => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       this.scrollTarget = maxScroll > 0 ? window.scrollY / maxScroll : 0;
@@ -243,7 +536,7 @@ export class App {
     window.addEventListener('resize', updateTarget, { passive: true });
     updateTarget();
 
-    inject(DestroyRef).onDestroy(() => {
+    this.destroyRef.onDestroy(() => {
       window.removeEventListener('scroll', updateTarget);
       window.removeEventListener('resize', updateTarget);
       if (this.scrollRafId !== null) {
@@ -252,24 +545,50 @@ export class App {
     });
   }
 
+  /** Time constant of the scroll smoothing, in seconds: roughly how long the
+   * scenery takes to cover ~63% of the distance to the live scroll position.
+   * Low enough that the parallax reads as attached to the page rather than
+   * trailing it, high enough to still absorb coarse mouse-wheel steps. */
+  private static readonly SCROLL_TAU = 0.08;
+
   private runScrollEasing(): void {
     if (this.scrollRafId !== null) {
       return;
     }
 
-    const step = (): void => {
+    this.lastFrameAt = performance.now();
+
+    const step = (now: number): void => {
+      /* Frame-rate independent exponential smoothing. A fixed per-frame factor
+         would ease at a different real-world speed on a 60Hz and a 144Hz
+         display; deriving it from elapsed time makes the glide identical on
+         both.
+         `dt` is clamped at *both* ends. The upper bound stops a backgrounded
+         tab resuming with one huge jump. The lower bound matters just as much:
+         a rAF timestamp is the frame's start time, so it can predate the
+         `performance.now()` taken when the loop was scheduled. That negative
+         dt flips the sign of `exp(-dt / TAU)` and throws the scenery hundreds
+         of units the wrong way on the first frame of every scroll burst. */
+      const dt = Math.min(Math.max(now - this.lastFrameAt, 0) / 1000, 0.05);
+      this.lastFrameAt = now;
+
       const diff = this.scrollTarget - this.scrollCurrent;
       if (Math.abs(diff) < 0.0005) {
         this.scrollCurrent = this.scrollTarget;
-        this.scrollShift.set(this.scrollCurrent);
+        this.writeScrollShift();
         this.scrollRafId = null;
         return;
       }
-      this.scrollCurrent += diff * 0.08;
-      this.scrollShift.set(this.scrollCurrent);
+
+      this.scrollCurrent += diff * (1 - Math.exp(-dt / App.SCROLL_TAU));
+      this.writeScrollShift();
       this.scrollRafId = requestAnimationFrame(step);
     };
 
     this.scrollRafId = requestAnimationFrame(step);
+  }
+
+  private writeScrollShift(): void {
+    this.skyRef()?.nativeElement.style.setProperty('--scroll-shift', this.scrollCurrent.toFixed(4));
   }
 }

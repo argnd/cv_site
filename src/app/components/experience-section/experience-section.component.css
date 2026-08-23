@@ -6,22 +6,23 @@
 
 .section {
   max-width: 1120px;
-  margin: 0 auto;
-  padding-block: var(--space-xl);
-  padding-inline: 1.5rem;
+  margin: var(--section-gap) auto;
+  padding: var(--section-pad-block) max(1.5rem, var(--section-pad-inline));
 }
 
 h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   color: var(--text-strong);
   margin: 0 0 0.35rem;
   font-size: 1.35rem;
 }
 
 h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   color: var(--text-strong);
   margin: 0 0 0.75rem;
   font-size: 1rem;
@@ -47,7 +48,7 @@ h4 {
   left: 4px;
   top: 8px;
   bottom: 8px;
-  width: 1px;
+  width: max(1px, var(--stroke-w));
   background: var(--text-faint);
 }
 
@@ -77,7 +78,7 @@ h4 {
   height: 9px;
   border-radius: 50%;
   background: var(--surface-muted);
-  box-shadow: 0 0 0 1px var(--text-faint);
+  box-shadow: 0 0 0 max(1px, var(--stroke-w)) var(--text-faint);
   transition:
     box-shadow 240ms var(--ease-soft),
     background 240ms var(--ease-soft);
@@ -114,8 +115,27 @@ h4 {
 .timeline__node.is-active .timeline__dot {
   background: var(--text-strong);
   box-shadow:
-    0 0 0 1px var(--text-strong),
-    0 0 12px var(--glow-strong);
+    0 0 0 max(1px, var(--stroke-w)) var(--text-strong),
+    0 0 12px var(--bloom-strong);
+}
+
+/* Day: a chunky ink ring that fills coral when selected — the timeline's one
+   piece of colour, and the only thing carrying the "you are here" state once
+   the glow is gone.
+   `:host-context` and not `.scene.is-day X` — Angular scopes *every* compound
+   in a component selector, and `.scene` lives in the app template, so it would
+   be tagged with the wrong component id and never match. */
+:host-context(.scene.is-day) .timeline__dot {
+  width: 13px;
+  height: 13px;
+  box-shadow: 0 0 0 var(--stroke-w) var(--ink);
+}
+
+:host-context(.scene.is-day) .timeline__node:hover .timeline__dot,
+:host-context(.scene.is-day) .timeline__node:focus-visible .timeline__dot,
+:host-context(.scene.is-day) .timeline__node.is-active .timeline__dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 var(--stroke-w) var(--ink);
 }
 
 .timeline__summary {
@@ -157,11 +177,34 @@ h4 {
   display: inline-block;
   margin: 0 0.6rem 0.55rem 0;
   padding: 0.35rem 0.7rem;
-  border: 1px solid var(--text-faint);
+  border: max(1px, var(--stroke-w)) solid var(--text-faint);
   border-radius: 999px;
   color: var(--text-soft);
   font-size: 0.88rem;
   line-height: 1.2;
+  box-shadow: calc(var(--shadow-offset) * 0.6) calc(var(--shadow-offset) * 0.6) 0 var(--shadow-hard);
+  transition:
+    border-color var(--theme-duration) var(--ease-soft),
+    background var(--theme-duration) var(--ease-soft),
+    color var(--theme-duration) var(--ease-soft),
+    box-shadow var(--theme-duration) var(--ease-soft);
+}
+
+:host-context(.scene.is-day) .timeline__tech {
+  background: var(--accent-warm);
+  border-color: var(--ink);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Stuck on by hand rather than printed — a degree or two of tilt each, on the
+   independent `rotate` property so it can't collide with a transform later. */
+:host-context(.scene.is-day) .timeline__tech:nth-child(3n) {
+  rotate: -1.6deg;
+}
+
+:host-context(.scene.is-day) .timeline__tech:nth-child(3n + 2) {
+  rotate: 1.2deg;
 }
 
 .timeline__toggle {
@@ -176,7 +219,7 @@ h4 {
 
   .section {
     max-width: none;
-    padding-inline: 0;
+    padding-inline: var(--section-pad-inline);
   }
 
   .timeline {

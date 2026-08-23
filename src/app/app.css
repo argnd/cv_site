@@ -3,7 +3,16 @@
   position: relative;
 }
 
-:host *,
+/* `:host *` also matches child *component hosts* — they are elements of this
+   template — and `transition` is a shorthand, so this rule silently replaces
+   whatever a child declared on its own `:host`. A child's `:host` is only
+   `[_nghost]` (0,1,0) after Angular's encapsulation rewrite, while this is
+   (0,2,0), so the parent wins. `app-celestial-body` owns a multi-property
+   hand-off keyed off `.is-hidden`, and losing the un-hidden half of it left
+   the arriving body with no transition at all: it teleported into its corner
+   while the departing one still animated. Component hosts are excluded here;
+   they never paint their own colour anyway. */
+:host *:not(app-celestial-body),
 :host {
   transition:
     color var(--theme-duration) var(--ease-soft),
@@ -26,23 +35,79 @@
 /* ---------------------------------- */
 
 .scene.is-day {
-  --sky-void: #d7e8f7;
-  --sky-deep: #9bc7ea;
-  --sky-mid: #82b6e2;
-  --sky-horizon: #ffe2ac;
-  --surface-muted: #b9d2ea;
+  --sky-void: #dff4ff;
+  --sky-deep: #2ea8ec;
+  --sky-mid: #9adcf9;
+  --surface-muted: #ffffff;
+  /* Only visible while `.sky__glow` fades out on toggle — a warm dawn band
+     rather than the navy smear the night value would leave behind. */
+  --sky-horizon: #ffd89a;
+  --text-strong: #16233f;
+  --text-body: #33405d;
+  --text-soft: #46546f;
+  --text-faint: rgba(22, 35, 63, 0.55);
 
-  --text-strong: #1e2a44;
-  --text-body: #3c4a63;
-  --text-soft: #4f5f78;
-  --text-faint: rgba(30, 42, 68, 0.7);
+  --celestial-core: var(--sun-core);
+  --celestial-edge: var(--sun-edge);
+  --celestial-shadow: var(--sun-shadow);
 
-  --celestial-core: #fff6df;
-  --celestial-edge: #ffd479;
-  --celestial-shadow: #e8983f;
+  /* Glow stays warm and real in day — it's the sun's light, and the halo needs
+     it. What day drops is *bloom on text*, which `--bloom-*` handles. */
+  --glow-soft: var(--sun-glow-soft);
+  --glow-strong: var(--sun-glow-strong);
+  --bloom-soft: transparent;
+  --bloom-strong: transparent;
 
-  --glow-soft: rgba(255, 196, 102, 0.35);
-  --glow-strong: rgba(255, 196, 102, 0.55);
+  --ink: #16233f;
+  --ink-soft: rgba(22, 35, 63, 0.45);
+  --shadow-hard: rgba(22, 35, 63, 1);
+  --stroke-w: 1.6px;
+  --shadow-offset: 5px;
+  --surface-card: #fff8ec;
+  --surface-card-edge: #16233f;
+
+  --section-pad-block: clamp(1.75rem, 3.5vw, 2.5rem);
+  --section-pad-inline: clamp(1.4rem, 3.5vw, 2.5rem);
+  --section-gap: clamp(1.25rem, 3vw, 2rem);
+  /* Drop cap in the about copy; a token because the rule lives behind
+     `::ng-deep` in the child stylesheet, where an ancestor selector can't
+     reach. Night has no declaration, so the component's fallback applies. */
+  --dropcap: var(--accent-text);
+
+  --accent: #ff5f3d;
+  --accent-text: #c93c1e;
+  --accent-hover: #9e2f14;
+  --accent-contrast: #fff8ec;
+  --accent-warm: #ffc542;
+
+  --glass-bg: rgba(255, 248, 236, 0.72);
+  --glass-active: rgba(22, 35, 63, 0.12);
+
+  --selection-bg: rgba(255, 197, 66, 0.55);
+
+  --font-heading: 'Baloo 2', 'Trebuchet MS', var(--font-display);
+  --heading-weight: 700;
+  --heading-tracking: -0.012em;
+
+  /* Day-only decorative layers (clouds, hills). No night counterpart is needed
+     because each layer is opacity-gated off, so these never interpolate. */
+  --cloud-fill: #ffffff;
+  --cloud-shade: #bfe4fa;
+  --cloud-storm: #c7d6e6;
+  --rain-fill: #3f9cd6;
+  --bird-body: #ff5f3d;
+  --bird-wing: #fff1e2;
+  --bird-beak: #ffc542;
+  --hill-far: #cbeccd;
+  --hill-mid: #a8dcae;
+  --hill-near: #82c98d;
+  --tree-leaf: #5aa86c;
+  --tree-bark: #a9682d;
+  --cat-grey: #98a4b6;
+  --cat-tabby: #d99a56;
+  --cat-stripe: #a9682d;
+  --cat-white: #fff8ec;
+  --cat-pink: #f2a7a0;
 }
 
 /* ---------------------------------- */
@@ -60,10 +125,55 @@
 .sky__gradient {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 120% 55% at 50% -12%, var(--sky-horizon) 0%, transparent 60%),
-    linear-gradient(180deg, var(--sky-deep) 0%, var(--sky-mid) 45%, var(--sky-void) 100%);
+  background: linear-gradient(180deg, var(--sky-deep) 0%, var(--sky-mid) 45%, var(--sky-void) 100%);
   transition: background var(--theme-duration) var(--ease-soft);
+}
+
+/* Zenith wash, split out of `.sky__gradient` so it can be night-only. Painting
+   a warm horizon glow at the *top* of the viewport reads as dusk, which is why
+   daylight looked like it was lit from the wrong place; day gets its own
+   sun-anchored glow in `.sky__daylight` instead. */
+.sky__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 120% 55% at 50% -12%, var(--sky-horizon) 0%, transparent 60%);
+  transition:
+    background var(--theme-duration) var(--ease-soft),
+    opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__glow {
+  opacity: 0;
+}
+
+/* Day-only atmosphere, layered over the (still opaque) base gradient rather
+   than cross-fading with it, so the body background never bleeds through
+   mid-transition. Flat-vector banding + a warm bloom anchored on the sun's
+   actual upper-left position. */
+.sky__daylight {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(
+      circle 46vmax at 11% 16%,
+      rgba(255, 226, 138, 0.85) 0%,
+      rgba(255, 226, 138, 0) 60%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 42%,
+      rgba(255, 255, 255, 0.22) 42%,
+      rgba(255, 255, 255, 0.22) 62%,
+      rgba(255, 255, 255, 0.46) 62%,
+      rgba(255, 255, 255, 0.46) 78%,
+      rgba(255, 255, 255, 0.68) 78%
+    );
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__daylight {
+  opacity: 1;
 }
 
 /* Scroll progress (0..1, eased in TS), fed into the nebula keyframes below
@@ -89,22 +199,46 @@
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
+/* Scroll parallax rides the standalone `translate`/`rotate` properties, never
+   the keyframes. A custom property referenced *inside* `@keyframes` forces the
+   browser to re-resolve the whole animation on the main thread every time that
+   property changes — i.e. every scroll frame — and disqualifies it from the
+   compositor. With a blur on each lobe that was the most expensive thing in
+   the scene. Keeping the keyframes constant lets them composite, and the
+   scroll offset lands in a slot the keyframes don't touch. */
+.sky__nebula--violet,
+.sky__nebula--teal,
+.sky__nebula--rose {
+  translate: calc(var(--scroll-shift) * var(--parallax-x))
+    calc(var(--scroll-shift) * var(--parallax-y));
+  rotate: calc(var(--scroll-shift) * var(--parallax-r));
+}
+
 .sky__nebula--violet {
   background: radial-gradient(ellipse 58% 38% at 78% 24%, var(--nebula-violet) 0%, transparent 72%);
   filter: blur(4px);
   animation: nebula-drift-a 210s ease-in-out infinite alternate;
+  --parallax-x: -14px;
+  --parallax-y: -32px;
+  --parallax-r: 5deg;
 }
 
 .sky__nebula--teal {
   background: radial-gradient(ellipse 52% 36% at 16% 60%, var(--nebula-teal) 0%, transparent 70%);
   filter: blur(3.5px);
   animation: nebula-drift-b 265s ease-in-out infinite alternate;
+  --parallax-x: 10px;
+  --parallax-y: 24px;
+  --parallax-r: -4deg;
 }
 
 .sky__nebula--rose {
   background: radial-gradient(ellipse 42% 30% at 56% 84%, var(--nebula-rose) 0%, transparent 68%);
   filter: blur(3px);
   animation: nebula-drift-c 175s ease-in-out infinite;
+  --parallax-x: -8px;
+  --parallax-y: -16px;
+  --parallax-r: 3deg;
 }
 
 .scene.is-day .sky__nebula {
@@ -113,35 +247,29 @@
 
 @keyframes nebula-drift-a {
   0% {
-    transform: translate3d(calc(var(--scroll-shift) * -14px), calc(var(--scroll-shift) * -32px), 0)
-      rotate(calc(var(--scroll-shift) * 5deg)) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   100% {
-    transform: translate3d(calc(-5% + var(--scroll-shift) * -14px), calc(4% + var(--scroll-shift) * -32px), 0)
-      rotate(calc(var(--scroll-shift) * 5deg)) scale(1.1);
+    transform: translate3d(-5%, 4%, 0) scale(1.1);
   }
 }
 
 @keyframes nebula-drift-b {
   0% {
-    transform: translate3d(calc(var(--scroll-shift) * 10px), calc(var(--scroll-shift) * 24px), 0)
-      rotate(calc(var(--scroll-shift) * -4deg)) scale(1.05);
+    transform: translate3d(0, 0, 0) scale(1.05);
   }
   100% {
-    transform: translate3d(calc(4% + var(--scroll-shift) * 10px), calc(-3% + var(--scroll-shift) * 24px), 0)
-      rotate(calc(var(--scroll-shift) * -4deg)) scale(0.97);
+    transform: translate3d(4%, -3%, 0) scale(0.97);
   }
 }
 
 @keyframes nebula-drift-c {
   0%,
   100% {
-    transform: translate3d(calc(var(--scroll-shift) * -8px), calc(var(--scroll-shift) * -16px), 0)
-      rotate(calc(var(--scroll-shift) * 3deg)) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translate3d(calc(-3% + var(--scroll-shift) * -8px), calc(-4% + var(--scroll-shift) * -16px), 0)
-      rotate(calc(var(--scroll-shift) * 3deg)) scale(1.06);
+    transform: translate3d(-3%, -4%, 0) scale(1.06);
   }
 }
 
@@ -380,78 +508,188 @@
 /* Birds (day only)                    */
 /* ---------------------------------- */
 
-.bird {
+/* The flock carries the horizontal crossing only, linearly, so travel speed
+   stays constant; each bird owns its own eased vertical soar on top. Splitting
+   them is the only way to get a wandering flight path without the ease also
+   warping the forward speed. */
+.bird-flock {
   position: absolute;
-  left: -60px;
-  width: 26px;
-  height: 14px;
+  left: -140px;
+  width: 0;
+  height: 0;
   opacity: 0;
-  animation-name: fly;
+  animation-name: bird-fly;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 
-.scene:not(.is-day) .bird {
+.scene:not(.is-day) .bird-flock {
   opacity: 0 !important;
   animation-play-state: paused;
 }
 
-.bird__wing {
+.bird {
   position: absolute;
-  top: 0;
-  width: 14px;
-  height: 14px;
-  border-top: 2px solid var(--text-soft);
-  border-radius: 50% 50% 0 0;
+  width: var(--bird-w, 44px);
+  animation: bird-soar 7s var(--ease-soft) infinite;
 }
 
-.bird__wing--left {
-  left: 0;
-  animation: flap-left 1.1s ease-in-out infinite;
+.bird__art {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.bird__wing--right {
-  right: 0;
-  animation: flap-right 1.1s ease-in-out infinite;
+.bird__body,
+.bird__beak,
+.bird__wing {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
-@keyframes flap-left {
-  0%,
-  100% {
-    transform: rotate(-20deg);
+.bird__body {
+  fill: var(--bird-body, #ff5f3d);
+}
+
+.bird__beak {
+  fill: var(--bird-beak, #ffc542);
+}
+
+.bird__eye {
+  fill: var(--ink);
+}
+
+/* Poses are swapped outright rather than morphed — `steps(1, end)` holds each
+   frame flat, which is what makes it read as drawn cels instead of a tween. */
+.bird__wing {
+  fill: var(--bird-wing, #fff1e2);
+  opacity: 0;
+  animation-duration: var(--bird-flap, 1.5s);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+  animation-delay: var(--bird-flap-shift, 0s);
+}
+
+.bird__wing--up {
+  animation-name: bird-wing-up;
+}
+
+.bird__wing--mid {
+  animation-name: bird-wing-mid;
+}
+
+.bird__wing--down {
+  animation-name: bird-wing-down;
+}
+
+/* Three beats then a glide: each flap is a fifth of the cycle, and the last
+   28% holds the extended pose so the birds aren't beating nonstop. */
+@keyframes bird-wing-up {
+  0% {
+    opacity: 1;
   }
-  50% {
-    transform: rotate(-50deg);
+  8% {
+    opacity: 0;
+  }
+  24% {
+    opacity: 1;
+  }
+  32% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 1;
+  }
+  56% {
+    opacity: 0;
   }
 }
 
-@keyframes flap-right {
-  0%,
-  100% {
-    transform: rotate(20deg) scaleX(-1);
+@keyframes bird-wing-mid {
+  0% {
+    opacity: 0;
   }
-  50% {
-    transform: rotate(50deg) scaleX(-1);
+  8% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 0;
+  }
+  32% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  56% {
+    opacity: 1;
+  }
+  64% {
+    opacity: 0;
+  }
+  72% {
+    opacity: 1;
   }
 }
 
-@keyframes fly {
+@keyframes bird-wing-down {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0;
+  }
+  64% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 0;
+  }
+}
+
+@keyframes bird-fly {
   0% {
     opacity: 0;
     transform: translate3d(0, 0, 0);
   }
   6% {
-    opacity: 0.8;
-  }
-  50% {
-    transform: translate3d(50vw, -18px, 0);
+    opacity: 1;
   }
   94% {
-    opacity: 0.8;
+    opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translate3d(calc(100vw + 80px), -6px, 0);
+    transform: translate3d(calc(100vw + 200px), 0, 0);
+  }
+}
+
+@keyframes bird-soar {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    transform: translate3d(0, -13px, 0);
+  }
+  55% {
+    transform: translate3d(0, -4px, 0);
+  }
+  80% {
+    transform: translate3d(0, -17px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -459,15 +697,44 @@
 /* Clouds (day only)                   */
 /* ---------------------------------- */
 
+/* The chunky ink outline is exactly what makes a cloud fight body copy, so the
+   whole layer thins out over the content column. The stops are keyed to the
+   720px `.page` width; on narrow screens they collapse past each other and the
+   veil goes uniform, which is right — there the text spans the full width. */
+.sky__clouds,
+.sky__birds {
+  position: absolute;
+  inset: 0;
+  --cloud-veil: 0.3;
+  --cloud-veil-mask: linear-gradient(
+    to right,
+    #000,
+    #000 calc(50% - 440px),
+    rgba(0, 0, 0, var(--cloud-veil)) calc(50% - 310px),
+    rgba(0, 0, 0, var(--cloud-veil)) calc(50% + 310px),
+    #000 calc(50% + 440px),
+    #000
+  );
+  -webkit-mask-image: var(--cloud-veil-mask);
+  mask-image: var(--cloud-veil-mask);
+}
+
+@media (max-width: 900px) {
+  .sky__clouds,
+  .sky__birds {
+    --cloud-veil: 0.5;
+  }
+}
+
 .cloud {
   position: absolute;
   left: -220px;
-  width: 140px;
-  height: 42px;
+  width: calc(190px * var(--cloud-scale, 1));
   opacity: 0;
   animation-name: cloud-drift;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  --cloud-opacity: 0.97;
 }
 
 .scene:not(.is-day) .cloud {
@@ -475,52 +742,153 @@
   animation-play-state: paused;
 }
 
-.cloud,
-.cloud::before,
-.cloud::after {
-  background: rgba(255, 255, 255, 0.8);
-  transition: background var(--theme-duration) var(--ease-soft);
+.cloud__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Rain falls below the viewBox's flat baseline. */
+  overflow: visible;
+  animation: cloud-bob 13s var(--ease-soft) infinite;
 }
 
-.cloud {
-  border-radius: 50% / 60%;
+.cloud__body {
+  fill: var(--cloud-fill, #ffffff);
+  stroke: var(--ink);
+  /* Screen-space px, so the outline reads the same weight on a 95px far cloud
+     as on a 190px near one instead of scaling with the viewBox. */
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--theme-duration) var(--ease-soft),
+    stroke var(--theme-duration) var(--ease-soft);
 }
 
-.cloud::before,
-.cloud::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
+/* The face deliberately does *not* use `non-scaling-stroke`: the silhouette is
+   drawn with a constant pen weight, but a distant cloud should have a smaller
+   face, not the same one at a smaller outline. */
+.cloud__face {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--theme-duration) var(--ease-soft);
 }
 
-.cloud::before {
-  width: 60%;
-  height: 150%;
-  top: -65%;
-  left: 8%;
+.cloud__blush {
+  fill: var(--accent);
+  stroke: none;
+  opacity: 0.34;
 }
 
-.cloud::after {
-  width: 44%;
-  height: 120%;
-  top: -45%;
-  right: 12%;
+.cloud__brows {
+  stroke-width: 2.8;
+}
+
+.cloud__lids {
+  stroke-width: 3.4;
+}
+
+.cloud__mouth {
+  stroke-width: 3.2;
+}
+
+.cloud__mouth--filled {
+  fill: var(--ink);
+  stroke: none;
+}
+
+/* Distance is sold by tint, outline weight and opacity together — not by scale
+   alone, which on its own just reads as "same cloud, further away". */
+.cloud--far {
+  --cloud-opacity: 0.72;
+}
+
+.cloud--far .cloud__body {
+  fill: var(--cloud-shade, #bfe4fa);
+  stroke-width: calc(var(--stroke-w) * 0.62);
+}
+
+/* ---------------------------------- */
+/* The rare rain cloud                 */
+/* ---------------------------------- */
+
+.cloud--rain .cloud__body {
+  fill: var(--cloud-storm, #c7d6e6);
+}
+
+.cloud__drop {
+  fill: var(--rain-fill, #3f9cd6);
+  stroke: none;
+  animation: rain-fall 0.5s linear infinite;
+}
+
+/* Parked off-screen for most of the cycle instead of drifting the whole time,
+   so this reads as a passing event rather than a seventh permanent fixture.
+   The transform is pinned through 82% and only travels over the last 18%. */
+.cloud--rare {
+  animation-name: cloud-drift-rare;
+}
+
+@keyframes cloud-drift-rare {
+  0%,
+  82% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  83.5% {
+    opacity: var(--cloud-opacity);
+  }
+  98.5% {
+    opacity: var(--cloud-opacity);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 440px), 0, 0);
+  }
+}
+
+@keyframes rain-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 }
 
 @keyframes cloud-drift {
   0% {
     opacity: 0;
-    transform: translate3d(0, 0, 0) scale(var(--cloud-scale, 1));
+    transform: translate3d(0, 0, 0);
   }
   8% {
-    opacity: 0.85;
+    opacity: var(--cloud-opacity);
   }
   92% {
-    opacity: 0.85;
+    opacity: var(--cloud-opacity);
   }
   100% {
     opacity: 0;
-    transform: translate3d(calc(100vw + 440px), 0, 0) scale(var(--cloud-scale, 1));
+    transform: translate3d(calc(100vw + 440px), 0, 0);
+  }
+}
+
+@keyframes cloud-bob {
+  0%,
+  100% {
+    transform: translate3d(0, -4px, 0);
+  }
+  50% {
+    transform: translate3d(0, 5px, 0);
   }
 }
 
@@ -559,7 +927,12 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--celestial-core) 0%, var(--celestial-edge) 70%, var(--celestial-shadow) 100%);
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--celestial-core) 0%,
+    var(--celestial-edge) 70%,
+    var(--celestial-shadow) 100%
+  );
   box-shadow: 0 0 12px var(--glow-soft);
   transform: translateX(0);
   transition:
@@ -575,6 +948,188 @@
 /* Layout                              */
 /* ---------------------------------- */
 
+/* ---------------------------------- */
+/* Hills (day only)                    */
+/* ---------------------------------- */
+
+.sky__hills {
+  position: absolute;
+  inset: auto 0 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__hills {
+  opacity: 1;
+}
+
+/* Each band overshoots the fold by --hill-sink so the parallax lift can never
+   drag its bottom edge into view, and overshoots left/right so the crest never
+   ends mid-screen. */
+/* Each band overshoots the fold by --hill-sink and the viewport sides by
+   --hill-overhang, so neither parallax axis can ever drag an edge into view. */
+.hill {
+  --hill-sink: 40px;
+  --hill-overhang: 80px;
+  position: absolute;
+  left: calc(-1 * var(--hill-overhang));
+  bottom: calc(-1 * var(--hill-sink));
+  width: calc(100% + 2 * var(--hill-overhang));
+  display: block;
+  translate: calc(var(--scroll-shift) * var(--parallax-x, 0px))
+    calc(var(--scroll-shift) * var(--parallax-y, 0px));
+  /* Hills and props are the only scenery that moves *without* a running
+     animation, so nothing auto-promotes them and every scroll frame repaints
+     the whole band. Promoting them turns that into a compositor shift. */
+  will-change: translate;
+}
+
+/* The path runs past the viewBox on every edge except the crest, so the root
+   SVG's own clip removes those strokes and only the skyline is inked. */
+.hill path {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hill--far {
+  height: calc(clamp(142px, 20vh, 202px) + var(--hill-sink));
+  --parallax-x: -16px;
+  --parallax-y: -8px;
+}
+
+.hill--far path {
+  fill: var(--hill-far, transparent);
+}
+
+.hill--mid {
+  height: calc(clamp(112px, 16vh, 162px) + var(--hill-sink));
+  --parallax-x: -36px;
+  --parallax-y: -16px;
+}
+
+.hill--mid path {
+  fill: var(--hill-mid, transparent);
+}
+
+.hill--near {
+  height: calc(clamp(84px, 12vh, 124px) + var(--hill-sink));
+  --parallax-x: -62px;
+  --parallax-y: -26px;
+}
+
+.hill--near path {
+  fill: var(--hill-near, transparent);
+}
+
+/* ---------------------------------- */
+/* Hill props (day only)               */
+/* ---------------------------------- */
+
+/* Seated on the green rather than balanced on a crest: the crest's height in px
+   shifts with the viewport, but the band below it is solid, so a fixed offset
+   from the fold always lands on grass. Carries the near band's parallax so each
+   prop travels with the ground it's standing on. */
+.hill-prop {
+  position: absolute;
+  bottom: 12px;
+  display: block;
+  height: var(--prop-h);
+  translate: calc(var(--scroll-shift) * var(--parallax-x, -62px))
+    calc(var(--scroll-shift) * var(--parallax-y, -26px));
+  will-change: translate;
+}
+
+/* Only ever drawn in the gutter beside the 720px text column — any narrower and
+   they would sit under the copy. */
+@media (max-width: 1099px) {
+  .hill-prop {
+    display: none;
+  }
+}
+
+.hill-prop path {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.tree {
+  --prop-h: 132px;
+  left: 44px;
+  width: calc(var(--prop-h) * 0.714);
+}
+
+.tree__trunk {
+  fill: var(--tree-bark, transparent);
+}
+
+.tree__canopy {
+  fill: var(--tree-leaf, transparent);
+}
+
+.cat {
+  --cat-fur: var(--cat-grey, transparent);
+  width: var(--prop-h);
+}
+
+.cat--tabby {
+  --cat-fur: var(--cat-tabby, transparent);
+}
+
+.cat__fur {
+  fill: var(--cat-fur);
+}
+
+.cat__white {
+  fill: var(--cat-white, transparent);
+}
+
+.cat__ear {
+  fill: var(--cat-pink, transparent);
+}
+
+.cat__eye {
+  fill: var(--ink);
+}
+
+/* Markings sit inside the silhouette, so they carry their own pen weight rather
+   than the outline's. */
+.cat__stripes path {
+  fill: none;
+  stroke: var(--cat-stripe, transparent);
+  stroke-width: 2px;
+}
+
+.cat__mouth path {
+  fill: none;
+  stroke-width: 1.3px;
+}
+
+/* Scroll parallax for the drifting scenery. `translate` is a separate property
+   from `transform`, so it stacks on top of the drift/fly keyframes instead of
+   fighting them for the same slot — which is the only reason these can have
+   both an animation and a scroll offset. */
+.cloud {
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, -20px));
+}
+
+.cloud--far {
+  --parallax-y: -8px;
+}
+
+.bird-flock {
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, -14px));
+}
+
+/* ---------------------------------- */
+/* Page                                */
+/* ---------------------------------- */
+
 .page {
   position: relative;
   z-index: 1;
@@ -583,22 +1138,69 @@
   padding: clamp(2rem, 6vh, 3.5rem) 1.5rem clamp(3rem, 10vh, 6rem);
 }
 
+/* Rule — glyph — rule as a flex row, rather than a glyph absolutely positioned
+   on top of a continuous hairline. Overlaying text on a 1px rule means the
+   glyph's optical centre depends entirely on the font's baseline metrics, and
+   ✦ (U+2726) is not in Inter — it gets served by whatever symbol font the OS
+   falls back to, whose ascent/descent bear no relation to the body face. That
+   is why it never sat on the line. Here the rule stops short on either side,
+   so there is nothing left for the glyph to be misaligned against, and
+   `align-items: center` handles the rest without a magic offset. */
 .divider {
-  position: relative;
-  height: 1px;
-  width: min(300px, 60%);
+  --divider-w: min(300px, 60%);
+  --divider-h: 1px;
+  --divider-gap: 0.65rem;
+  --divider-line: var(--text-faint);
+  --divider-glyph: var(--text-strong);
+  --divider-glyph-size: 0.7rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--divider-gap);
+  width: var(--divider-w);
   margin: 0 auto;
-  background: linear-gradient(90deg, transparent, var(--text-faint), transparent);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: var(--divider-h);
+  border-radius: 999px;
+}
+
+.divider::before {
+  background: linear-gradient(90deg, transparent, var(--divider-line));
+}
+
+.divider::after {
+  background: linear-gradient(90deg, var(--divider-line), transparent);
+}
+
+/* Day keeps the glyph — it is the one mark both skins share — but trades the
+   fading hairline for two stubby solid bars, since a gradient hairline between
+   two cards reads as a rendering artefact. */
+.scene.is-day .divider {
+  --divider-w: min(190px, 46%);
+  --divider-h: 4px;
+  --divider-gap: 0.55rem;
+  --divider-line: var(--ink-soft);
+  --divider-glyph: var(--ink);
+  --divider-glyph-size: 0.85rem;
+}
+
+.scene.is-day .divider::before,
+.scene.is-day .divider::after {
+  background: var(--divider-line);
 }
 
 .divider span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--text-strong);
-  font-size: 0.7rem;
-  text-shadow: 0 0 8px var(--glow-strong);
+  flex: none;
+  line-height: 1;
+  color: var(--divider-glyph);
+  font-size: var(--divider-glyph-size);
+  text-shadow: 0 0 8px var(--bloom-strong);
 }
 
 @media (max-width: 560px) {
@@ -623,9 +1225,60 @@
   .sky__stardust,
   .star,
   .shooting-star,
+  .bird-flock,
   .bird,
   .bird__wing,
-  .cloud {
+  .cloud,
+  .cloud__art,
+  .cloud__drop {
     animation: none !important;
+  }
+
+  /* The drift animation is what positioned *and* revealed the clouds, so
+     killing it would leave the day sky empty. Park them at fixed spots. */
+  .scene.is-day .cloud {
+    left: var(--cloud-rest);
+    opacity: var(--cloud-opacity);
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  .scene.is-day .bird-flock {
+    left: var(--flock-rest);
+    opacity: 1;
+  }
+
+  /* Without the flap cycle every pose would stay hidden, leaving a wingless
+     bird — hold the extended one, which is the pose a gliding bird has. */
+  .bird__wing--mid {
+    opacity: 1;
+  }
+
+  /* Scroll-driven motion is still motion — pin the scenery where it sits. */
+  .cloud,
+  .bird-flock,
+  .hill,
+  .hill-prop {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+  }
+
+  .sky__nebula--violet,
+  .sky__nebula--teal,
+  .sky__nebula--rose {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+    --parallax-r: 0deg;
+  }
+
+  /* Nothing moves any more, so the compositor layers are pure overhead. */
+  .hill,
+  .hill-prop {
+    will-change: auto;
+  }
+
+  /* Falling rain is the entire point of this one, and a permanently parked
+     storm cloud isn't the same feature — leave it out rather than freeze it. */
+  .cloud--rare {
+    display: none;
   }
 }

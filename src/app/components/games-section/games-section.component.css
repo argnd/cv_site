@@ -18,7 +18,10 @@ p {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1px solid var(--text-faint);
+  border: max(1px, var(--stroke-w)) solid var(--text-faint);
+  /* Ink is transparent at night, so the dots stay hollow there and fill in
+     solid for day without a second rule. */
+  background: var(--ink);
   animation: glyph-glow 3.2s ease-in-out infinite;
 }
 
@@ -50,7 +53,7 @@ p {
   }
   50% {
     opacity: 1;
-    box-shadow: 0 0 8px 2px var(--glow-soft);
+    box-shadow: 0 0 8px 2px var(--bloom-soft);
   }
 }
 

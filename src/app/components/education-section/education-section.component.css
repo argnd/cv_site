@@ -3,8 +3,9 @@
 }
 
 h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   color: var(--text-strong);
   margin: 0 0 0.35rem;
   font-size: 1.1rem;
@@ -30,7 +31,7 @@ p {
 
 .constellation-item__mark {
   color: var(--text-strong);
-  text-shadow: 0 0 10px var(--glow-strong);
+  text-shadow: 0 0 10px var(--bloom-strong);
   font-size: 0.9rem;
   margin-top: 0.35rem;
 }
