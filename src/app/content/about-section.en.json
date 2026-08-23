@@ -1,6 +1,7 @@
 {
   "kicker": "Summary",
   "title": "Professional summary",
+  "phone": "+33 6 03 77 20 01",
   "email": "gandour37@gmail.com",
   "bodyPrimary": "<p>Full-stack Java / Angular developer with 6 years of experience, specialized in designing high-performance web applications and processing large data volumes.</p><p>My expertise covers the full development lifecycle, from back-end architecture with Java / Spring (Boot, Batch, Integration, Web / WebFlux) to building modern Angular user interfaces.</p>",
   "bodyExpanded": "<p>Thanks to my specialization in Spring Batch, I regularly work on complex integration, migration, and asynchronous processing challenges involving large-scale data flows.</p><h3>\uD83D\uDEE0 Technical skills &amp; keywords</h3><ul><li><strong>Back-end:</strong> Java, Spring Framework, Spring Boot, Spring Batch, Spring Integration, REST APIs, microservices, JPA / Hibernate</li><li><strong>Front-end:</strong> JavaScript, Angular, TypeScript, Leaflet, HTML5, CSS3 / SASS, SPA</li><li><strong>Databases:</strong> SQL, PostgreSQL, MySQL, Oracle, data modeling</li><li><strong>Environment &amp; practices:</strong> Git, CI/CD, Docker, unit testing (JUnit), Agile methodologies (Scrum, SAFe)</li></ul><p>\uD83D\uDCA1 Throughout my assignments, I have built strong expertise in application modernization and continuous improvement of existing systems.</p>",

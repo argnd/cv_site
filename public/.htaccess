@@ -8,7 +8,20 @@ DirectoryIndex index.html
   RewriteEngine On
   RewriteBase /
 
+  # Let ACME challenges through untouched, over plain http. Certificate
+  # renewal every 3 months serves a token from this path; keeping it off the
+  # redirect chain means a renewal can never be broken by a rule below.
+  RewriteRule ^\.well-known/ - [L]
+
+  # Canonical host: www folds onto the bare domain, in a single hop and
+  # straight to https, so a visitor never pays two redirects. Written against
+  # the canonical host rather than matching "www." so any other name pointed
+  # at this hosting lands on the right URL too.
+  RewriteCond %{HTTP_HOST} !^armelgandour\.fr$ [NC]
+  RewriteRule ^(.*)$ https://armelgandour.fr/$1 [R=301,L]
+
   # OVH terminates TLS upstream, so %{HTTPS} is unreliable: trust X-Forwarded-Proto.
+  # The host is already canonical by this point.
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteCond %{HTTPS} !=on
   RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]

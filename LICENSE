@@ -1,0 +1,34 @@
+Copyright (c) 2026 Armel Gandour. All rights reserved.
+
+PROPRIETARY SOFTWARE LICENSE
+
+This repository, its source code, its design, and its content (collectively,
+"the Work") are the exclusive property of Armel Gandour ("the Author").
+
+No permission is granted to any person or entity to use, copy, modify, merge,
+publish, distribute, sublicense, sell, host, or create derivative works of the
+Work, in whole or in part, in any medium, whether for commercial or
+non-commercial purposes.
+
+Viewing the source code through the hosting platform on which it is published,
+and any reproduction that is strictly technically necessary for such viewing,
+is permitted. Nothing beyond that is permitted without the prior written
+consent of the Author.
+
+The personal data contained in the Work — including but not limited to the
+Author's name, biography, employment history, education, and contact details —
+may not be extracted, reproduced, indexed for redistribution, or used to train
+machine learning models without the prior written consent of the Author.
+
+Third-party components consumed by the Work (listed as dependencies in
+package.json) remain governed by their own respective licenses and are not
+covered by this license.
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE WORK OR THE
+USE OR OTHER DEALINGS IN THE WORK.
+
+For licensing enquiries, contact the Author at gandour37@gmail.com.

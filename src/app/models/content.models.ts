@@ -30,6 +30,7 @@ export type HeroSectionContent = {
 export type AboutSectionContent = {
   kicker: string;
   title: string;
+  phone: string;
   email: string;
   /** Sanitized through Angular's innerHTML binding, allowing basic HTML formatting in JSON content. */
   bodyPrimary: string;

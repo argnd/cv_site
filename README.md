@@ -1,5 +1,8 @@
 # CvSite
 
+Personal portfolio site of Armel Gandour. Copyright (c) 2026 Armel Gandour, all
+rights reserved — see [LICENSE](LICENSE).
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.5.
 
 ## Project structure
@@ -55,7 +58,7 @@ ng generate --help
 To build the project run:
 
 ```bash
-++++++++++++++++++++++++++ng build
+ng build
 ```
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
@@ -98,6 +101,13 @@ compression and cache headers on OVH's Apache 2.4.
 
 Use `Actions > Deploy to OVH > Run workflow` with `dry_run` enabled to preview a deploy
 without uploading anything.
+
+## License
+
+Proprietary — Copyright (c) 2026 Armel Gandour. All rights reserved. The source,
+design and content of this repository may not be used, copied, modified or
+redistributed without prior written consent. See [LICENSE](LICENSE) for the full
+terms. Third-party dependencies keep their own licenses.
 
 ## Additional Resources
 
