@@ -75,6 +75,11 @@
      because each layer is opacity-gated off, so these never interpolate. */
   --cloud-fill: #ffffff;
   --cloud-shade: #bfe4fa;
+  --cloud-storm: #c7d6e6;
+  --rain-fill: #3f9cd6;
+  --bird-body: #ff5f3d;
+  --bird-wing: #fff1e2;
+  --bird-beak: #ffc542;
   --hill-far: #cbeccd;
   --hill-mid: #a8dcae;
   --hill-near: #82c98d;
@@ -125,7 +130,11 @@
   inset: 0;
   opacity: 0;
   background:
-    radial-gradient(circle 46vmax at 86% 8%, rgba(255, 226, 138, 0.85) 0%, rgba(255, 226, 138, 0) 60%),
+    radial-gradient(
+      circle 46vmax at 86% 8%,
+      rgba(255, 226, 138, 0.85) 0%,
+      rgba(255, 226, 138, 0) 60%
+    ),
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0) 42%,
@@ -193,7 +202,11 @@
       rotate(calc(var(--scroll-shift) * 5deg)) scale(1);
   }
   100% {
-    transform: translate3d(calc(-5% + var(--scroll-shift) * -14px), calc(4% + var(--scroll-shift) * -32px), 0)
+    transform: translate3d(
+        calc(-5% + var(--scroll-shift) * -14px),
+        calc(4% + var(--scroll-shift) * -32px),
+        0
+      )
       rotate(calc(var(--scroll-shift) * 5deg)) scale(1.1);
   }
 }
@@ -204,7 +217,11 @@
       rotate(calc(var(--scroll-shift) * -4deg)) scale(1.05);
   }
   100% {
-    transform: translate3d(calc(4% + var(--scroll-shift) * 10px), calc(-3% + var(--scroll-shift) * 24px), 0)
+    transform: translate3d(
+        calc(4% + var(--scroll-shift) * 10px),
+        calc(-3% + var(--scroll-shift) * 24px),
+        0
+      )
       rotate(calc(var(--scroll-shift) * -4deg)) scale(0.97);
   }
 }
@@ -216,7 +233,11 @@
       rotate(calc(var(--scroll-shift) * 3deg)) scale(1);
   }
   50% {
-    transform: translate3d(calc(-3% + var(--scroll-shift) * -8px), calc(-4% + var(--scroll-shift) * -16px), 0)
+    transform: translate3d(
+        calc(-3% + var(--scroll-shift) * -8px),
+        calc(-4% + var(--scroll-shift) * -16px),
+        0
+      )
       rotate(calc(var(--scroll-shift) * 3deg)) scale(1.06);
   }
 }
@@ -456,78 +477,188 @@
 /* Birds (day only)                    */
 /* ---------------------------------- */
 
-.bird {
+/* The flock carries the horizontal crossing only, linearly, so travel speed
+   stays constant; each bird owns its own eased vertical soar on top. Splitting
+   them is the only way to get a wandering flight path without the ease also
+   warping the forward speed. */
+.bird-flock {
   position: absolute;
-  left: -60px;
-  width: 26px;
-  height: 14px;
+  left: -140px;
+  width: 0;
+  height: 0;
   opacity: 0;
-  animation-name: fly;
+  animation-name: bird-fly;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 
-.scene:not(.is-day) .bird {
+.scene:not(.is-day) .bird-flock {
   opacity: 0 !important;
   animation-play-state: paused;
 }
 
-.bird__wing {
+.bird {
   position: absolute;
-  top: 0;
-  width: 14px;
-  height: 14px;
-  border-top: 2px solid var(--text-soft);
-  border-radius: 50% 50% 0 0;
+  width: var(--bird-w, 44px);
+  animation: bird-soar 7s var(--ease-soft) infinite;
 }
 
-.bird__wing--left {
-  left: 0;
-  animation: flap-left 1.1s ease-in-out infinite;
+.bird__art {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.bird__wing--right {
-  right: 0;
-  animation: flap-right 1.1s ease-in-out infinite;
+.bird__body,
+.bird__beak,
+.bird__wing {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
-@keyframes flap-left {
-  0%,
-  100% {
-    transform: rotate(-20deg);
+.bird__body {
+  fill: var(--bird-body, #ff5f3d);
+}
+
+.bird__beak {
+  fill: var(--bird-beak, #ffc542);
+}
+
+.bird__eye {
+  fill: var(--ink);
+}
+
+/* Poses are swapped outright rather than morphed — `steps(1, end)` holds each
+   frame flat, which is what makes it read as drawn cels instead of a tween. */
+.bird__wing {
+  fill: var(--bird-wing, #fff1e2);
+  opacity: 0;
+  animation-duration: var(--bird-flap, 1.5s);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+  animation-delay: var(--bird-flap-shift, 0s);
+}
+
+.bird__wing--up {
+  animation-name: bird-wing-up;
+}
+
+.bird__wing--mid {
+  animation-name: bird-wing-mid;
+}
+
+.bird__wing--down {
+  animation-name: bird-wing-down;
+}
+
+/* Three beats then a glide: each flap is a fifth of the cycle, and the last
+   28% holds the extended pose so the birds aren't beating nonstop. */
+@keyframes bird-wing-up {
+  0% {
+    opacity: 1;
   }
-  50% {
-    transform: rotate(-50deg);
+  8% {
+    opacity: 0;
+  }
+  24% {
+    opacity: 1;
+  }
+  32% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 1;
+  }
+  56% {
+    opacity: 0;
   }
 }
 
-@keyframes flap-right {
-  0%,
-  100% {
-    transform: rotate(20deg) scaleX(-1);
+@keyframes bird-wing-mid {
+  0% {
+    opacity: 0;
   }
-  50% {
-    transform: rotate(50deg) scaleX(-1);
+  8% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 0;
+  }
+  32% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  56% {
+    opacity: 1;
+  }
+  64% {
+    opacity: 0;
+  }
+  72% {
+    opacity: 1;
   }
 }
 
-@keyframes fly {
+@keyframes bird-wing-down {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0;
+  }
+  64% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 0;
+  }
+}
+
+@keyframes bird-fly {
   0% {
     opacity: 0;
     transform: translate3d(0, 0, 0);
   }
   6% {
-    opacity: 0.8;
-  }
-  50% {
-    transform: translate3d(50vw, -18px, 0);
+    opacity: 1;
   }
   94% {
-    opacity: 0.8;
+    opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translate3d(calc(100vw + 80px), -6px, 0);
+    transform: translate3d(calc(100vw + 200px), 0, 0);
+  }
+}
+
+@keyframes bird-soar {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    transform: translate3d(0, -13px, 0);
+  }
+  55% {
+    transform: translate3d(0, -4px, 0);
+  }
+  80% {
+    transform: translate3d(0, -17px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -539,7 +670,8 @@
    whole layer thins out over the content column. The stops are keyed to the
    720px `.page` width; on narrow screens they collapse past each other and the
    veil goes uniform, which is right — there the text spans the full width. */
-.sky__clouds {
+.sky__clouds,
+.sky__birds {
   position: absolute;
   inset: 0;
   --cloud-veil: 0.3;
@@ -557,7 +689,8 @@
 }
 
 @media (max-width: 900px) {
-  .sky__clouds {
+  .sky__clouds,
+  .sky__birds {
     --cloud-veil: 0.5;
   }
 }
@@ -582,6 +715,8 @@
   display: block;
   width: 100%;
   height: auto;
+  /* Rain falls below the viewBox's flat baseline. */
+  overflow: visible;
   animation: cloud-bob 13s var(--ease-soft) infinite;
 }
 
@@ -615,6 +750,14 @@
   opacity: 0.34;
 }
 
+.cloud__brows {
+  stroke-width: 2.8;
+}
+
+.cloud__lids {
+  stroke-width: 3.4;
+}
+
 .cloud__mouth {
   stroke-width: 3.2;
 }
@@ -633,6 +776,62 @@
 .cloud--far .cloud__body {
   fill: var(--cloud-shade, #bfe4fa);
   stroke-width: calc(var(--stroke-w) * 0.62);
+}
+
+/* ---------------------------------- */
+/* The rare rain cloud                 */
+/* ---------------------------------- */
+
+.cloud--rain .cloud__body {
+  fill: var(--cloud-storm, #c7d6e6);
+}
+
+.cloud__drop {
+  fill: var(--rain-fill, #3f9cd6);
+  stroke: none;
+  animation: rain-fall 0.5s linear infinite;
+}
+
+/* Parked off-screen for most of the cycle instead of drifting the whole time,
+   so this reads as a passing event rather than a seventh permanent fixture.
+   The transform is pinned through 82% and only travels over the last 18%. */
+.cloud--rare {
+  animation-name: cloud-drift-rare;
+}
+
+@keyframes cloud-drift-rare {
+  0%,
+  82% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  83.5% {
+    opacity: var(--cloud-opacity);
+  }
+  98.5% {
+    opacity: var(--cloud-opacity);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 440px), 0, 0);
+  }
+}
+
+@keyframes rain-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 }
 
 @keyframes cloud-drift {
@@ -697,7 +896,12 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--celestial-core) 0%, var(--celestial-edge) 70%, var(--celestial-shadow) 100%);
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--celestial-core) 0%,
+    var(--celestial-edge) 70%,
+    var(--celestial-shadow) 100%
+  );
   box-shadow: 0 0 12px var(--glow-soft);
   transform: translateX(0);
   transition:
@@ -761,10 +965,12 @@
   .sky__stardust,
   .star,
   .shooting-star,
+  .bird-flock,
   .bird,
   .bird__wing,
   .cloud,
-  .cloud__art {
+  .cloud__art,
+  .cloud__drop {
     animation: none !important;
   }
 
@@ -774,5 +980,22 @@
     left: var(--cloud-rest);
     opacity: var(--cloud-opacity);
     transform: translate3d(-50%, 0, 0);
+  }
+
+  .scene.is-day .bird-flock {
+    left: var(--flock-rest);
+    opacity: 1;
+  }
+
+  /* Without the flap cycle every pose would stay hidden, leaving a wingless
+     bird — hold the extended one, which is the pose a gliding bird has. */
+  .bird__wing--mid {
+    opacity: 1;
+  }
+
+  /* Falling rain is the entire point of this one, and a permanently parked
+     storm cloud isn't the same feature — leave it out rather than freeze it. */
+  .cloud--rare {
+    display: none;
   }
 }

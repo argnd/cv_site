@@ -41,7 +41,10 @@ function detectLocale(): SupportedLocale {
     return 'fr';
   }
 
-  const browserLocales = navigator.languages && navigator.languages.length > 0 ? navigator.languages : [navigator.language];
+  const browserLocales =
+    navigator.languages && navigator.languages.length > 0
+      ? navigator.languages
+      : [navigator.language];
   return browserLocales.some((locale) => locale.toLowerCase().startsWith('fr')) ? 'fr' : 'en';
 }
 
@@ -137,23 +140,99 @@ const CLOUD_SHAPES = {
     d: 'M40.8 88 A22 22 0 0 1 58.3 47.6 A28 28 0 0 1 111.2 39.7 A24 24 0 0 1 146.9 52.7 A20 20 0 0 1 164 88 Z',
     faceAt: '100,64',
   },
+  /** Asymmetric tower, rising toward the right. */
+  e: {
+    d: 'M44.7 88 A24 24 0 0 1 62 44.3 A30 30 0 0 1 105.6 19.3 A24 24 0 0 1 149.6 36.3 A28 28 0 0 1 168.4 88 Z',
+    faceAt: '92,66',
+  },
+  /** Two lobes only — the small, simple puff of the set. */
+  f: {
+    d: 'M56.1 88 A26 26 0 1 1 90 49.3 A30 30 0 1 1 128.8 88 Z',
+    faceAt: '95,66',
+  },
+  /** Heavy, flat-bottomed storm cloud — the one that rains. */
+  g: {
+    d: 'M36.4 88 A24 24 0 1 1 56.9 44.6 A30 30 0 0 1 109.3 33.1 A28 28 0 0 1 155.3 47.8 A22 22 0 0 1 173.2 88 Z',
+    faceAt: '100,64',
+  },
 } as const;
 
-/**
- * Expressions, in coordinates local to a shape's `faceAt` anchor. Eyes and mouth
- * are both round-capped stroked paths, so a "dot" eye is just a zero-length
- * segment — one styling idiom covers dots, happy arcs and sleepy arcs alike.
- */
+type CloudFace = {
+  /** Round-capped zero-length segments — each renders as a dot pupil. */
+  eyes?: string;
+  eyeWidth?: number;
+  /** Closed/curved eyelids. Split from `eyes` so the two can carry different pen
+   * weights, which is what lets `wink` pair a 7.4 dot with a 3.4 lid. */
+  lids?: string;
+  brows?: string;
+  mouth: string;
+  /** Fills the mouth path instead of stroking it, closing an open curve into a
+   * solid shape — an open grin or a round "oh". */
+  mouthFilled?: boolean;
+};
+
+/** Expressions, in coordinates local to a shape's `faceAt` anchor. */
 const FACES = {
-  happy: { eyes: 'M-13 -2l.01 0M13 -2l.01 0', eyeWidth: 7.4, mouth: 'M-8 5Q0 13 8 5', mouthFilled: false },
-  closed: { eyes: 'M-17 1Q-12 -6 -7 1M7 1Q12 -6 17 1', eyeWidth: 3.4, mouth: 'M-5 6Q0 11 5 6', mouthFilled: false },
-  sleepy: { eyes: 'M-16 -2Q-11 4 -6 -2M6 -2Q11 4 16 -2', eyeWidth: 3.4, mouth: 'M-4 7Q0 10.5 4 7', mouthFilled: false },
-  oh: { eyes: 'M-13 -3l.01 0M13 -3l.01 0', eyeWidth: 7.4, mouth: 'M0 4a3.4 4.6 0 1 0 .01 0', mouthFilled: true },
-} as const;
+  happy: { eyes: 'M-13 -2l.01 0M13 -2l.01 0', eyeWidth: 7.4, mouth: 'M-8 5Q0 13 8 5' },
+  closed: { lids: 'M-17 1Q-12 -6 -7 1M7 1Q12 -6 17 1', mouth: 'M-5 6Q0 11 5 6' },
+  sleepy: { lids: 'M-16 -2Q-11 4 -6 -2M6 -2Q11 4 16 -2', mouth: 'M-4 7Q0 10.5 4 7' },
+  oh: {
+    eyes: 'M-13 -3l.01 0M13 -3l.01 0',
+    eyeWidth: 7.4,
+    mouth: 'M0 4a3.4 4.6 0 1 0 .01 0',
+    mouthFilled: true,
+  },
+  wink: {
+    eyes: 'M13 -2l.01 0',
+    eyeWidth: 7.4,
+    lids: 'M-17 -1Q-12 -8 -7 -1',
+    mouth: 'M-8 5Q0 13 8 5',
+  },
+  grin: {
+    eyes: 'M-14 -3l.01 0M14 -3l.01 0',
+    eyeWidth: 7,
+    mouth: 'M-11 4Q0 16 11 4',
+    mouthFilled: true,
+  },
+  sad: {
+    eyes: 'M-12 0l.01 0M12 0l.01 0',
+    eyeWidth: 6.6,
+    /** Inner ends raised — the difference between worried and angry. */
+    brows: 'M-19 -9L-8 -13M19 -9L8 -13',
+    mouth: 'M-8 11Q0 3 8 11',
+  },
+} satisfies Record<string, CloudFace>;
+
+/** Teardrop: a point at the origin, straight down into a semicircular bottom. */
+const RAINDROP = 'M0 0Q3 5 3 7.4A3 3 0 1 1 -3 7.4Q-3 5 0 0Z';
+
+type FlockMember = {
+  /** Offset from the flock's leader, in px. */
+  dx: number;
+  dy: number;
+  width: number;
+  /** One full flap cycle: three beats plus a glide. Varied per bird so a flock
+   * doesn't beat in lockstep. */
+  flap: number;
+  /** Phase offset into that flap cycle, so the beats are staggered too. */
+  flapShift: number;
+  /** Phase offset for the vertical soar, so members wander independently. */
+  soar: number;
+};
+
+type Flock = {
+  /** Vertical position, in % of the viewport. */
+  top: number;
+  delay: number;
+  duration: number;
+  /** Where the flock parks when motion is reduced, in % of the viewport width. */
+  rest: number;
+  members: FlockMember[];
+};
 
 type Cloud = {
   art: (typeof CLOUD_SHAPES)[keyof typeof CLOUD_SHAPES];
-  face: (typeof FACES)[keyof typeof FACES];
+  face: CloudFace;
   /** Vertical position, in % of the viewport. */
   top: number;
   /** Multiplier on the base width. Sizing is width-driven rather than a CSS
@@ -170,6 +249,10 @@ type Cloud = {
   bob: number;
   /** Where the cloud parks when motion is reduced, in % of the viewport width. */
   rest: number;
+  /** Spends most of its cycle parked off-screen rather than drifting the whole
+   * time, so it shows up as an occasional event instead of a fixture. */
+  rare?: boolean;
+  rain?: boolean;
 };
 
 @Component({
@@ -242,17 +325,123 @@ export class App {
 
   protected readonly shootingStars: ShootingStar[] = generateShootingStars(3);
 
-  protected readonly birds = [
-    { top: 18, delay: 0, duration: 26 },
-    { top: 30, delay: 15, duration: 23 },
+  protected readonly flocks: Flock[] = [
+    {
+      top: 16,
+      delay: -4,
+      duration: 27,
+      rest: 30,
+      members: [
+        { dx: 0, dy: 0, width: 48, flap: 1.5, flapShift: 0, soar: 0 },
+        { dx: -40, dy: -23, width: 42, flap: 1.34, flapShift: -0.52, soar: -1.7 },
+        { dx: -43, dy: 21, width: 40, flap: 1.62, flapShift: -0.95, soar: -3.1 },
+      ],
+    },
+    {
+      top: 34,
+      delay: 13,
+      duration: 31,
+      rest: 68,
+      members: [{ dx: 0, dy: 0, width: 44, flap: 1.44, flapShift: -0.3, soar: -2.2 }],
+    },
   ];
 
   protected readonly clouds: Cloud[] = [
-    { art: CLOUD_SHAPES.a, face: FACES.happy, top: 8, scale: 1, depth: 'near', delay: -12, duration: 118, bob: 0, rest: 14 },
-    { art: CLOUD_SHAPES.c, face: FACES.sleepy, top: 21, scale: 0.6, depth: 'far', delay: -95, duration: 172, bob: -4.5, rest: 63 },
-    { art: CLOUD_SHAPES.b, face: FACES.closed, top: 4, scale: 0.72, depth: 'far', delay: -55, duration: 150, bob: -9, rest: 88 },
-    { art: CLOUD_SHAPES.d, face: FACES.oh, top: 31, scale: 0.88, depth: 'near', delay: -108, duration: 130, bob: -2, rest: 36 },
-    { art: CLOUD_SHAPES.a, face: FACES.closed, top: 15, scale: 0.5, depth: 'far', delay: -30, duration: 196, bob: -6.5, rest: 76 },
+    {
+      art: CLOUD_SHAPES.a,
+      face: FACES.happy,
+      top: 8,
+      scale: 1,
+      depth: 'near',
+      delay: -12,
+      duration: 118,
+      bob: 0,
+      rest: 14,
+    },
+    {
+      art: CLOUD_SHAPES.c,
+      face: FACES.sleepy,
+      top: 21,
+      scale: 0.6,
+      depth: 'far',
+      delay: -95,
+      duration: 172,
+      bob: -4.5,
+      rest: 63,
+    },
+    {
+      art: CLOUD_SHAPES.b,
+      face: FACES.closed,
+      top: 4,
+      scale: 0.72,
+      depth: 'far',
+      delay: -55,
+      duration: 150,
+      bob: -9,
+      rest: 88,
+    },
+    {
+      art: CLOUD_SHAPES.d,
+      face: FACES.oh,
+      top: 31,
+      scale: 0.88,
+      depth: 'near',
+      delay: -108,
+      duration: 130,
+      bob: -2,
+      rest: 36,
+    },
+    {
+      art: CLOUD_SHAPES.e,
+      face: FACES.wink,
+      top: 26,
+      scale: 0.78,
+      depth: 'near',
+      delay: -70,
+      duration: 141,
+      bob: -11,
+      rest: 50,
+    },
+    {
+      art: CLOUD_SHAPES.f,
+      face: FACES.grin,
+      top: 14,
+      scale: 0.52,
+      depth: 'far',
+      delay: -150,
+      duration: 190,
+      bob: -6.5,
+      rest: 76,
+    },
+    {
+      art: CLOUD_SHAPES.g,
+      face: FACES.sad,
+      top: 17,
+      scale: 0.92,
+      depth: 'near',
+      // `cloud-drift-rare` parks the cloud until 82% of its cycle, so the drift
+      // itself starts at 0.82 * 300s. Offsetting by that lands the first pass a
+      // few seconds after load — a rare cloud nobody ever sees is a wasted one —
+      // and every pass after that is one per 5-minute cycle.
+      delay: randomBetween(8, 45) - 246,
+      duration: 300,
+      bob: -3,
+      rest: 58,
+      rare: true,
+      rain: true,
+    },
+  ];
+
+  protected readonly raindropPath = RAINDROP;
+
+  /** Irregular delays so the fall reads as rain rather than a marching wave. */
+  protected readonly raindrops = [
+    { x: 52, delay: 0 },
+    { x: 72, delay: -0.34 },
+    { x: 92, delay: -0.13 },
+    { x: 112, delay: -0.45 },
+    { x: 132, delay: -0.22 },
+    { x: 152, delay: -0.07 },
   ];
 
   protected readonly isNight = signal(true);
@@ -296,7 +485,9 @@ export class App {
     }
 
     document.documentElement.style.colorScheme = isNight ? 'dark' : 'light';
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isNight ? '#05060d' : '#2ea8ec');
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', isNight ? '#05060d' : '#2ea8ec');
   }
 
   /** Tracks scroll progress (0..1) and eases it toward `scrollShift` on each

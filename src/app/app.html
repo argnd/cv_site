@@ -21,6 +21,8 @@
         <span
           class="cloud"
           [class.cloud--far]="cloud.depth === 'far'"
+          [class.cloud--rare]="cloud.rare"
+          [class.cloud--rain]="cloud.rain"
           [style.top.%]="cloud.top"
           [style.--cloud-scale]="cloud.scale"
           [style.--cloud-rest]="cloud.rest + '%'"
@@ -29,10 +31,35 @@
         >
           <svg class="cloud__art" viewBox="0 0 200 96" [style.animationDelay.s]="cloud.bob">
             <path class="cloud__body" [attr.d]="cloud.art.d" />
+
+            @if (cloud.rain) {
+              @for (drop of raindrops; track $index) {
+                <g [attr.transform]="'translate(' + drop.x + ',90)'">
+                  <path
+                    class="cloud__drop"
+                    [attr.d]="raindropPath"
+                    [style.animationDelay.s]="drop.delay"
+                  />
+                </g>
+              }
+            }
+
             <g class="cloud__face" [attr.transform]="'translate(' + cloud.art.faceAt + ')'">
               <ellipse class="cloud__blush" cx="-23" cy="4" rx="6" ry="3.6" />
               <ellipse class="cloud__blush" cx="23" cy="4" rx="6" ry="3.6" />
-              <path class="cloud__eyes" [attr.d]="cloud.face.eyes" [attr.stroke-width]="cloud.face.eyeWidth" />
+              @if (cloud.face.brows) {
+                <path class="cloud__brows" [attr.d]="cloud.face.brows" />
+              }
+              @if (cloud.face.lids) {
+                <path class="cloud__lids" [attr.d]="cloud.face.lids" />
+              }
+              @if (cloud.face.eyes) {
+                <path
+                  class="cloud__eyes"
+                  [attr.d]="cloud.face.eyes"
+                  [attr.stroke-width]="cloud.face.eyeWidth"
+                />
+              }
               <path
                 class="cloud__mouth"
                 [class.cloud__mouth--filled]="cloud.face.mouthFilled"
@@ -73,17 +100,50 @@
       ></span>
     }
 
-    @for (bird of birds; track $index) {
-      <span
-        class="bird"
-        [style.top.%]="bird.top"
-        [style.animationDelay.s]="bird.delay"
-        [style.animationDuration.s]="bird.duration"
-      >
-        <span class="bird__wing bird__wing--left"></span>
-        <span class="bird__wing bird__wing--right"></span>
-      </span>
-    }
+    <div class="sky__birds">
+      @for (flock of flocks; track $index) {
+        <span
+          class="bird-flock"
+          [style.top.%]="flock.top"
+          [style.--flock-rest]="flock.rest + '%'"
+          [style.animationDelay.s]="flock.delay"
+          [style.animationDuration.s]="flock.duration"
+        >
+          @for (bird of flock.members; track $index) {
+            <span
+              class="bird"
+              [style.left.px]="bird.dx"
+              [style.top.px]="bird.dy"
+              [style.--bird-w.px]="bird.width"
+              [style.--bird-flap]="bird.flap + 's'"
+              [style.--bird-flap-shift]="bird.flapShift + 's'"
+              [style.animationDelay.s]="bird.soar"
+            >
+              <svg class="bird__art" viewBox="-3 -3 106 82">
+                <path class="bird__beak" d="M74 31L94 36L74 43Z" />
+                <path
+                  class="bird__body"
+                  d="M2 14C16 26 26 30 38 30C46 20 64 19 73 29C81 37 78 46 68 50C56 55 38 54 28 47C18 40 8 28 2 14Z"
+                />
+                <path
+                  class="bird__wing bird__wing--up"
+                  d="M42 32C38 18 44 4 56 0C61 12 57 28 51 37Z"
+                />
+                <path
+                  class="bird__wing bird__wing--mid"
+                  d="M44 30C38 23 32 19 23 19C27 27 35 35 47 37Z"
+                />
+                <path
+                  class="bird__wing bird__wing--down"
+                  d="M44 33C41 48 44 63 53 71C60 59 57 44 53 36Z"
+                />
+                <circle class="bird__eye" cx="64" cy="31" r="3.1" />
+              </svg>
+            </span>
+          }
+        </span>
+      }
+    </div>
   </div>
 
   <button
