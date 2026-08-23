@@ -8,4 +8,18 @@ import { HeroSectionContent } from '../../content/content.models';
 })
 export class HeroSectionComponent {
   readonly content = input.required<HeroSectionContent>();
+
+  protected onProjectsClick(event: MouseEvent): void {
+    event.preventDefault();
+
+    const nextPath = '/project';
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, '', nextPath);
+    }
+
+    document.getElementById('games')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
 }
