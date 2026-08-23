@@ -21,7 +21,7 @@
 }
 
 :host ::ng-deep .about__content p:first-child::first-letter {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-size: 3rem;
   float: left;
   line-height: 0.8;
@@ -30,8 +30,9 @@
 }
 
 :host ::ng-deep .about__content h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   font-size: 1.15rem;
   line-height: 1.4;
   color: var(--text-strong);

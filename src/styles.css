@@ -87,6 +87,67 @@
   initial-value: rgba(224, 122, 158, 0.18);
 }
 
+/* Flat-vector day skin: outline ink, hard offset shadow and card surface.
+   Registered too, since they're consumed inside box-shadows/gradients that
+   must stay interpolable across the theme swap. Their night values are fully
+   transparent / zero-length, so every day-only idiom collapses to a no-op at
+   night without needing a second rule per element. */
+@property --ink {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(22, 35, 63, 0);
+}
+@property --ink-soft {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(22, 35, 63, 0);
+}
+@property --shadow-hard {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(22, 35, 63, 0);
+}
+@property --surface-card {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(255, 248, 236, 0);
+}
+@property --surface-card-edge {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(22, 35, 63, 0);
+}
+@property --accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7dd3fc;
+}
+@property --accent-warm {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7dd3fc;
+}
+@property --glass-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(5, 6, 13, 0.3);
+}
+@property --glass-active {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(255, 255, 255, 0.08);
+}
+@property --stroke-w {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+@property --shadow-offset {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
 :root {
   color-scheme: dark;
 
@@ -117,9 +178,39 @@
   --nebula-teal: rgba(45, 190, 178, 0.2);
   --nebula-rose: rgba(224, 122, 158, 0.18);
 
+  /* Flat-vector day skin (neutralised at night — see the @property block above) */
+  --ink: rgba(22, 35, 63, 0);
+  --ink-soft: rgba(22, 35, 63, 0);
+  --shadow-hard: rgba(22, 35, 63, 0);
+  --stroke-w: 0px;
+  --shadow-offset: 0px;
+  --surface-card: rgba(255, 248, 236, 0);
+  --surface-card-edge: rgba(22, 35, 63, 0);
+  --radius-card: 20px;
+
+  /* Accent: `--accent` is the saturated fill tone, `--accent-text` the
+     contrast-safe variant for copy, `--accent-contrast` what sits on top of a
+     filled accent surface. */
+  --accent: #7dd3fc;
+  --accent-text: #7dd3fc;
+  --accent-hover: #bae6fd;
+  --accent-contrast: #05060d;
+  --accent-warm: #7dd3fc;
+
+  /* Frosted controls (locale selector, theme toggle) */
+  --glass-bg: rgba(5, 6, 13, 0.3);
+  --glass-active: rgba(255, 255, 255, 0.08);
+
+  --selection-bg: rgba(248, 250, 252, 0.22);
+
   /* Typography tokens */
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Headings resolve through `--font-heading` so the day skin can swap to a
+     rounded display face without touching every component stylesheet. */
+  --font-heading: var(--font-display);
+  --heading-weight: 600;
+  --heading-tracking: 0;
 
   /* Spacing tokens */
   --space-lg: 3rem;
@@ -158,7 +249,7 @@ body {
 }
 
 ::selection {
-  background: rgba(248, 250, 252, 0.22);
+  background: var(--selection-bg);
   color: var(--text-strong);
 }
 
@@ -191,8 +282,9 @@ body {
 }
 
 h2 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   font-size: clamp(1.55rem, 3.4vw, 2rem);
   color: var(--text-strong);
   margin: 0 0 1.5rem;
@@ -212,7 +304,7 @@ h2 {
   padding: 0.2rem 0;
   background: none;
   border: 0;
-  color: #7dd3fc;
+  color: var(--accent-text);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -226,7 +318,7 @@ h2 {
 
 .link-toggle:hover,
 .link-toggle:focus-visible {
-  color: #bae6fd;
+  color: var(--accent-hover);
 }
 
 button:focus-visible,

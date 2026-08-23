@@ -5,6 +5,15 @@
   width: clamp(64px, 9vw, 110px);
   height: clamp(64px, 9vw, 110px);
   display: block;
+  transition: top var(--theme-duration) var(--ease-soft);
+}
+
+/* The sun sits lower than the moon. `.halo` could always overflow the top of
+   the viewport unnoticed because it's a soft bloom, but the rays are
+   hard-edged, so a clipped spoke reads as a rendering bug. Dropping the disc
+   buys the radius they need. */
+:host(.is-day) {
+  top: clamp(3.5rem, 9vh, 5.5rem);
 }
 
 /* ---------------------------------- */
@@ -40,27 +49,59 @@
 }
 
 /* ---------------------------------- */
-/* Corona (sun only)                   */
+/* Rays (day only)                     */
+/* Replaces the old photoreal corona.  */
+/* Heraldic flame silhouettes in the   */
+/* accent tone, deliberately contrasting */
+/* with the disc rather than blending   */
+/* into it — that colour split is what  */
+/* makes a folk-art sun legible at      */
+/* 110px, where the corona's hairline   */
+/* conic spokes read as noise.          */
 /* ---------------------------------- */
 
-.corona {
+.rays {
   position: absolute;
-  inset: -100%;
-  border-radius: 50%;
-  background: repeating-conic-gradient(from 0deg, var(--glow-strong) 0deg 2.2deg, transparent 2.2deg 24deg);
-  mask-image: radial-gradient(circle, transparent 24%, black 34%, black 54%, transparent 74%);
-  -webkit-mask-image: radial-gradient(circle, transparent 24%, black 34%, black 54%, transparent 74%);
-  filter: blur(2px);
+  top: -75%;
+  left: -75%;
+  width: 250%;
+  height: 250%;
+  overflow: visible;
   opacity: 0;
-  animation: corona-spin 150s linear infinite;
+  animation: rays-breathe 6.5s ease-in-out infinite;
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
-:host(.is-day) .corona {
-  opacity: 0.75;
+:host(.is-day) .rays {
+  opacity: 1;
 }
 
-@keyframes corona-spin {
+.ray {
+  /* The disc's own deeper tone rather than `--accent`: the coral accent read as
+     red against the amber core, and reusing the celestial ramp keeps the sun a
+     two-tone object instead of borrowing an unrelated UI colour. */
+  fill: var(--celestial-shadow);
+  stroke: var(--ink);
+  /* `non-scaling-stroke` keeps the outline in screen pixels regardless of the
+     viewBox scale, so the flames and the disc's CSS border can share one
+     `--stroke-w` and stay visually matched at every breakpoint. */
+  stroke-width: var(--stroke-w);
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  transition:
+    fill var(--theme-duration) var(--ease-soft),
+    stroke var(--theme-duration) var(--ease-soft);
+}
+
+/* Spin and breathe are split across the <g> and the <svg> so they compose
+   instead of overwriting each other on a single `transform`. */
+.rays__spin {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: rays-spin 90s linear infinite;
+}
+
+@keyframes rays-spin {
   from {
     transform: rotate(0deg);
   }
@@ -69,10 +110,20 @@
   }
 }
 
+@keyframes rays-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.055);
+  }
+}
+
 /* ---------------------------------- */
-/* Body: sphere + surface detail       */
+/* Body: the disc itself               */
 /* Sized 20% larger than the halo/     */
-/* corona reference box, on purpose.   */
+/* rays reference box, on purpose.     */
 /* ---------------------------------- */
 
 .body {
@@ -87,24 +138,33 @@
     var(--celestial-edge) 78%,
     var(--celestial-shadow) 100%
   );
-  transition: background var(--theme-duration) var(--ease-soft);
+  transition:
+    background var(--theme-duration) var(--ease-soft),
+    transform var(--theme-duration) var(--ease-soft);
+}
+
+/* The rayed sun needs a smaller core than the moon: the flames reach ~2.2x the
+   disc radius, and at the moon's diameter that whole silhouette would overflow
+   the top of the viewport. Shrinking the disc — rather than shortening the
+   flames — preserves the folk-art proportions the shape depends on. */
+:host(.is-day) .body,
+:host(.is-day) .disc-outline {
+  transform: scale(0.72);
 }
 
 .moon-photo,
-.granulation,
-.sunspots,
-.limb-vignette {
+.sun-face {
   position: absolute;
   inset: 0;
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
-/* Moon: real photographic texture, cross-faded with the sun's CSS surface
+/* Moon: real photographic texture, cross-faded with the sun's flat face
    below. Cropped tight to the disc itself (no baked-in halo/stars) so it
-   drops cleanly inside the existing halo/corona/rim glow. Sized slightly
+   drops cleanly inside the existing halo/rim glow. Sized slightly
    larger than its own clip box so the photo's soft feathered edge falls
-   outside the visible circle — otherwise a sliver of the shared sun-shaped
-   `.body` gradient peeks out from behind it as a mismatched outline. */
+   outside the visible circle — otherwise a sliver of the shared `.body`
+   gradient peeks out from behind it as a mismatched outline. */
 .moon-photo {
   inset: -8%;
   border-radius: 50%;
@@ -114,87 +174,45 @@
   opacity: 1;
 }
 
-/* Sun granulation: real photospheric granulation is a fine, all-over mottle
-   of small bright convection cells separated by darker lanes — not just dark
-   blobs — so it's built from two offset layers rather than one. (day only) */
-.granulation--dark {
-  background-image:
-    radial-gradient(ellipse 7% 7% at 30% 34%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 6% 6% at 45% 27%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 6.5% 6.5% at 61% 36%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 5.5% 5.5% at 73% 52%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 6% 6% at 64% 65%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 6% 6% at 47% 70%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 6% 6% at 30% 61%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 5% 5% at 22% 45%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 5% 5% at 50% 48%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 4% 4% at 58% 22%, var(--celestial-shadow) 0%, transparent 100%);
+/* Sun: flat illustration, not physics — a plain fill, no shading at all. Any
+   highlight or shaded underside makes the disc read as a lit sphere, which
+   fights the flat folk-art language the flames establish. */
+.sun-face {
+  border-radius: 50%;
+  background-color: var(--celestial-edge);
   opacity: 0;
-}
-
-.granulation--bright {
-  background-image:
-    radial-gradient(ellipse 3% 3% at 36% 30%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.6% 2.6% at 52% 24%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.8% 2.8% at 67% 33%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.4% 2.4% at 77% 48%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.6% 2.6% at 69% 61%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.6% 2.6% at 53% 66%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.6% 2.6% at 36% 57%, var(--celestial-core) 0%, transparent 100%),
-    radial-gradient(ellipse 2.2% 2.2% at 27% 41%, var(--celestial-core) 0%, transparent 100%);
-  opacity: 0;
-}
-
-/* Sunspots: a soft penumbra halo plus a small sharp-edged umbra core, like
-   real ones, rather than a single flat tone. (day only) */
-.sunspots--penumbra {
-  background-image:
-    radial-gradient(ellipse 5.4% 4.2% at 38% 45%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 3.6% 2.8% at 62% 38%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 2.8% 2.2% at 51% 61%, var(--celestial-shadow) 0%, transparent 100%);
-  opacity: 0;
-}
-
-.sunspots--umbra {
-  background-image:
-    radial-gradient(ellipse 2.2% 1.7% at 38% 45%, var(--celestial-shadow) 0%, var(--celestial-shadow) 55%, transparent 100%),
-    radial-gradient(ellipse 1.4% 1.1% at 62% 38%, var(--celestial-shadow) 0%, var(--celestial-shadow) 55%, transparent 100%),
-    radial-gradient(ellipse 1.1% 0.9% at 51% 61%, var(--celestial-shadow) 0%, var(--celestial-shadow) 55%, transparent 100%);
-  opacity: 0;
-}
-
-/* Limb darkening: real limb darkening is radially symmetric (we're looking
-   straight at a self-lit sphere, unlike the moon's one-sided reflected
-   light), so it's layered on top as its own centered vignette rather than
-   baked into `.body`'s off-center gradient — which stays untouched so its
-   day/night color transition keeps interpolating smoothly. (day only) */
-.limb-vignette {
-  background: radial-gradient(circle at 50% 50%, transparent 52%, var(--celestial-shadow) 100%);
-  opacity: 0;
+  transition:
+    opacity var(--theme-duration) var(--ease-soft),
+    background-color var(--theme-duration) var(--ease-soft);
 }
 
 :host(.is-day) .moon-photo {
   opacity: 0;
 }
 
-:host(.is-day) .granulation--dark {
-  opacity: 0.07;
+:host(.is-day) .sun-face {
+  opacity: 1;
 }
 
-:host(.is-day) .granulation--bright {
-  opacity: 0.08;
+/* Halo is dialled back hard in day: `.sky__daylight` already paints a warm
+   bloom at the sun's position, and a folk-art sun wants no glow of its own —
+   at night strength it would smear the flames' hard edges. */
+:host(.is-day) .halo {
+  opacity: 0.25;
 }
 
-:host(.is-day) .sunspots--penumbra {
-  opacity: 0.05;
-}
-
-:host(.is-day) .sunspots--umbra {
-  opacity: 0.12;
-}
-
-:host(.is-day) .limb-vignette {
-  opacity: 0.5;
+/* Ink outline around the disc. A sibling of `.body` (not a border on it) so
+   it isn't painted over by `.sun-face`/`.moon-photo`, which sit above the
+   element's own background and would hide an inset shadow. */
+.disc-outline {
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  border: var(--stroke-w) solid var(--ink);
+  transition:
+    border-color var(--theme-duration) var(--ease-soft),
+    border-width var(--theme-duration) var(--ease-soft),
+    transform var(--theme-duration) var(--ease-soft);
 }
 
 /* ---------------------------------- */
@@ -206,7 +224,7 @@
 /* from one side reads as reflected      */
 /* sunlight; the sun is self-lit, so this */
 /* would look physically wrong on it —   */
-/* its limb-vignette + corona carry that */
+/* its cel shading + rays carry that     */
 /* role instead. (night only)            */
 /* ---------------------------------- */
 
@@ -244,7 +262,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .halo,
-  .corona {
+  .rays,
+  .rays__spin {
     animation: none !important;
   }
 }

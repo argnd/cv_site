@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { CelestialBodyComponent } from './components/celestial-body/celestial-body.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
@@ -207,6 +207,7 @@ export class App {
   constructor() {
     this.syncDocumentLanguage(this.locale());
     this.initScrollParallax();
+    effect(() => this.syncColorScheme(this.isNight()));
   }
 
   protected toggleTheme(): void {
@@ -222,6 +223,18 @@ export class App {
     if (typeof document !== 'undefined') {
       document.documentElement.lang = locale;
     }
+  }
+
+  /** Keeps the UA-level theme in step with the in-page one. Without this the
+   * root `color-scheme` stays `dark` in daylight, so scrollbars, form controls
+   * and the mobile browser chrome stay night-colored around a light page. */
+  private syncColorScheme(isNight: boolean): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    document.documentElement.style.colorScheme = isNight ? 'dark' : 'light';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isNight ? '#05060d' : '#2ea8ec');
   }
 
   /** Tracks scroll progress (0..1) and eases it toward `scrollShift` on each

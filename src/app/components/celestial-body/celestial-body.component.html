@@ -1,13 +1,21 @@
 <div class="halo" aria-hidden="true"></div>
-<div class="corona" aria-hidden="true"></div>
+
+<svg class="rays" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+  <g class="rays__spin">
+    @for (angle of rayAngles; track angle) {
+      <path
+        class="ray"
+        d="M87 69 L88 66.9 L88.7 64.8 L89 62.7 L88.8 60.6 L88.1 58.5 L87 56.5 L85.8 54.4 L84.7 52.3 L83.9 50.2 L83.7 48.1 L84 46 L84.9 43.9 L86.3 41.8 L88.1 39.7 L90 37.6 L91.9 35.5 L93.6 33.5 L95 31.4 L96.1 29.3 L97 27.2 L97.9 25.1 L100 23 L103.3 25.1 L105 27.2 L106.3 29.3 L107.3 31.4 L107.9 33.5 L108.2 35.5 L108.5 37.6 L108.8 39.7 L109.3 41.8 L110.2 43.9 L111.4 46 L112.9 48.1 L114.5 50.2 L116.1 52.3 L117.4 54.4 L118.3 56.5 L118.4 58.5 L117.9 60.6 L116.6 62.7 L114.8 64.8 L112.7 66.9 L110.6 69 Z"
+        [attr.transform]="'rotate(' + angle + ' 100 100)'"
+      />
+    }
+  </g>
+</svg>
 
 <div class="body" aria-hidden="true">
   <div class="moon-photo"></div>
-  <div class="granulation granulation--dark"></div>
-  <div class="granulation granulation--bright"></div>
-  <div class="sunspots sunspots--penumbra"></div>
-  <div class="sunspots sunspots--umbra"></div>
-  <div class="limb-vignette"></div>
+  <div class="sun-face"></div>
 </div>
 
+<div class="disc-outline" aria-hidden="true"></div>
 <div class="rim" aria-hidden="true"></div>

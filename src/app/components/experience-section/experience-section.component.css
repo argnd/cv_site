@@ -12,16 +12,18 @@
 }
 
 h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   color: var(--text-strong);
   margin: 0 0 0.35rem;
   font-size: 1.35rem;
 }
 
 h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
   color: var(--text-strong);
   margin: 0 0 0.75rem;
   font-size: 1rem;

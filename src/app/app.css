@@ -26,23 +26,58 @@
 /* ---------------------------------- */
 
 .scene.is-day {
-  --sky-void: #d7e8f7;
-  --sky-deep: #9bc7ea;
-  --sky-mid: #82b6e2;
-  --sky-horizon: #ffe2ac;
-  --surface-muted: #b9d2ea;
+  --sky-void: #dff4ff;
+  --sky-deep: #2ea8ec;
+  --sky-mid: #9adcf9;
+  --surface-muted: #ffffff;
+  /* Only visible while `.sky__glow` fades out on toggle — a warm dawn band
+     rather than the navy smear the night value would leave behind. */
+  --sky-horizon: #ffd89a;
+  --text-strong: #16233f;
+  --text-body: #33405d;
+  --text-soft: #46546f;
+  --text-faint: rgba(22, 35, 63, 0.55);
 
-  --text-strong: #1e2a44;
-  --text-body: #3c4a63;
-  --text-soft: #4f5f78;
-  --text-faint: rgba(30, 42, 68, 0.7);
+  --celestial-core: #fff0b8;
+  --celestial-edge: #ffc233;
+  --celestial-shadow: #f0921f;
 
-  --celestial-core: #fff6df;
-  --celestial-edge: #ffd479;
-  --celestial-shadow: #e8983f;
+  /* Glow stays warm and real in day — it's the sun's light, and the halo needs
+     it. What day drops is *bloom on text*, handled per-element rather than by
+     gutting the token (see the ink idiom below). */
+  --glow-soft: rgba(255, 190, 80, 0.45);
+  --glow-strong: rgba(255, 190, 80, 0.7);
 
-  --glow-soft: rgba(255, 196, 102, 0.35);
-  --glow-strong: rgba(255, 196, 102, 0.55);
+  --ink: #16233f;
+  --ink-soft: rgba(22, 35, 63, 0.45);
+  --shadow-hard: rgba(22, 35, 63, 1);
+  --stroke-w: 1.6px;
+  --shadow-offset: 5px;
+  --surface-card: #fff8ec;
+  --surface-card-edge: #16233f;
+
+  --accent: #ff5f3d;
+  --accent-text: #c93c1e;
+  --accent-hover: #9e2f14;
+  --accent-contrast: #fff8ec;
+  --accent-warm: #ffc542;
+
+  --glass-bg: rgba(255, 248, 236, 0.72);
+  --glass-active: rgba(22, 35, 63, 0.12);
+
+  --selection-bg: rgba(255, 197, 66, 0.55);
+
+  --font-heading: 'Baloo 2', 'Trebuchet MS', var(--font-display);
+  --heading-weight: 700;
+  --heading-tracking: -0.012em;
+
+  /* Day-only decorative layers (clouds, hills). No night counterpart is needed
+     because each layer is opacity-gated off, so these never interpolate. */
+  --cloud-fill: #ffffff;
+  --cloud-shade: #bfe4fa;
+  --hill-far: #cbeccd;
+  --hill-mid: #a8dcae;
+  --hill-near: #82c98d;
 }
 
 /* ---------------------------------- */
@@ -60,10 +95,51 @@
 .sky__gradient {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 120% 55% at 50% -12%, var(--sky-horizon) 0%, transparent 60%),
-    linear-gradient(180deg, var(--sky-deep) 0%, var(--sky-mid) 45%, var(--sky-void) 100%);
+  background: linear-gradient(180deg, var(--sky-deep) 0%, var(--sky-mid) 45%, var(--sky-void) 100%);
   transition: background var(--theme-duration) var(--ease-soft);
+}
+
+/* Zenith wash, split out of `.sky__gradient` so it can be night-only. Painting
+   a warm horizon glow at the *top* of the viewport reads as dusk, which is why
+   daylight looked like it was lit from the wrong place; day gets its own
+   sun-anchored glow in `.sky__daylight` instead. */
+.sky__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 120% 55% at 50% -12%, var(--sky-horizon) 0%, transparent 60%);
+  transition:
+    background var(--theme-duration) var(--ease-soft),
+    opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__glow {
+  opacity: 0;
+}
+
+/* Day-only atmosphere, layered over the (still opaque) base gradient rather
+   than cross-fading with it, so the body background never bleeds through
+   mid-transition. Flat-vector banding + a warm bloom anchored on the sun's
+   actual top-right position. */
+.sky__daylight {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(circle 46vmax at 86% 8%, rgba(255, 226, 138, 0.85) 0%, rgba(255, 226, 138, 0) 60%),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 42%,
+      rgba(255, 255, 255, 0.22) 42%,
+      rgba(255, 255, 255, 0.22) 62%,
+      rgba(255, 255, 255, 0.46) 62%,
+      rgba(255, 255, 255, 0.46) 78%,
+      rgba(255, 255, 255, 0.68) 78%
+    );
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__daylight {
+  opacity: 1;
 }
 
 /* Scroll progress (0..1, eased in TS), fed into the nebula keyframes below
