@@ -1,0 +1,8 @@
+.page {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
