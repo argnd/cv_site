@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.section {
+  padding-block: var(--space-xl);
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.55rem, 3.4vw, 2rem);
+  color: var(--text-strong);
+  margin: 0 0 1.5rem;
+}
+
+.skills__list {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 2.2;
+  color: var(--text-body);
+}
+
+.skill {
+  display: inline-block;
+  color: var(--text-body);
+}
+
+.skill:not(:last-child)::after {
+  content: '✦';
+  display: inline-block;
+  margin: 0 0.7rem;
+  color: var(--text-faint);
+  font-size: 0.65rem;
+  vertical-align: middle;
+}

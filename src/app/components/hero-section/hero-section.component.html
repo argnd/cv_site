@@ -1,11 +1,11 @@
 <header class="hero" id="top">
   <p class="kicker">Portfolio</p>
-  <h1 class="hero__name">{{ name() }}</h1>
-  <p class="hero__headline">{{ headline() }}</p>
-  <p class="hero__meta">{{ location() }}</p>
+  <h1 class="hero__name">{{ content().name }}</h1>
+  <p class="hero__headline">{{ content().headline }}</p>
+  <p class="hero__meta">{{ content().location }}</p>
 
   <nav class="hero__actions">
-    <a class="link-glow" [href]="linkedinUrl()" target="_blank" rel="noopener noreferrer">
+    <a class="link-glow" [href]="content().linkedinUrl" target="_blank" rel="noopener noreferrer">
       <span>LinkedIn</span>
     </a>
     <a class="link-glow" href="#game"><span>Game section</span></a>

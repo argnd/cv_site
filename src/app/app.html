@@ -71,112 +71,28 @@
   </button>
 
   <main class="page">
-    <app-hero-section
-      [name]="profile.name"
-      [headline]="profile.headline"
-      [location]="profile.location"
-      [linkedinUrl]="profile.linkedin"
-    />
+    <app-hero-section [content]="heroContent" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <section class="section about" id="about">
-      <p class="kicker">About</p>
-      <h2>Under a quiet sky</h2>
-      <p class="lede">{{ profile.about }}</p>
-      <p class="hero__meta">{{ profile.email }}</p>
-    </section>
+    <app-about-section [content]="aboutContent" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <section class="section experience" id="experience">
-      <p class="kicker">Experience</p>
-      <h2>Where the path has led</h2>
-
-      <div class="timeline">
-        <ol class="timeline__nav" role="tablist" aria-label="Experience list">
-          @for (experience of experiences; track experience.company; let i = $index) {
-            <li>
-              <button
-                class="timeline__node"
-                [class.is-active]="selectedExperience === i"
-                (click)="selectExperience(i)"
-                type="button"
-                role="tab"
-                [attr.aria-selected]="selectedExperience === i"
-              >
-                <span class="timeline__dot"></span>
-                <span class="timeline__label">
-                  <strong>{{ experience.company }}</strong>
-                  <em>{{ experience.period }}</em>
-                </span>
-              </button>
-            </li>
-          }
-        </ol>
-
-        <article class="timeline__detail" role="tabpanel">
-          <h3>{{ experiences[selectedExperience].role }}</h3>
-          <p class="hero__meta">
-            {{ experiences[selectedExperience].company }} · {{ experiences[selectedExperience].location }}
-          </p>
-          <ul>
-            @for (highlight of experiences[selectedExperience].highlights; track highlight) {
-              <li>{{ highlight }}</li>
-            }
-          </ul>
-        </article>
-      </div>
-    </section>
+    <app-experience-section [items]="experiences" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <section class="section education" id="education">
-      <p class="kicker">Education</p>
-      <h2>Foundations, charted</h2>
-
-      <div class="constellation-list">
-        @for (item of education; track item.school) {
-          <article class="constellation-item">
-            <span class="constellation-item__mark" aria-hidden="true">✦</span>
-            <div>
-              <h3>{{ item.degree }}</h3>
-              <p class="hero__meta">{{ item.school }} · {{ item.period }}</p>
-              <p>{{ item.details }}</p>
-            </div>
-          </article>
-        }
-      </div>
-    </section>
+    <app-education-section [items]="education" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <section class="section skills" id="skills">
-      <p class="kicker">Skills</p>
-      <h2>Instruments of the craft</h2>
-      <p class="skills__list">
-        @for (skill of skills; track skill) {
-          <span class="skill">{{ skill }}</span>
-        }
-      </p>
-    </section>
+    <app-skills-section [items]="skills" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <section class="section game" id="game">
-      <p class="kicker">Coming soon</p>
-      <h2>A small game, written in starlight</h2>
-      <p>
-        This corner of the sky is reserved for an interactive constellation game — a quiet detour among the stars,
-        no full app switch required.
-      </p>
-      <div class="game__glyph" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-    </section>
+    <app-game-section [content]="gameContent" />
 
-    <footer class="footer">
-      <p>{{ profile.name }} · {{ currentYear }}</p>
-    </footer>
+    <app-footer-section [content]="footerContent" />
   </main>
 </div>

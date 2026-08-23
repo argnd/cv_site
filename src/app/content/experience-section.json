@@ -1,0 +1,35 @@
+[
+  {
+    "role": "Frontend Engineer",
+    "company": "Company A",
+    "period": "2024 - Present",
+    "location": "Paris, France",
+    "highlights": [
+      "Built responsive interfaces with Angular and TypeScript.",
+      "Improved Core Web Vitals and usability across key pages.",
+      "Collaborated with product and design to deliver new features."
+    ]
+  },
+  {
+    "role": "Full Stack Developer",
+    "company": "Company B",
+    "period": "2022 - 2024",
+    "location": "Remote",
+    "highlights": [
+      "Delivered APIs and UI features for customer-facing products.",
+      "Implemented testing strategy to reduce regressions.",
+      "Contributed to CI/CD improvements and release stability."
+    ]
+  },
+  {
+    "role": "Software Developer Intern",
+    "company": "Company C",
+    "period": "2021 - 2022",
+    "location": "Lyon, France",
+    "highlights": [
+      "Developed internal tools that streamlined team workflows.",
+      "Created reusable UI components and technical documentation.",
+      "Participated in code reviews and sprint planning."
+    ]
+  }
+]

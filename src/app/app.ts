@@ -1,20 +1,26 @@
 import { Component } from '@angular/core';
+import { AboutSectionComponent } from './components/about-section/about-section.component';
+import { EducationSectionComponent } from './components/education-section/education-section.component';
+import { ExperienceSectionComponent } from './components/experience-section/experience-section.component';
+import { FooterSectionComponent } from './components/footer-section/footer-section.component';
+import { GameSectionComponent } from './components/game-section/game-section.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
-
-type Experience = {
-  role: string;
-  company: string;
-  period: string;
-  location: string;
-  highlights: string[];
-};
-
-type Education = {
-  degree: string;
-  school: string;
-  period: string;
-  details: string;
-};
+import { SkillsSectionComponent } from './components/skills-section/skills-section.component';
+import aboutSectionData from './content/about-section.json';
+import educationSectionData from './content/education-section.json';
+import experienceSectionData from './content/experience-section.json';
+import footerSectionData from './content/footer-section.json';
+import gameSectionData from './content/game-section.json';
+import heroSectionData from './content/hero-section.json';
+import skillsSectionData from './content/skills-section.json';
+import {
+  AboutSectionContent,
+  EducationItem,
+  ExperienceItem,
+  FooterSectionContent,
+  GameSectionContent,
+  HeroSectionContent,
+} from './content/content.models';
 
 type ShootingStarConfig = {
   top: number;
@@ -50,79 +56,26 @@ function createShootingStar(config: ShootingStarConfig): ShootingStar {
 
 @Component({
   selector: 'app-root',
-  imports: [HeroSectionComponent],
+  imports: [
+    AboutSectionComponent,
+    EducationSectionComponent,
+    ExperienceSectionComponent,
+    FooterSectionComponent,
+    GameSectionComponent,
+    HeroSectionComponent,
+    SkillsSectionComponent,
+  ],
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly profile = {
-    name: 'Armel Gandour',
-    headline: 'Software Engineer',
-    location: 'Paris, France',
-    email: 'armel.gandour@example.com',
-    linkedin: 'https://www.linkedin.com/in/armel-gandour/',
-    about:
-      'Curious and product-focused engineer with a strong interest in building elegant, reliable web experiences. This page is intentionally structured to map directly to LinkedIn data and can be updated quickly.',
-  };
-
-  protected readonly experiences: Experience[] = [
-    {
-      role: 'Frontend Engineer',
-      company: 'Company A',
-      period: '2024 - Present',
-      location: 'Paris, France',
-      highlights: [
-        'Built responsive interfaces with Angular and TypeScript.',
-        'Improved Core Web Vitals and usability across key pages.',
-        'Collaborated with product and design to deliver new features.',
-      ],
-    },
-    {
-      role: 'Full Stack Developer',
-      company: 'Company B',
-      period: '2022 - 2024',
-      location: 'Remote',
-      highlights: [
-        'Delivered APIs and UI features for customer-facing products.',
-        'Implemented testing strategy to reduce regressions.',
-        'Contributed to CI/CD improvements and release stability.',
-      ],
-    },
-    {
-      role: 'Software Developer Intern',
-      company: 'Company C',
-      period: '2021 - 2022',
-      location: 'Lyon, France',
-      highlights: [
-        'Developed internal tools that streamlined team workflows.',
-        'Created reusable UI components and technical documentation.',
-        'Participated in code reviews and sprint planning.',
-      ],
-    },
-  ];
-
-  protected readonly education: Education[] = [
-    {
-      degree: 'Master in Computer Science',
-      school: 'University 1',
-      period: '2020 - 2022',
-      details: 'Specialization in software engineering and distributed systems.',
-    },
-    {
-      degree: 'Bachelor in Information Technology',
-      school: 'University 2',
-      period: '2017 - 2020',
-      details: 'Foundations in web development, algorithms, and databases.',
-    },
-    {
-      degree: 'Technical Diploma',
-      school: 'Institute 3',
-      period: '2015 - 2017',
-      details: 'Applied programming, networking, and software project methods.',
-    },
-  ];
-
-  protected readonly skills = ['Angular', 'TypeScript', 'JavaScript', 'Node.js', 'REST APIs', 'SQL', 'Git'];
+  protected readonly heroContent: HeroSectionContent = heroSectionData;
+  protected readonly aboutContent: AboutSectionContent = aboutSectionData;
+  protected readonly experiences: ExperienceItem[] = experienceSectionData;
+  protected readonly education: EducationItem[] = educationSectionData;
+  protected readonly skills: string[] = skillsSectionData;
+  protected readonly gameContent: GameSectionContent = gameSectionData;
+  protected readonly footerContent: FooterSectionContent = footerSectionData;
 
   protected readonly heroStars = [
     { top: 8, left: 14, size: 2, delay: 0, duration: 4.6 },
@@ -160,15 +113,5 @@ export class App {
 
   protected toggleTheme(): void {
     this.isNight = !this.isNight;
-  }
-
-  protected selectedExperience = 0;
-
-  protected selectExperience(index: number): void {
-    this.selectedExperience = index;
-  }
-
-  protected get currentYear(): number {
-    return new Date().getFullYear();
   }
 }

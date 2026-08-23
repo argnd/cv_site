@@ -1,0 +1,39 @@
+<section class="section experience" id="experience">
+  <p class="kicker">Experience</p>
+  <h2>Where the path has led</h2>
+
+  @if (items().length > 0) {
+    <div class="timeline">
+      <ol class="timeline__nav" role="tablist" aria-label="Experience list">
+        @for (experience of items(); track experience.company; let i = $index) {
+          <li>
+            <button
+              class="timeline__node"
+              [class.is-active]="selectedExperience() === i"
+              (click)="selectExperience(i)"
+              type="button"
+              role="tab"
+              [attr.aria-selected]="selectedExperience() === i"
+            >
+              <span class="timeline__dot"></span>
+              <span class="timeline__label">
+                <strong>{{ experience.company }}</strong>
+                <em>{{ experience.period }}</em>
+              </span>
+            </button>
+          </li>
+        }
+      </ol>
+
+      <article class="timeline__detail" role="tabpanel">
+        <h3>{{ selectedItem().role }}</h3>
+        <p class="hero__meta">{{ selectedItem().company }} · {{ selectedItem().location }}</p>
+        <ul>
+          @for (highlight of selectedItem().highlights; track highlight) {
+            <li>{{ highlight }}</li>
+          }
+        </ul>
+      </article>
+    </div>
+  }
+</section>

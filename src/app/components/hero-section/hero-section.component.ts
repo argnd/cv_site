@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { HeroSectionContent } from '../../content/content.models';
 
 @Component({
   selector: 'app-hero-section',
@@ -6,8 +7,5 @@ import { Component, input } from '@angular/core';
   styleUrl: './hero-section.component.css',
 })
 export class HeroSectionComponent {
-  readonly name = input.required<string>();
-  readonly headline = input.required<string>();
-  readonly location = input.required<string>();
-  readonly linkedinUrl = input.required<string>();
+  readonly content = input.required<HeroSectionContent>();
 }

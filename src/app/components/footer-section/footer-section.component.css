@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.footer {
+  text-align: center;
+  padding-block: var(--space-lg) var(--space-xl);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+.footer p {
+  margin: 0;
+}
