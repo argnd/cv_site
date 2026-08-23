@@ -1,4 +1,4 @@
-<div class="scene" [class.is-day]="!isNight">
+<div class="scene" [class.is-day]="!isNight()">
   <app-locale-selector
     [currentLocale]="locale()"
     [content]="appShellContent().localeSelector"
@@ -68,7 +68,7 @@
     type="button"
     class="theme-toggle"
     role="switch"
-    [attr.aria-checked]="!isNight"
+    [attr.aria-checked]="!isNight()"
     [attr.aria-label]="appShellContent().themeToggleAriaLabel"
     (click)="toggleTheme()"
   >

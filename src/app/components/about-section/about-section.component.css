@@ -3,27 +3,7 @@
 }
 
 .about__toggle {
-  display: block;
-  width: fit-content;
-  padding: 0.2rem 0;
   margin: 0 auto 1.5rem;
-  background: none;
-  border: 0;
-  color: #7dd3fc;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-color: currentColor;
-  text-underline-offset: 0.18em;
-  transition:
-    color var(--theme-duration) var(--ease-soft),
-    text-decoration-color var(--theme-duration) var(--ease-soft);
-}
-
-.about__toggle:hover,
-.about__toggle:focus-visible {
-  color: #bae6fd;
 }
 
 .about__content--expanded {
@@ -84,10 +64,4 @@
   color: var(--text-strong);
   text-decoration-color: var(--text-faint);
   text-underline-offset: 0.16em;
-}
-
-button:focus-visible {
-  outline: 1px solid var(--text-faint);
-  outline-offset: 4px;
-  border-radius: 2px;
 }

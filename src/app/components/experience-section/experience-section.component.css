@@ -165,33 +165,7 @@ h4 {
 }
 
 .timeline__toggle {
-  display: block;
-  width: fit-content;
   margin: 1.25rem auto 0;
-  padding: 0.2rem 0;
-  background: none;
-  border: 0;
-  color: #7dd3fc;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-color: currentColor;
-  text-underline-offset: 0.18em;
-  transition:
-    color var(--theme-duration) var(--ease-soft),
-    text-decoration-color var(--theme-duration) var(--ease-soft);
-}
-
-.timeline__toggle:hover,
-.timeline__toggle:focus-visible {
-  color: #bae6fd;
-}
-
-button:focus-visible {
-  outline: 1px solid var(--text-faint);
-  outline-offset: 4px;
-  border-radius: 2px;
 }
 
 @media (max-width: 720px) {

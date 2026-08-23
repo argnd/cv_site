@@ -106,14 +106,14 @@
   }
 }
 
-a:focus-visible {
-  outline: 1px solid var(--text-faint);
-  outline-offset: 4px;
-  border-radius: 2px;
-}
-
 @media (max-width: 560px) {
   .hero__actions {
     gap: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue span {
+    animation: none !important;
   }
 }

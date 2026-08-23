@@ -150,14 +150,14 @@ export class App {
     { top: 5, scale: 0.8, delay: 70, duration: 130 },
   ];
 
-  protected isNight = true;
+  protected readonly isNight = signal(true);
 
   constructor() {
     this.syncDocumentLanguage(this.locale());
   }
 
   protected toggleTheme(): void {
-    this.isNight = !this.isNight;
+    this.isNight.update((value) => !value);
   }
 
   protected setLocale(locale: SupportedLocale): void {

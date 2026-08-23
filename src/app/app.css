@@ -550,8 +550,7 @@
   .bird,
   .bird__wing,
   .cloud,
-  .celestial__halo,
-  .scroll-cue span {
+  .celestial__halo {
     animation: none !important;
   }
 }
