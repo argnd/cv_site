@@ -1,0 +1,74 @@
+:host {
+  position: fixed;
+  top: clamp(1rem, 4vh, 1.75rem);
+  left: clamp(1rem, 5vw, 2rem);
+  z-index: 5;
+}
+
+.locale-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.45rem 0.35rem 0.75rem;
+  border: 1px solid var(--text-faint);
+  border-radius: 999px;
+  background: rgba(5, 6, 13, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.locale-selector__label {
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.locale-selector__options {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.locale-selector__option {
+  min-width: 44px;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.locale-selector__option.is-active {
+  color: var(--text-strong);
+  border-color: var(--text-faint);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.locale-selector__option:hover,
+.locale-selector__option:focus-visible {
+  color: var(--text-strong);
+}
+
+button:focus-visible {
+  outline: 1px solid var(--text-faint);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .locale-selector {
+    gap: 0.5rem;
+    padding-inline: 0.6rem 0.35rem;
+  }
+
+  .locale-selector__label {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+  }
+
+  .locale-selector__option {
+    min-width: 40px;
+    padding-inline: 0.55rem;
+  }
+}

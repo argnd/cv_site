@@ -1,0 +1,23 @@
+<div class="locale-selector" role="group" [attr.aria-label]="content().label">
+  <span class="locale-selector__label">{{ content().label }}</span>
+  <div class="locale-selector__options">
+    <button
+      type="button"
+      class="locale-selector__option"
+      [class.is-active]="currentLocale() === 'fr'"
+      [attr.aria-pressed]="currentLocale() === 'fr'"
+      (click)="selectLocale('fr')"
+    >
+      {{ content().frenchLabel }}
+    </button>
+    <button
+      type="button"
+      class="locale-selector__option"
+      [class.is-active]="currentLocale() === 'en'"
+      [attr.aria-pressed]="currentLocale() === 'en'"
+      (click)="selectLocale('en')"
+    >
+      {{ content().englishLabel }}
+    </button>
+  </div>
+</div>
