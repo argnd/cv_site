@@ -21,7 +21,11 @@
      of the leg — no further. Overshooting means the body clears early and
      spends the remainder of the leg travelling where nobody can see it. The
      flames hang 0.75x the host size lower and never clear; they are at zero
-     opacity by then. */
+     opacity by then.
+     Both legs re-derive from `--home-top`, which differs per body (the sun
+     parks lower, clear of the locale selector), so moving either body's corner
+     retunes its exit and its entry with it — there is no second number to keep
+     in sync. */
   --exit-lift: calc(var(--home-top) + var(--size));
   --to-exit-y: calc(-1 * var(--exit-lift));
   /* Lateral lean, signed toward the middle of the sky — the moon sits at the
@@ -59,12 +63,24 @@
   --glow-strong: var(--moon-glow-strong);
 }
 
-/* The sun sits under the locale selector on the left. Its flames reach ~0.75x
-   the host size past every edge, so `left` has to stay clear of that or the
-   sky's `overflow: hidden` shaves a spoke off — and a clipped spoke reads as a
-   rendering bug rather than a design choice. */
+/* The sun sits on the left, below the locale selector. Two constraints fix its
+   corner, and both are expressed against the corona rather than the disc:
+
+   The flame tips sit 77 of the ray viewBox's 100-unit radius from the disc
+   centre, inside a box 2.5x the host, and `rays-breathe` pushes that to 1.055 —
+   so the corona sweeps a circle of ~1.02x --size, reaching ~0.52x --size past
+   the host's own edge on every side.
+
+   `left` must stay past that reach or the sky's `overflow: hidden` shaves a
+   spoke off, and a clipped spoke reads as a rendering bug rather than a design
+   choice. `top` must clear the selector by the same reach: the selector is a
+   translucent glass pill, so a corona sliding *behind* it still shows through.
+   Derived from the shared control tokens instead of hand-tuned, so the corona
+   stays clear at every breakpoint — including the 560px one, where --size
+   changes underneath it. */
 :host(.celestial--sun) {
-  --home-top: clamp(4.5rem, 10vh, 6.5rem);
+  --corona-reach: calc(0.52 * var(--size));
+  --home-top: calc(var(--controls-top) + var(--controls-h) + 0.5rem + var(--corona-reach));
   --home-left: clamp(3rem, 7vw, 5.5rem);
   /* Mirror of the moon's lean: the sun sits at the left, so it leans right. */
   --to-exit-x: calc(1.3 * var(--exit-lift));

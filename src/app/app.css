@@ -60,9 +60,14 @@
 
   --ink: #16233f;
   --ink-soft: rgba(22, 35, 63, 0.45);
-  --shadow-hard: rgba(22, 35, 63, 1);
+  /* Deliberately below the ink it echoes: at full navy the offset slab reads as
+     a second outline, and five stacked cards turn the column into a wall of it.
+     Letting the sky through keeps each card lifted without the mass. */
+  --shadow-hard: rgba(22, 35, 63, 0.75);
   --stroke-w: 1.6px;
-  --shadow-offset: 5px;
+  /* Kept just above the 1.6px stroke so the slab still reads as depth rather
+     than a thickened border. Below ~2px the chips (0.6x) fall under a pixel. */
+  --shadow-offset: 3px;
   --surface-card: #fff8ec;
   --surface-card-edge: #16233f;
 
@@ -156,7 +161,7 @@
   opacity: 0;
   background:
     radial-gradient(
-      circle 46vmax at 11% 16%,
+      circle 46vmax at 11% 20%,
       rgba(255, 226, 138, 0.85) 0%,
       rgba(255, 226, 138, 0) 60%
     ),

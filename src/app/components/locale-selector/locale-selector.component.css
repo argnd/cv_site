@@ -1,6 +1,6 @@
 :host {
   position: fixed;
-  top: clamp(1rem, 4vh, 1.75rem);
+  top: var(--controls-top);
   left: clamp(1rem, 5vw, 2rem);
   z-index: 5;
 }
@@ -9,6 +9,11 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  /* Pinned to the shared token instead of left to the buttons' font metrics:
+     the sun's resting position is computed from this height, so it has to be a
+     number the stylesheet knows rather than one only layout does. The intrinsic
+     height sits just under it, so this sets the box without stretching it. */
+  min-height: var(--controls-h);
   padding: 0.35rem 0.45rem 0.35rem 0.75rem;
   border: 1px solid var(--text-faint);
   border-radius: 999px;

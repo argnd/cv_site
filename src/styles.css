@@ -228,6 +228,14 @@
   --section-pad-inline: 0px;
   --section-gap: 0px;
 
+  /* The fixed top row (locale selector, theme toggle). Shared rather than
+     repeated inline because the sun parks itself clear of this row and would
+     otherwise silently drift out of alignment with it. `--controls-h` is the
+     selector's rendered height, pinned as a token because it is content-driven
+     and no CSS length can read an intrinsic box. */
+  --controls-top: clamp(1rem, 4vh, 1.75rem);
+  --controls-h: 2.75rem;
+
   /* Accent: `--accent` is the saturated fill tone, `--accent-text` the
      contrast-safe variant for copy, `--accent-contrast` what sits on top of a
      filled accent surface. */
