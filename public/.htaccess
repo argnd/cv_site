@@ -37,12 +37,23 @@ DirectoryIndex index.html
   RewriteCond %{HTTP_REFERER} ^https?://(?!(www\.)?armelgandour\.fr/) [NC]
   RewriteRule \.(png|jpe?g|gif|webp|avif|svg|ico)$ - [F,NC]
 
+  # Prerendered pages: each route is written as <path>/index.html, so serve
+  # that file directly. Without this Apache treats /en as a directory and
+  # mod_dir answers with a 301 to /en/ — but the canonical URLs carry no
+  # trailing slash, so every entry to a translated page would cost a redirect
+  # and advertise a URL that immediately bounces.
+  # Must come before the "serve real files" rule: that rule ends with [L] and
+  # /en is a real directory, so anything after it would never be reached.
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.+[^/])$ /$1/index.html [L]
+
   # Serve real files and directories untouched.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # SPA fallback: hand every other URL to the Angular router.
+  # Fallback for anything with no prerendered file of its own. The app boots
+  # client-side and renders the French home page.
   RewriteRule ^ index.html [L]
 </IfModule>
 
@@ -85,6 +96,14 @@ DirectoryIndex index.html
 
 # Do not publish the deploy state file written by the GitHub Actions FTP sync.
 <Files ".ftp-deploy-sync-state.json">
+  Require all denied
+</Files>
+
+# The build also emits index.csr.html, the empty client-render shell an SSR
+# server would fall back to. Nothing serves it here — every real URL has a
+# prerendered file — and leaving it reachable just exposes a contentless page
+# for a crawler to find.
+<Files "index.csr.html">
   Require all denied
 </Files>
 

@@ -24,8 +24,8 @@
   bottom: calc(-1 * var(--hill-sink));
   width: calc(100% + 2 * var(--hill-overhang));
   display: block;
-  translate: calc(var(--scroll-shift) * var(--parallax-x, 0px))
-    calc(var(--scroll-shift) * var(--parallax-y, 0px));
+  translate: calc(var(--scroll-shift, 0) * var(--parallax-x, 0px))
+    calc(var(--scroll-shift, 0) * var(--parallax-y, 0px));
   /* Hills and props are the only scenery that moves *without* a running
      animation, so nothing auto-promotes them and every scroll frame repaints
      the whole band. Promoting them turns that into a compositor shift. */
@@ -84,8 +84,8 @@
   bottom: 12px;
   display: block;
   height: var(--prop-h);
-  translate: calc(var(--scroll-shift) * var(--parallax-x, -62px))
-    calc(var(--scroll-shift) * var(--parallax-y, -26px));
+  translate: calc(var(--scroll-shift, 0) * var(--parallax-x, -62px))
+    calc(var(--scroll-shift, 0) * var(--parallax-y, -26px));
   will-change: translate;
 }
 

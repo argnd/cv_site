@@ -10,16 +10,55 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
-# AI training crawlers: declined. They account for a large share of the
-# traffic on small sites and bring no visitors back. Remove a block below if
-# you would rather appear in that assistant's answers.
+User-agent: Applebot
+Allow: /
+
+User-agent: Qwantbot
+Allow: /
+
+# ---------------------------------------------------------------------------
+# AI crawlers: declined, both kinds.
+#
+# Two groups, kept apart because the trade-off is not the same:
+#
+#   Training crawlers scrape text to train a model. Nothing comes back — no
+#   visit, no citation, no link. Blocking them costs nothing.
+#
+#   Assistant/search crawlers fetch pages to answer a question being asked
+#   right now, and usually cite the source. Blocking them means "who is Armel
+#   Gandour?" asked to ChatGPT, Claude or Perplexity returns nothing about
+#   this site. That is a real loss of visibility, and it is deliberate here.
+#   To reappear in those answers, delete that second group — leaving the
+#   training group blocked.
+#
+# robots.txt is honoured voluntarily. The operators below publish their agent
+# strings and do respect it; scrapers that do not are unaffected by any of
+# this.
+# ---------------------------------------------------------------------------
+
+# -- Training ---------------------------------------------------------------
 User-agent: GPTBot
 Disallow: /
 
 User-agent: ClaudeBot
 Disallow: /
 
+User-agent: anthropic-ai
+Disallow: /
+
 User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: FacebookBot
 Disallow: /
 
 User-agent: CCBot
@@ -30,6 +69,78 @@ Disallow: /
 
 User-agent: Amazonbot
 Disallow: /
+
+User-agent: AI2Bot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: Omgili
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Timpibot
+Disallow: /
+
+User-agent: Kangaroo Bot
+Disallow: /
+
+User-agent: PanguBot
+Disallow: /
+
+User-agent: Webzio-Extended
+Disallow: /
+
+User-agent: SemrushBot-OCOB
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+# -- Assistants and AI search ----------------------------------------------
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Claude-User
+Disallow: /
+
+User-agent: Claude-SearchBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Perplexity-User
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+User-agent: MistralAI-User
+Disallow: /
+
+User-agent: DuckAssistBot
+Disallow: /
+
+User-agent: Bytespider-Search
+Disallow: /
+
+# ---------------------------------------------------------------------------
 
 User-agent: *
 Allow: /

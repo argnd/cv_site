@@ -19,6 +19,11 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "prerender": {
+              "discoverRoutes": false,
+              "routesFile": "prerender-routes.txt"
+            },
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {

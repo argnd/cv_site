@@ -9,9 +9,11 @@
     <div class="sky__gradient"></div>
     <div class="sky__glow"></div>
     <div class="sky__daylight"></div>
-    <div class="sky__nebula sky__nebula--violet"></div>
-    <div class="sky__nebula sky__nebula--teal"></div>
-    <div class="sky__nebula sky__nebula--rose"></div>
+    <!-- The inner element is not decoration: it keeps the scroll parallax and
+         the idle drift on separate boxes. See `animations/styles/stars.css`. -->
+    <div class="sky__nebula sky__nebula--violet"><div class="sky__nebula-gas"></div></div>
+    <div class="sky__nebula sky__nebula--teal"><div class="sky__nebula-gas"></div></div>
+    <div class="sky__nebula sky__nebula--rose"><div class="sky__nebula-gas"></div></div>
     <div class="sky__stardust"></div>
     <div class="sky__stars sky__stars--far"></div>
     <div class="sky__stars sky__stars--near"></div>
@@ -235,7 +237,7 @@
   </button>
 
   <main class="page">
-    <app-hero-section [content]="content().hero" />
+    <app-hero-section [content]="content().hero" [gamesPath]="gamesPath()" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
