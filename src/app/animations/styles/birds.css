@@ -1,0 +1,187 @@
+/* The birds that cross the day sky. Flock and member data lives in
+   `../birds.ts`; night gates the whole layer off. */
+
+/* The flock carries the horizontal crossing only, linearly, so travel speed
+   stays constant; each bird owns its own eased vertical soar on top. Splitting
+   them is the only way to get a wandering flight path without the ease also
+   warping the forward speed. */
+.bird-flock {
+  position: absolute;
+  left: -140px;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  animation-name: bird-fly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.scene:not(.is-day) .bird-flock {
+  opacity: 0 !important;
+  animation-play-state: paused;
+}
+
+.bird {
+  position: absolute;
+  width: var(--bird-w, 44px);
+  animation: bird-soar 7s var(--ease-soft) infinite;
+}
+
+.bird__art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bird__body,
+.bird__beak,
+.bird__wing {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.bird__body {
+  fill: var(--bird-body, #ff5f3d);
+}
+
+.bird__beak {
+  fill: var(--bird-beak, #ffc542);
+}
+
+.bird__eye {
+  fill: var(--ink);
+}
+
+/* Poses are swapped outright rather than morphed — `steps(1, end)` holds each
+   frame flat, which is what makes it read as drawn cels instead of a tween. */
+.bird__wing {
+  fill: var(--bird-wing, #fff1e2);
+  opacity: 0;
+  animation-duration: var(--bird-flap, 1.5s);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+  animation-delay: var(--bird-flap-shift, 0s);
+}
+
+.bird__wing--up {
+  animation-name: bird-wing-up;
+}
+
+.bird__wing--mid {
+  animation-name: bird-wing-mid;
+}
+
+.bird__wing--down {
+  animation-name: bird-wing-down;
+}
+
+/* Three beats then a glide: each flap is a fifth of the cycle, and the last
+   28% holds the extended pose so the birds aren't beating nonstop. */
+@keyframes bird-wing-up {
+  0% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0;
+  }
+  24% {
+    opacity: 1;
+  }
+  32% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 1;
+  }
+  56% {
+    opacity: 0;
+  }
+}
+
+@keyframes bird-wing-mid {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 0;
+  }
+  32% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  56% {
+    opacity: 1;
+  }
+  64% {
+    opacity: 0;
+  }
+  72% {
+    opacity: 1;
+  }
+}
+
+@keyframes bird-wing-down {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0;
+  }
+  64% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 0;
+  }
+}
+
+@keyframes bird-fly {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  6% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 200px), 0, 0);
+  }
+}
+
+@keyframes bird-soar {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    transform: translate3d(0, -13px, 0);
+  }
+  55% {
+    transform: translate3d(0, -4px, 0);
+  }
+  80% {
+    transform: translate3d(0, -17px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}

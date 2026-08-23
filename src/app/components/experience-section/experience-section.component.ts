@@ -1,8 +1,9 @@
-import { Component, computed, input, signal } from '@angular/core';
-import { ExperienceSectionContent } from '../../content/content.models';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { ExperienceSectionContent } from '../../models/content.models';
 
 @Component({
   selector: 'app-experience-section',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './experience-section.component.html',
   styleUrl: './experience-section.component.css',
 })

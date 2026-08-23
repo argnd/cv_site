@@ -1,8 +1,9 @@
-import { Component, input, signal } from '@angular/core';
-import { AboutSectionContent } from '../../content/content.models';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { AboutSectionContent } from '../../models/content.models';
 
 @Component({
   selector: 'app-about-section',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './about-section.component.html',
   styleUrl: './about-section.component.css',
 })

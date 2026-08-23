@@ -1,0 +1,198 @@
+/* The drifting clouds and their faces, plus the storm cloud's rain. Silhouettes,
+   expressions and per-cloud timing live in `../cloud-art.ts` and `../clouds.ts`;
+   night gates the whole layer off. */
+
+/* The chunky ink outline is exactly what makes a cloud fight body copy, so the
+   whole layer thins out over the content column. The stops are keyed to the
+   720px `.page` width; on narrow screens they collapse past each other and the
+   veil goes uniform, which is right — there the text spans the full width. */
+.sky__clouds,
+.sky__birds {
+  position: absolute;
+  inset: 0;
+  --cloud-veil: 0.3;
+  --cloud-veil-mask: linear-gradient(
+    to right,
+    #000,
+    #000 calc(50% - 440px),
+    rgba(0, 0, 0, var(--cloud-veil)) calc(50% - 310px),
+    rgba(0, 0, 0, var(--cloud-veil)) calc(50% + 310px),
+    #000 calc(50% + 440px),
+    #000
+  );
+  -webkit-mask-image: var(--cloud-veil-mask);
+  mask-image: var(--cloud-veil-mask);
+}
+
+@media (max-width: 900px) {
+  .sky__clouds,
+  .sky__birds {
+    --cloud-veil: 0.5;
+  }
+}
+
+.cloud {
+  position: absolute;
+  left: -220px;
+  width: calc(190px * var(--cloud-scale, 1));
+  opacity: 0;
+  animation-name: cloud-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  --cloud-opacity: 0.97;
+}
+
+.scene:not(.is-day) .cloud {
+  opacity: 0 !important;
+  animation-play-state: paused;
+}
+
+.cloud__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Rain falls below the viewBox's flat baseline. */
+  overflow: visible;
+  animation: cloud-bob 13s var(--ease-soft) infinite;
+}
+
+.cloud__body {
+  fill: var(--cloud-fill, #ffffff);
+  stroke: var(--ink);
+  /* Screen-space px, so the outline reads the same weight on a 95px far cloud
+     as on a 190px near one instead of scaling with the viewBox. */
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--theme-duration) var(--ease-soft),
+    stroke var(--theme-duration) var(--ease-soft);
+}
+
+/* The face deliberately does *not* use `non-scaling-stroke`: the silhouette is
+   drawn with a constant pen weight, but a distant cloud should have a smaller
+   face, not the same one at a smaller outline. */
+.cloud__face {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--theme-duration) var(--ease-soft);
+}
+
+.cloud__blush {
+  fill: var(--accent);
+  stroke: none;
+  opacity: 0.34;
+}
+
+.cloud__brows {
+  stroke-width: 2.8;
+}
+
+.cloud__lids {
+  stroke-width: 3.4;
+}
+
+.cloud__mouth {
+  stroke-width: 3.2;
+}
+
+.cloud__mouth--filled {
+  fill: var(--ink);
+  stroke: none;
+}
+
+/* Distance is sold by tint, outline weight and opacity together — not by scale
+   alone, which on its own just reads as "same cloud, further away". */
+.cloud--far {
+  --cloud-opacity: 0.72;
+}
+
+.cloud--far .cloud__body {
+  fill: var(--cloud-shade, #bfe4fa);
+  stroke-width: calc(var(--stroke-w) * 0.62);
+}
+
+/* ---------------------------------- */
+/* The rare rain cloud                 */
+/* ---------------------------------- */
+
+.cloud--rain .cloud__body {
+  fill: var(--cloud-storm, #c7d6e6);
+}
+
+.cloud__drop {
+  fill: var(--rain-fill, #3f9cd6);
+  stroke: none;
+  animation: rain-fall 0.5s linear infinite;
+}
+
+/* Parked off-screen for most of the cycle instead of drifting the whole time,
+   so this reads as a passing event rather than a seventh permanent fixture.
+   The transform is pinned through 82% and only travels over the last 18%. */
+.cloud--rare {
+  animation-name: cloud-drift-rare;
+}
+
+@keyframes cloud-drift-rare {
+  0%,
+  82% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  83.5% {
+    opacity: var(--cloud-opacity);
+  }
+  98.5% {
+    opacity: var(--cloud-opacity);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 440px), 0, 0);
+  }
+}
+
+@keyframes rain-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes cloud-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  8% {
+    opacity: var(--cloud-opacity);
+  }
+  92% {
+    opacity: var(--cloud-opacity);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 440px), 0, 0);
+  }
+}
+
+@keyframes cloud-bob {
+  0%,
+  100% {
+    transform: translate3d(0, -4px, 0);
+  }
+  50% {
+    transform: translate3d(0, 5px, 0);
+  }
+}

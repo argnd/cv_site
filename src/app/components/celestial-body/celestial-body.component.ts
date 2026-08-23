@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /**
  * Decorative moon / sun disc. Renders both the night (photographic moon) and
@@ -12,6 +12,7 @@ import { Component } from '@angular/core';
  */
 @Component({
   selector: 'app-celestial-body',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './celestial-body.component.html',
   styleUrl: './celestial-body.component.css',
 })

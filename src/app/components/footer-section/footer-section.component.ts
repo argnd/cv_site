@@ -1,8 +1,9 @@
-import { Component, input } from '@angular/core';
-import { FooterSectionContent } from '../../content/content.models';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { FooterSectionContent } from '../../models/content.models';
 
 @Component({
   selector: 'app-footer-section',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './footer-section.component.html',
   styleUrl: './footer-section.component.css',
 })

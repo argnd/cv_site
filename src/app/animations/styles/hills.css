@@ -1,0 +1,158 @@
+/* Rolling skyline at the bottom of the day sky: three parallaxed bands, plus
+   the props that sit on the nearest one (a tree, two cats). Night gates the
+   whole layer off with opacity, so none of it needs a night counterpart. */
+
+.sky__hills {
+  position: absolute;
+  inset: auto 0 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__hills {
+  opacity: 1;
+}
+
+/* Each band overshoots the fold by --hill-sink and the viewport sides by
+   --hill-overhang, so neither parallax axis can ever drag an edge into view. */
+.hill {
+  --hill-sink: 40px;
+  --hill-overhang: 80px;
+  position: absolute;
+  left: calc(-1 * var(--hill-overhang));
+  bottom: calc(-1 * var(--hill-sink));
+  width: calc(100% + 2 * var(--hill-overhang));
+  display: block;
+  translate: calc(var(--scroll-shift) * var(--parallax-x, 0px))
+    calc(var(--scroll-shift) * var(--parallax-y, 0px));
+  /* Hills and props are the only scenery that moves *without* a running
+     animation, so nothing auto-promotes them and every scroll frame repaints
+     the whole band. Promoting them turns that into a compositor shift. */
+  will-change: translate;
+}
+
+/* The path runs past the viewBox on every edge except the crest, so the root
+   SVG's own clip removes those strokes and only the skyline is inked. */
+.hill path {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hill--far {
+  height: calc(clamp(142px, 20vh, 202px) + var(--hill-sink));
+  --parallax-x: -16px;
+  --parallax-y: -8px;
+}
+
+.hill--far path {
+  fill: var(--hill-far, transparent);
+}
+
+.hill--mid {
+  height: calc(clamp(112px, 16vh, 162px) + var(--hill-sink));
+  --parallax-x: -36px;
+  --parallax-y: -16px;
+}
+
+.hill--mid path {
+  fill: var(--hill-mid, transparent);
+}
+
+.hill--near {
+  height: calc(clamp(84px, 12vh, 124px) + var(--hill-sink));
+  --parallax-x: -62px;
+  --parallax-y: -26px;
+}
+
+.hill--near path {
+  fill: var(--hill-near, transparent);
+}
+
+/* ---------------------------------- */
+/* Hill props                          */
+/* ---------------------------------- */
+
+/* Seated on the green rather than balanced on a crest: the crest's height in px
+   shifts with the viewport, but the band below it is solid, so a fixed offset
+   from the fold always lands on grass. Carries the near band's parallax so each
+   prop travels with the ground it's standing on. */
+.hill-prop {
+  position: absolute;
+  bottom: 12px;
+  display: block;
+  height: var(--prop-h);
+  translate: calc(var(--scroll-shift) * var(--parallax-x, -62px))
+    calc(var(--scroll-shift) * var(--parallax-y, -26px));
+  will-change: translate;
+}
+
+/* Only ever drawn in the gutter beside the 720px text column — any narrower and
+   they would sit under the copy. */
+@media (max-width: 1099px) {
+  .hill-prop {
+    display: none;
+  }
+}
+
+.hill-prop path {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.tree {
+  --prop-h: 132px;
+  left: 44px;
+  width: calc(var(--prop-h) * 0.714);
+}
+
+.tree__trunk {
+  fill: var(--tree-bark, transparent);
+}
+
+.tree__canopy {
+  fill: var(--tree-leaf, transparent);
+}
+
+.cat {
+  --cat-fur: var(--cat-grey, transparent);
+  width: var(--prop-h);
+}
+
+.cat--tabby {
+  --cat-fur: var(--cat-tabby, transparent);
+}
+
+.cat__fur {
+  fill: var(--cat-fur);
+}
+
+.cat__white {
+  fill: var(--cat-white, transparent);
+}
+
+.cat__ear {
+  fill: var(--cat-pink, transparent);
+}
+
+.cat__eye {
+  fill: var(--ink);
+}
+
+/* Markings sit inside the silhouette, so they carry their own pen weight rather
+   than the outline's. */
+.cat__stripes path {
+  fill: none;
+  stroke: var(--cat-stripe, transparent);
+  stroke-width: 2px;
+}
+
+.cat__mouth path {
+  fill: none;
+  stroke-width: 1.3px;
+}

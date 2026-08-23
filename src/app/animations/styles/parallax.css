@@ -1,0 +1,18 @@
+/* Scroll parallax for the *drifting* scenery — the hills and their props carry
+   theirs in `hills.css`, since those have no animation to stack on top of.
+   `--scroll-shift` is written per frame by `../scroll-parallax.ts`.
+
+   `translate` is a separate property from `transform`, so it stacks on top of
+   the drift/fly keyframes instead of fighting them for the same slot — which is
+   the only reason these can have both an animation and a scroll offset. */
+.cloud {
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, -20px));
+}
+
+.cloud--far {
+  --parallax-y: -8px;
+}
+
+.bird-flock {
+  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, -14px));
+}

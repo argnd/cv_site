@@ -1,8 +1,9 @@
-import { Component, input, output } from '@angular/core';
-import { LocaleSelectorContent, SupportedLocale } from '../../content/content.models';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { LocaleSelectorContent, SupportedLocale } from '../../models/content.models';
 
 @Component({
   selector: 'app-locale-selector',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './locale-selector.component.html',
   styleUrl: './locale-selector.component.css',
 })

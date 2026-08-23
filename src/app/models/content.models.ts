@@ -1,3 +1,9 @@
+/**
+ * Shape of the localized copy the page renders. The values themselves live as
+ * JSON in `../content/`; these types are what makes that JSON typechecked at
+ * the point it is imported.
+ */
+
 export type SupportedLocale = 'fr' | 'en';
 
 export type LocaleSelectorContent = {
@@ -80,4 +86,16 @@ export type GamesSectionContent = {
 
 export type FooterSectionContent = {
   name: string;
+};
+
+/** Every string the page renders, for one locale. */
+export type SiteContent = {
+  appShell: AppShellContent;
+  hero: HeroSectionContent;
+  about: AboutSectionContent;
+  experience: ExperienceSectionContent;
+  education: EducationSectionContent;
+  skills: SkillsSectionContent;
+  games: GamesSectionContent;
+  footer: FooterSectionContent;
 };

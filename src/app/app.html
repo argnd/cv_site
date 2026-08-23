@@ -1,7 +1,7 @@
 <div class="scene" [class.is-day]="!isNight()">
   <app-locale-selector
     [currentLocale]="locale()"
-    [content]="appShellContent().localeSelector"
+    [content]="content().appShell.localeSelector"
     (localeChange)="setLocale($event)"
   />
 
@@ -227,7 +227,7 @@
     class="theme-toggle"
     role="switch"
     [attr.aria-checked]="!isNight()"
-    [attr.aria-label]="appShellContent().themeToggleAriaLabel"
+    [attr.aria-label]="content().appShell.themeToggleAriaLabel"
     (click)="toggleTheme()"
   >
     <span class="theme-toggle__track" aria-hidden="true"></span>
@@ -235,28 +235,28 @@
   </button>
 
   <main class="page">
-    <app-hero-section [content]="heroContent()" />
+    <app-hero-section [content]="content().hero" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-about-section [content]="aboutContent()" />
+    <app-about-section [content]="content().about" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-experience-section [content]="experienceContent()" />
+    <app-experience-section [content]="content().experience" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-education-section [content]="educationContent()" />
+    <app-education-section [content]="content().education" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-skills-section [content]="skillsContent()" />
+    <app-skills-section [content]="content().skills" />
 
     <div class="divider" aria-hidden="true"><span>✦</span></div>
 
-    <app-games-section [content]="gamesContent()" />
+    <app-games-section [content]="content().games" />
 
-    <app-footer-section [content]="footerContent()" />
+    <app-footer-section [content]="content().footer" />
   </main>
 </div>

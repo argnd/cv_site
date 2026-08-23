@@ -1,8 +1,9 @@
-import { Component, input } from '@angular/core';
-import { HeroSectionContent } from '../../content/content.models';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { HeroSectionContent } from '../../models/content.models';
 
 @Component({
   selector: 'app-hero-section',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './hero-section.component.html',
   styleUrl: './hero-section.component.css',
 })

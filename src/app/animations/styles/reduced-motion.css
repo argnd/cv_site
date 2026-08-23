@@ -1,0 +1,67 @@
+/* Loaded last, so it can strip motion back out of everything the other scenery
+   stylesheets set up. Each layer needs its own fallback, because for most of
+   them the animation is what *positions* and *reveals* the element, not just
+   what moves it. */
+@media (prefers-reduced-motion: reduce) {
+  .sky__stars,
+  .sky__nebula,
+  .sky__stardust,
+  .star,
+  .shooting-star,
+  .bird-flock,
+  .bird,
+  .bird__wing,
+  .cloud,
+  .cloud__art,
+  .cloud__drop {
+    animation: none !important;
+  }
+
+  /* The drift animation is what positioned *and* revealed the clouds, so
+     killing it would leave the day sky empty. Park them at fixed spots. */
+  .scene.is-day .cloud {
+    left: var(--cloud-rest);
+    opacity: var(--cloud-opacity);
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  .scene.is-day .bird-flock {
+    left: var(--flock-rest);
+    opacity: 1;
+  }
+
+  /* Without the flap cycle every pose would stay hidden, leaving a wingless
+     bird — hold the extended one, which is the pose a gliding bird has. */
+  .bird__wing--mid {
+    opacity: 1;
+  }
+
+  /* Scroll-driven motion is still motion — pin the scenery where it sits. */
+  .cloud,
+  .bird-flock,
+  .hill,
+  .hill-prop {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+  }
+
+  .sky__nebula--violet,
+  .sky__nebula--teal,
+  .sky__nebula--rose {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+    --parallax-r: 0deg;
+  }
+
+  /* Nothing moves any more, so the compositor layers are pure overhead. */
+  .hill,
+  .hill-prop {
+    will-change: auto;
+  }
+
+  /* Falling rain is the entire point of this one, and a permanently parked
+     storm cloud isn't the same feature — leave it out rather than freeze it. */
+  .cloud--rare {
+    display: none;
+  }
+}
