@@ -376,75 +376,6 @@
 }
 
 /* ---------------------------------- */
-/* Celestial body (moon / sun)         */
-/* ---------------------------------- */
-
-.celestial {
-  position: absolute;
-  top: clamp(1.5rem, 6vh, 4rem);
-  right: clamp(1.25rem, 8vw, 6rem);
-  width: clamp(64px, 9vw, 110px);
-  height: clamp(64px, 9vw, 110px);
-}
-
-.celestial__halo {
-  position: absolute;
-  inset: -60%;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--glow-soft) 0%, transparent 70%);
-  animation: celestial-pulse 6s ease-in-out infinite;
-  transition: background var(--theme-duration) var(--ease-soft);
-}
-
-.celestial__body {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--celestial-core) 0%, var(--celestial-edge) 70%, var(--celestial-shadow) 100%);
-  box-shadow: 0 0 42px var(--glow-soft);
-  transition:
-    background var(--theme-duration) var(--ease-soft),
-    box-shadow var(--theme-duration) var(--ease-soft);
-}
-
-/* Surface texture: reads as craters by night, granulation/sunspots by day —
-   both driven by the same celestial tokens via a theme-aware blend mode. */
-.celestial__body::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background-image:
-    radial-gradient(circle at 27% 64%, var(--celestial-shadow) 0%, transparent 13%),
-    radial-gradient(circle at 60% 76%, var(--celestial-shadow) 0%, transparent 9%),
-    radial-gradient(circle at 76% 40%, var(--celestial-shadow) 0%, transparent 15%),
-    radial-gradient(circle at 42% 46%, var(--celestial-shadow) 0%, transparent 7%),
-    radial-gradient(circle at 55% 18%, var(--celestial-shadow) 0%, transparent 6%),
-    radial-gradient(circle at 18% 28%, var(--celestial-core) 0%, transparent 11%),
-    radial-gradient(circle at 85% 62%, var(--celestial-core) 0%, transparent 8%);
-  mix-blend-mode: overlay;
-  opacity: 0.6;
-  transition: opacity var(--theme-duration) var(--ease-soft);
-}
-
-.scene.is-day .celestial__body::before {
-  mix-blend-mode: soft-light;
-  opacity: 0.8;
-}
-
-@keyframes celestial-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(0.94);
-  }
-  50% {
-    opacity: 0.85;
-    transform: scale(1.05);
-  }
-}
-
-/* ---------------------------------- */
 /* Theme toggle                        */
 /* ---------------------------------- */
 
@@ -522,11 +453,6 @@
 }
 
 @media (max-width: 560px) {
-  .celestial {
-    width: 56px;
-    height: 56px;
-  }
-
   .theme-toggle {
     width: 52px;
     height: 26px;
@@ -549,8 +475,7 @@
   .shooting-star,
   .bird,
   .bird__wing,
-  .cloud,
-  .celestial__halo {
+  .cloud {
     animation: none !important;
   }
 }

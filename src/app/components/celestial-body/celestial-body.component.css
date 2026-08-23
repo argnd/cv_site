@@ -1,0 +1,193 @@
+:host {
+  position: absolute;
+  top: clamp(1.5rem, 6vh, 4rem);
+  right: clamp(1.25rem, 8vw, 6rem);
+  width: clamp(64px, 9vw, 110px);
+  height: clamp(64px, 9vw, 110px);
+  display: block;
+}
+
+/* ---------------------------------- */
+/* Halo (kept at its current size)     */
+/* ---------------------------------- */
+
+.halo {
+  position: absolute;
+  inset: -125%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--glow-strong) 0%, transparent 26%),
+    radial-gradient(circle, var(--glow-soft) 0%, transparent 58%);
+  opacity: 0.75;
+  animation: halo-breathe 7.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  transition: background var(--theme-duration) var(--ease-soft);
+}
+
+@keyframes halo-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+  40% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+  75% {
+    opacity: 0.68;
+    transform: scale(1.01);
+  }
+}
+
+/* ---------------------------------- */
+/* Corona (sun only)                   */
+/* ---------------------------------- */
+
+.corona {
+  position: absolute;
+  inset: -100%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, var(--glow-strong) 0deg 2.2deg, transparent 2.2deg 24deg);
+  mask-image: radial-gradient(circle, transparent 24%, black 34%, black 54%, transparent 74%);
+  -webkit-mask-image: radial-gradient(circle, transparent 24%, black 34%, black 54%, transparent 74%);
+  filter: blur(2px);
+  opacity: 0;
+  animation: corona-spin 150s linear infinite;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+:host(.is-day) .corona {
+  opacity: 0.75;
+}
+
+@keyframes corona-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------- */
+/* Body: sphere + surface detail       */
+/* Sized 20% larger than the halo/     */
+/* corona reference box, on purpose.   */
+/* ---------------------------------- */
+
+.body {
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at 34% 30%,
+    var(--celestial-core) 0%,
+    var(--celestial-core) 42%,
+    var(--celestial-edge) 78%,
+    var(--celestial-shadow) 100%
+  );
+  transition: background var(--theme-duration) var(--ease-soft);
+}
+
+.moon-photo,
+.granulation,
+.sunspots {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+/* Moon: real photographic texture, cross-faded with the sun's CSS surface
+   below. Cropped tight to the disc itself (no baked-in halo/stars) so it
+   drops cleanly inside the existing halo/corona/rim glow. Sized slightly
+   larger than its own clip box so the photo's soft feathered edge falls
+   outside the visible circle — otherwise a sliver of the shared sun-shaped
+   `.body` gradient peeks out from behind it as a mismatched outline. */
+.moon-photo {
+  inset: -8%;
+  border-radius: 50%;
+  background-image: url('/images/moon.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 1;
+}
+
+/* Sun granulation: many small, low-contrast blobs — fine uniform mottling
+   reads correctly here, unlike discrete craters. (day only) */
+.granulation {
+  background-image:
+    radial-gradient(ellipse 7% 7% at 30% 34%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 6% 6% at 45% 27%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 6.5% 6.5% at 61% 36%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 5.5% 5.5% at 73% 52%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 6% 6% at 64% 65%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 6% 6% at 47% 70%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 6% 6% at 30% 61%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 5% 5% at 22% 45%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 5% 5% at 50% 48%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 4% 4% at 58% 22%, var(--celestial-shadow) 0%, transparent 100%);
+  opacity: 0;
+}
+
+.sunspots {
+  background-image:
+    radial-gradient(ellipse 4% 3% at 38% 45%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 2.5% 2% at 62% 38%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 2% 1.6% at 51% 61%, var(--celestial-shadow) 0%, transparent 100%);
+  opacity: 0;
+}
+
+:host(.is-day) .moon-photo {
+  opacity: 0;
+}
+
+:host(.is-day) .granulation {
+  opacity: 0.16;
+}
+
+:host(.is-day) .sunspots {
+  opacity: 0.5;
+}
+
+/* ---------------------------------- */
+/* Rim light                            */
+/* Sibling of `.body` (not clipped by   */
+/* its overflow:hidden) so the blur can  */
+/* bleed softly past the sphere's edge.  */
+/* ---------------------------------- */
+
+.rim {
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  border: 2px solid var(--celestial-core);
+  opacity: 0.5;
+  mask-image: conic-gradient(transparent 0deg, transparent 278deg, black 278deg, black 350deg, transparent 350deg, transparent 360deg);
+  -webkit-mask-image: conic-gradient(
+    transparent 0deg,
+    transparent 278deg,
+    black 278deg,
+    black 350deg,
+    transparent 350deg,
+    transparent 360deg
+  );
+  filter: blur(1.5px);
+  transition:
+    border-color var(--theme-duration) var(--ease-soft),
+    opacity var(--theme-duration) var(--ease-soft);
+}
+
+@media (max-width: 560px) {
+  :host {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halo,
+  .corona {
+    animation: none !important;
+  }
+}

@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
+import { CelestialBodyComponent } from './components/celestial-body/celestial-body.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
 import { ExperienceSectionComponent } from './components/experience-section/experience-section.component';
 import { FooterSectionComponent } from './components/footer-section/footer-section.component';
@@ -80,6 +81,7 @@ function createShootingStar(config: ShootingStarConfig): ShootingStar {
   selector: 'app-root',
   imports: [
     AboutSectionComponent,
+    CelestialBodyComponent,
     EducationSectionComponent,
     ExperienceSectionComponent,
     FooterSectionComponent,
