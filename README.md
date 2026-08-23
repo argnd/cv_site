@@ -84,17 +84,28 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Deployment (OVHcloud shared hosting)
 
 The app is a fully static SPA, so it only needs a file host. `.github/workflows/deploy.yml`
-builds it on every push to `main` and uploads `dist/cv-site/browser/` to the hosting over FTPS.
+builds it on every push to `main` and mirrors `dist/cv-site/browser/` onto the hosting over
+SFTP with `lftp` (OVHcloud shared hosting does not implement explicit FTPS — `AUTH TLS`
+comes back as `500 This security scheme is not implemented`).
 
 Required repository secrets (`Settings > Secrets and variables > Actions`):
 
 | Secret | Value |
 | --- | --- |
 | `OVH_FTP_SERVER` | `ftp.clusterXXX.hosting.ovh.net` (OVHcloud panel, `FTP - SSH` tab) |
-| `OVH_FTP_USERNAME` | FTP login |
+| `OVH_FTP_USERNAME` | FTP login — must be the **main** user, secondary users have no SSH/SFTP access |
 | `OVH_FTP_PASSWORD` | FTP password |
 
-Optional repository *variable* `OVH_FTP_SERVER_DIR` overrides the target folder (defaults to `www/`).
+Optional settings:
+
+| Name | Kind | Purpose |
+| --- | --- | --- |
+| `OVH_SSH_KNOWN_HOSTS` | secret | `ssh-keyscan ftp.clusterXXX.hosting.ovh.net` output, pinned so the deploy cannot be MITM'd. Without it the workflow trusts whatever key the server presents and logs a warning. |
+| `OVH_FTP_SERVER_DIR` | variable | Target folder, defaults to `www/` |
+| `OVH_SFTP_PORT` | variable | SFTP port, defaults to `22` |
+
+The mirror deletes remote files that no longer exist in the build, so `OVH_FTP_SERVER_DIR`
+must point at a folder the site owns exclusively.
 
 `public/.htaccess` ships with the build and handles the HTTPS redirect, the SPA fallback,
 compression and cache headers on OVH's Apache 2.4.

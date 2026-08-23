@@ -10,8 +10,8 @@ on:
         type: boolean
         default: false
 
-# One deploy at a time: the FTP sync keeps a state file on the server that
-# concurrent runs would corrupt.
+# One deploy at a time: two concurrent mirrors of the same directory would
+# race on uploads and deletions.
 concurrency:
   group: deploy-ovh
   cancel-in-progress: false
@@ -66,15 +66,57 @@ jobs:
           test -f dist/cv-site/browser/.htaccess
           ls -la dist/cv-site/browser
 
-      - name: Deploy over FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.OVH_FTP_SERVER }}
-          username: ${{ secrets.OVH_FTP_USERNAME }}
-          password: ${{ secrets.OVH_FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: ./dist/cv-site/browser/
-          server-dir: ${{ vars.OVH_FTP_SERVER_DIR || 'www/' }}
-          dry-run: ${{ inputs.dry_run == true }}
-          log-level: standard
+      # OVHcloud shared hosting does not implement explicit FTPS (AUTH TLS is
+      # answered with "500 This security scheme is not implemented"), so the
+      # upload goes over SFTP. Only the main FTP user has SSH/SFTP access.
+      - name: Install lftp
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends lftp
+
+      - name: Trust the host key
+        env:
+          FTP_SERVER: ${{ secrets.OVH_FTP_SERVER }}
+          SFTP_PORT: ${{ vars.OVH_SFTP_PORT || '22' }}
+          KNOWN_HOSTS: ${{ secrets.OVH_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          if [ -n "$KNOWN_HOSTS" ]; then
+            printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            echo "::warning::OVH_SSH_KNOWN_HOSTS is not set; trusting the key the server presents now."
+            ssh-keyscan -p "$SFTP_PORT" -H "$FTP_SERVER" > ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/known_hosts
+          test -s ~/.ssh/known_hosts
+
+      - name: Deploy over SFTP
+        env:
+          FTP_SERVER: ${{ secrets.OVH_FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.OVH_FTP_USERNAME }}
+          LFTP_PASSWORD: ${{ secrets.OVH_FTP_PASSWORD }}
+          SFTP_PORT: ${{ vars.OVH_SFTP_PORT || '22' }}
+          SERVER_DIR: ${{ vars.OVH_FTP_SERVER_DIR || 'www/' }}
+          DRY_RUN: ${{ inputs.dry_run == true }}
+        run: |
+          set -euo pipefail
+          mirror_flags="--reverse --delete --no-perms --parallel=4 --verbose"
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Dry run: listing what would change, uploading nothing."
+            mirror_flags="$mirror_flags --dry-run"
+          fi
+          script="$RUNNER_TEMP/deploy.lftp"
+          umask 077
+          cat > "$script" <<EOF
+          set cmd:fail-exit yes
+          set net:max-retries 3
+          set net:timeout 20s
+          set sftp:auto-confirm no
+          set sftp:connect-program "ssh -a -x -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+          open -u "$FTP_USERNAME" --env-password -p "$SFTP_PORT" sftp://$FTP_SERVER
+          mirror $mirror_flags ./dist/cv-site/browser/ "$SERVER_DIR"
+          bye
+          EOF
+          trap 'rm -f "$script"' EXIT
+          lftp -f "$script"
