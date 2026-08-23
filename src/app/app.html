@@ -16,15 +16,33 @@
     <div class="sky__stars sky__stars--far"></div>
     <div class="sky__stars sky__stars--near"></div>
 
-    @for (cloud of clouds; track $index) {
-      <span
-        class="cloud"
-        [style.top.%]="cloud.top"
-        [style.--cloud-scale]="cloud.scale"
-        [style.animationDelay.s]="cloud.delay"
-        [style.animationDuration.s]="cloud.duration"
-      ></span>
-    }
+    <div class="sky__clouds">
+      @for (cloud of clouds; track $index) {
+        <span
+          class="cloud"
+          [class.cloud--far]="cloud.depth === 'far'"
+          [style.top.%]="cloud.top"
+          [style.--cloud-scale]="cloud.scale"
+          [style.--cloud-rest]="cloud.rest + '%'"
+          [style.animationDelay.s]="cloud.delay"
+          [style.animationDuration.s]="cloud.duration"
+        >
+          <svg class="cloud__art" viewBox="0 0 200 96" [style.animationDelay.s]="cloud.bob">
+            <path class="cloud__body" [attr.d]="cloud.art.d" />
+            <g class="cloud__face" [attr.transform]="'translate(' + cloud.art.faceAt + ')'">
+              <ellipse class="cloud__blush" cx="-23" cy="4" rx="6" ry="3.6" />
+              <ellipse class="cloud__blush" cx="23" cy="4" rx="6" ry="3.6" />
+              <path class="cloud__eyes" [attr.d]="cloud.face.eyes" [attr.stroke-width]="cloud.face.eyeWidth" />
+              <path
+                class="cloud__mouth"
+                [class.cloud__mouth--filled]="cloud.face.mouthFilled"
+                [attr.d]="cloud.face.mouth"
+              />
+            </g>
+          </svg>
+        </span>
+      }
+    </div>
 
     <app-celestial-body [class.is-day]="!isNight()" />
 

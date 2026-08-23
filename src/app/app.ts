@@ -112,6 +112,66 @@ function generateShootingStars(count: number): ShootingStar[] {
   });
 }
 
+/**
+ * Cloud silhouettes, in a `0 0 200 96` viewBox. Each one is the exact outline of
+ * a chain of overlapping circles resting on a shared flat baseline, so the lobes
+ * meet in true tangent-free arcs — no seams to hide, and the whole shape stays a
+ * handful of `A` commands rather than a sampled polyline. `faceAt` is the anchor
+ * the face group is translated to, picked per shape to sit on the body mass
+ * rather than drifting onto a lobe.
+ */
+const CLOUD_SHAPES = {
+  a: {
+    d: 'M34 88 A26 26 0 1 1 54.2 40.1 A34 34 0 0 1 120.4 33.6 A28 28 0 0 1 161.2 51.2 A20 20 0 0 1 176.7 88 Z',
+    faceAt: '95,63',
+  },
+  b: {
+    d: 'M42.1 88 A26 26 0 0 1 64.2 41.3 A34 34 0 1 1 131.8 41.3 A26 26 0 0 1 153.9 88 Z',
+    faceAt: '98,62',
+  },
+  c: {
+    d: 'M25.3 88 A20 20 0 1 1 44.5 53 A26 26 0 0 1 83.8 36 A28 28 0 0 1 134.5 40.9 A24 24 0 0 1 169.5 57.3 A17 17 0 1 1 183.7 88 Z',
+    faceAt: '100,64',
+  },
+  d: {
+    d: 'M40.8 88 A22 22 0 0 1 58.3 47.6 A28 28 0 0 1 111.2 39.7 A24 24 0 0 1 146.9 52.7 A20 20 0 0 1 164 88 Z',
+    faceAt: '100,64',
+  },
+} as const;
+
+/**
+ * Expressions, in coordinates local to a shape's `faceAt` anchor. Eyes and mouth
+ * are both round-capped stroked paths, so a "dot" eye is just a zero-length
+ * segment — one styling idiom covers dots, happy arcs and sleepy arcs alike.
+ */
+const FACES = {
+  happy: { eyes: 'M-13 -2l.01 0M13 -2l.01 0', eyeWidth: 7.4, mouth: 'M-8 5Q0 13 8 5', mouthFilled: false },
+  closed: { eyes: 'M-17 1Q-12 -6 -7 1M7 1Q12 -6 17 1', eyeWidth: 3.4, mouth: 'M-5 6Q0 11 5 6', mouthFilled: false },
+  sleepy: { eyes: 'M-16 -2Q-11 4 -6 -2M6 -2Q11 4 16 -2', eyeWidth: 3.4, mouth: 'M-4 7Q0 10.5 4 7', mouthFilled: false },
+  oh: { eyes: 'M-13 -3l.01 0M13 -3l.01 0', eyeWidth: 7.4, mouth: 'M0 4a3.4 4.6 0 1 0 .01 0', mouthFilled: true },
+} as const;
+
+type Cloud = {
+  art: (typeof CLOUD_SHAPES)[keyof typeof CLOUD_SHAPES];
+  face: (typeof FACES)[keyof typeof FACES];
+  /** Vertical position, in % of the viewport. */
+  top: number;
+  /** Multiplier on the base width. Sizing is width-driven rather than a CSS
+   * `scale()`, because an ancestor transform also shrinks the silhouette's
+   * "non-scaling" stroke — which would leave far clouds with a hairline. */
+  scale: number;
+  /** Drives fill, outline weight and opacity so size isn't the only depth cue. */
+  depth: 'near' | 'far';
+  /** Negative, so every cloud is already mid-flight on load instead of the sky
+   * starting empty and filling up over the next two minutes. */
+  delay: number;
+  duration: number;
+  /** Offsets the vertical bob so the clouds don't rise and fall in lockstep. */
+  bob: number;
+  /** Where the cloud parks when motion is reduced, in % of the viewport width. */
+  rest: number;
+};
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -187,10 +247,12 @@ export class App {
     { top: 30, delay: 15, duration: 23 },
   ];
 
-  protected readonly clouds = [
-    { top: 10, scale: 1, delay: 0, duration: 115 },
-    { top: 23, scale: 0.68, delay: 34, duration: 145 },
-    { top: 5, scale: 0.8, delay: 70, duration: 130 },
+  protected readonly clouds: Cloud[] = [
+    { art: CLOUD_SHAPES.a, face: FACES.happy, top: 8, scale: 1, depth: 'near', delay: -12, duration: 118, bob: 0, rest: 14 },
+    { art: CLOUD_SHAPES.c, face: FACES.sleepy, top: 21, scale: 0.6, depth: 'far', delay: -95, duration: 172, bob: -4.5, rest: 63 },
+    { art: CLOUD_SHAPES.b, face: FACES.closed, top: 4, scale: 0.72, depth: 'far', delay: -55, duration: 150, bob: -9, rest: 88 },
+    { art: CLOUD_SHAPES.d, face: FACES.oh, top: 31, scale: 0.88, depth: 'near', delay: -108, duration: 130, bob: -2, rest: 36 },
+    { art: CLOUD_SHAPES.a, face: FACES.closed, top: 15, scale: 0.5, depth: 'far', delay: -30, duration: 196, bob: -6.5, rest: 76 },
   ];
 
   protected readonly isNight = signal(true);
