@@ -43,10 +43,11 @@
   --celestial-shadow: #f0921f;
 
   /* Glow stays warm and real in day — it's the sun's light, and the halo needs
-     it. What day drops is *bloom on text*, handled per-element rather than by
-     gutting the token (see the ink idiom below). */
+     it. What day drops is *bloom on text*, which `--bloom-*` handles. */
   --glow-soft: rgba(255, 190, 80, 0.45);
   --glow-strong: rgba(255, 190, 80, 0.7);
+  --bloom-soft: transparent;
+  --bloom-strong: transparent;
 
   --ink: #16233f;
   --ink-soft: rgba(22, 35, 63, 0.45);
@@ -55,6 +56,14 @@
   --shadow-offset: 5px;
   --surface-card: #fff8ec;
   --surface-card-edge: #16233f;
+
+  --section-pad-block: clamp(1.75rem, 3.5vw, 2.5rem);
+  --section-pad-inline: clamp(1.4rem, 3.5vw, 2.5rem);
+  --section-gap: clamp(1.25rem, 3vw, 2rem);
+  /* Drop cap in the about copy; a token because the rule lives behind
+     `::ng-deep` in the child stylesheet, where an ancestor selector can't
+     reach. Night has no declaration, so the component's fallback applies. */
+  --dropcap: var(--accent-text);
 
   --accent: #ff5f3d;
   --accent-text: #c93c1e;
@@ -181,22 +190,46 @@
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
+/* Scroll parallax rides the standalone `translate`/`rotate` properties, never
+   the keyframes. A custom property referenced *inside* `@keyframes` forces the
+   browser to re-resolve the whole animation on the main thread every time that
+   property changes — i.e. every scroll frame — and disqualifies it from the
+   compositor. With a blur on each lobe that was the most expensive thing in
+   the scene. Keeping the keyframes constant lets them composite, and the
+   scroll offset lands in a slot the keyframes don't touch. */
+.sky__nebula--violet,
+.sky__nebula--teal,
+.sky__nebula--rose {
+  translate: calc(var(--scroll-shift) * var(--parallax-x))
+    calc(var(--scroll-shift) * var(--parallax-y));
+  rotate: calc(var(--scroll-shift) * var(--parallax-r));
+}
+
 .sky__nebula--violet {
   background: radial-gradient(ellipse 58% 38% at 78% 24%, var(--nebula-violet) 0%, transparent 72%);
   filter: blur(4px);
   animation: nebula-drift-a 210s ease-in-out infinite alternate;
+  --parallax-x: -14px;
+  --parallax-y: -32px;
+  --parallax-r: 5deg;
 }
 
 .sky__nebula--teal {
   background: radial-gradient(ellipse 52% 36% at 16% 60%, var(--nebula-teal) 0%, transparent 70%);
   filter: blur(3.5px);
   animation: nebula-drift-b 265s ease-in-out infinite alternate;
+  --parallax-x: 10px;
+  --parallax-y: 24px;
+  --parallax-r: -4deg;
 }
 
 .sky__nebula--rose {
   background: radial-gradient(ellipse 42% 30% at 56% 84%, var(--nebula-rose) 0%, transparent 68%);
   filter: blur(3px);
   animation: nebula-drift-c 175s ease-in-out infinite;
+  --parallax-x: -8px;
+  --parallax-y: -16px;
+  --parallax-r: 3deg;
 }
 
 .scene.is-day .sky__nebula {
@@ -205,47 +238,29 @@
 
 @keyframes nebula-drift-a {
   0% {
-    transform: translate3d(calc(var(--scroll-shift) * -14px), calc(var(--scroll-shift) * -32px), 0)
-      rotate(calc(var(--scroll-shift) * 5deg)) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   100% {
-    transform: translate3d(
-        calc(-5% + var(--scroll-shift) * -14px),
-        calc(4% + var(--scroll-shift) * -32px),
-        0
-      )
-      rotate(calc(var(--scroll-shift) * 5deg)) scale(1.1);
+    transform: translate3d(-5%, 4%, 0) scale(1.1);
   }
 }
 
 @keyframes nebula-drift-b {
   0% {
-    transform: translate3d(calc(var(--scroll-shift) * 10px), calc(var(--scroll-shift) * 24px), 0)
-      rotate(calc(var(--scroll-shift) * -4deg)) scale(1.05);
+    transform: translate3d(0, 0, 0) scale(1.05);
   }
   100% {
-    transform: translate3d(
-        calc(4% + var(--scroll-shift) * 10px),
-        calc(-3% + var(--scroll-shift) * 24px),
-        0
-      )
-      rotate(calc(var(--scroll-shift) * -4deg)) scale(0.97);
+    transform: translate3d(4%, -3%, 0) scale(0.97);
   }
 }
 
 @keyframes nebula-drift-c {
   0%,
   100% {
-    transform: translate3d(calc(var(--scroll-shift) * -8px), calc(var(--scroll-shift) * -16px), 0)
-      rotate(calc(var(--scroll-shift) * 3deg)) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translate3d(
-        calc(-3% + var(--scroll-shift) * -8px),
-        calc(-4% + var(--scroll-shift) * -16px),
-        0
-      )
-      rotate(calc(var(--scroll-shift) * 3deg)) scale(1.06);
+    transform: translate3d(-3%, -4%, 0) scale(1.06);
   }
 }
 
@@ -955,6 +970,10 @@
   display: block;
   translate: calc(var(--scroll-shift) * var(--parallax-x, 0px))
     calc(var(--scroll-shift) * var(--parallax-y, 0px));
+  /* Hills and props are the only scenery that moves *without* a running
+     animation, so nothing auto-promotes them and every scroll frame repaints
+     the whole band. Promoting them turns that into a compositor shift. */
+  will-change: translate;
 }
 
 /* The path runs past the viewBox on every edge except the crest, so the root
@@ -1011,6 +1030,7 @@
   height: var(--prop-h);
   translate: calc(var(--scroll-shift) * var(--parallax-x, -62px))
     calc(var(--scroll-shift) * var(--parallax-y, -26px));
+  will-change: translate;
 }
 
 /* Only ever drawn in the gutter beside the 720px text column — any narrower and
@@ -1109,22 +1129,69 @@
   padding: clamp(2rem, 6vh, 3.5rem) 1.5rem clamp(3rem, 10vh, 6rem);
 }
 
+/* Rule — glyph — rule as a flex row, rather than a glyph absolutely positioned
+   on top of a continuous hairline. Overlaying text on a 1px rule means the
+   glyph's optical centre depends entirely on the font's baseline metrics, and
+   ✦ (U+2726) is not in Inter — it gets served by whatever symbol font the OS
+   falls back to, whose ascent/descent bear no relation to the body face. That
+   is why it never sat on the line. Here the rule stops short on either side,
+   so there is nothing left for the glyph to be misaligned against, and
+   `align-items: center` handles the rest without a magic offset. */
 .divider {
-  position: relative;
-  height: 1px;
-  width: min(300px, 60%);
+  --divider-w: min(300px, 60%);
+  --divider-h: 1px;
+  --divider-gap: 0.65rem;
+  --divider-line: var(--text-faint);
+  --divider-glyph: var(--text-strong);
+  --divider-glyph-size: 0.7rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--divider-gap);
+  width: var(--divider-w);
   margin: 0 auto;
-  background: linear-gradient(90deg, transparent, var(--text-faint), transparent);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: var(--divider-h);
+  border-radius: 999px;
+}
+
+.divider::before {
+  background: linear-gradient(90deg, transparent, var(--divider-line));
+}
+
+.divider::after {
+  background: linear-gradient(90deg, var(--divider-line), transparent);
+}
+
+/* Day keeps the glyph — it is the one mark both skins share — but trades the
+   fading hairline for two stubby solid bars, since a gradient hairline between
+   two cards reads as a rendering artefact. */
+.scene.is-day .divider {
+  --divider-w: min(190px, 46%);
+  --divider-h: 4px;
+  --divider-gap: 0.55rem;
+  --divider-line: var(--ink-soft);
+  --divider-glyph: var(--ink);
+  --divider-glyph-size: 0.85rem;
+}
+
+.scene.is-day .divider::before,
+.scene.is-day .divider::after {
+  background: var(--divider-line);
 }
 
 .divider span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--text-strong);
-  font-size: 0.7rem;
-  text-shadow: 0 0 8px var(--glow-strong);
+  flex: none;
+  line-height: 1;
+  color: var(--divider-glyph);
+  font-size: var(--divider-glyph-size);
+  text-shadow: 0 0 8px var(--bloom-strong);
 }
 
 @media (max-width: 560px) {
@@ -1184,6 +1251,20 @@
   .hill-prop {
     --parallax-x: 0px;
     --parallax-y: 0px;
+  }
+
+  .sky__nebula--violet,
+  .sky__nebula--teal,
+  .sky__nebula--rose {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+    --parallax-r: 0deg;
+  }
+
+  /* Nothing moves any more, so the compositor layers are pure overhead. */
+  .hill,
+  .hill-prop {
+    will-change: auto;
   }
 
   /* Falling rain is the entire point of this one, and a permanently parked

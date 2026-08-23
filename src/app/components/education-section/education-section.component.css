@@ -31,7 +31,7 @@ p {
 
 .constellation-item__mark {
   color: var(--text-strong);
-  text-shadow: 0 0 10px var(--glow-strong);
+  text-shadow: 0 0 10px var(--bloom-strong);
   font-size: 0.9rem;
   margin-top: 0.35rem;
 }

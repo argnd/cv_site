@@ -71,6 +71,19 @@
   inherits: true;
   initial-value: rgba(248, 250, 252, 0.65);
 }
+/* Bloom is the *text* halo, split from `--glow-*` because day keeps a real
+   glow (the sun lights the sky) while flat-vector copy must not bleed light.
+   Transparent in day, so every bloom shadow collapses to a no-op. */
+@property --bloom-soft {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(248, 250, 252, 0.35);
+}
+@property --bloom-strong {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(248, 250, 252, 0.65);
+}
 @property --nebula-violet {
   syntax: '<color>';
   inherits: true;
@@ -172,6 +185,8 @@
   /* Glow */
   --glow-soft: rgba(248, 250, 252, 0.35);
   --glow-strong: rgba(248, 250, 252, 0.65);
+  --bloom-soft: rgba(248, 250, 252, 0.35);
+  --bloom-strong: rgba(248, 250, 252, 0.65);
 
   /* Nebula (night only; fades out for day, so no day-mode override needed) */
   --nebula-violet: rgba(147, 130, 246, 0.24);
@@ -187,6 +202,13 @@
   --surface-card: rgba(255, 248, 236, 0);
   --surface-card-edge: rgba(22, 35, 63, 0);
   --radius-card: 20px;
+
+  /* Section geometry. Night keeps the copy floating with only vertical rhythm;
+     day turns the same block into a card, so the rhythm moves from padding to
+     margin and inline padding appears. */
+  --section-pad-block: var(--space-xl);
+  --section-pad-inline: 0px;
+  --section-gap: 0px;
 
   /* Accent: `--accent` is the saturated fill tone, `--accent-text` the
      contrast-safe variant for copy, `--accent-contrast` what sits on top of a
@@ -268,8 +290,24 @@ body {
 /* Shared component styles            */
 /* ---------------------------------- */
 
+/* Day turns every section into a physical cream card. No `.scene.is-day` twin is
+   needed: the surface tokens are fully transparent and the lengths zero at
+   night, so the whole idiom paints nothing there. */
 .section {
-  padding-block: var(--space-xl);
+  padding: var(--section-pad-block) var(--section-pad-inline);
+  margin-block: var(--section-gap);
+  background: var(--surface-card);
+  border: var(--stroke-w) solid var(--surface-card-edge);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--shadow-hard);
+  /* Paint-only. `padding`, `margin` and `border-width` are deliberately absent:
+     animating them would reflow the whole document on every frame of the
+     toggle, on five cards at once, while the sky is already cross-fading. The
+     geometry snaps instantly and the card paints in around it. */
+  transition:
+    border-color var(--theme-duration) var(--ease-soft),
+    background-color var(--theme-duration) var(--ease-soft),
+    box-shadow var(--theme-duration) var(--ease-soft);
 }
 
 .kicker {

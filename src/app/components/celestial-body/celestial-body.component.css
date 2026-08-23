@@ -234,7 +234,14 @@
   border-radius: 50%;
   border: 2px solid var(--celestial-core);
   opacity: 0.5;
-  mask-image: conic-gradient(transparent 0deg, transparent 278deg, black 278deg, black 350deg, transparent 350deg, transparent 360deg);
+  mask-image: conic-gradient(
+    transparent 0deg,
+    transparent 278deg,
+    black 278deg,
+    black 350deg,
+    transparent 350deg,
+    transparent 360deg
+  );
   -webkit-mask-image: conic-gradient(
     transparent 0deg,
     transparent 278deg,

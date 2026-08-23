@@ -22,3 +22,13 @@
   font-size: 0.65rem;
   vertical-align: middle;
 }
+
+/* The star belongs to the night sky; day separates with a coral bead instead.
+   `:host-context` and not `.scene.is-day X` — Angular scopes *every* compound
+   in a component selector, and `.scene` lives in the app template, so it would
+   be tagged with the wrong component id and never match. */
+:host-context(.scene.is-day) .skill:not(:last-child)::after {
+  content: '●';
+  color: var(--accent);
+  font-size: 0.5rem;
+}

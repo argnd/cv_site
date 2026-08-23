@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { CelestialBodyComponent } from './components/celestial-body/celestial-body.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
@@ -462,19 +472,22 @@ export class App {
 
   protected readonly isNight = signal(true);
 
-  /** Eased 0..1 scroll progress through the page, used to give the nebula a
-   * subtle parallax drift/rotation instead of sitting fully static while
-   * scrolling (the sky itself is `position: fixed`, so it needs its own cue). */
-  protected readonly scrollShift = signal(0);
+  private readonly skyRef = viewChild<ElementRef<HTMLElement>>('sky');
+
+  /* Captured here rather than inside `initScrollParallax`: that method runs
+     from an `afterNextRender` callback, which is outside the injection
+     context, so `inject()` would throw there. */
+  private readonly destroyRef = inject(DestroyRef);
 
   private scrollTarget = 0;
   private scrollCurrent = 0;
   private scrollRafId: number | null = null;
+  private lastFrameAt = 0;
 
   constructor() {
     this.syncDocumentLanguage(this.locale());
-    this.initScrollParallax();
     effect(() => this.syncColorScheme(this.isNight()));
+    afterNextRender(() => this.initScrollParallax());
   }
 
   protected toggleTheme(): void {
@@ -506,15 +519,13 @@ export class App {
       ?.setAttribute('content', isNight ? '#05060d' : '#2ea8ec');
   }
 
-  /** Tracks scroll progress (0..1) and eases it toward `scrollShift` on each
-   * frame via a self-terminating rAF loop, rather than writing scroll events
-   * straight to the signal — this smooths out the parallax so it glides
-   * instead of jittering with every scroll tick. */
+  /** Eased 0..1 scroll progress through the page, giving the fixed sky its own
+   * parallax cue. The eased value is written **straight to the `.sky` element**
+   * rather than through a signal: a signal write per frame drags Angular's
+   * change detection into the animation loop for a value no template logic
+   * depends on. This is a pure paint concern, so it stays out of the framework.
+   */
   private initScrollParallax(): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
     const updateTarget = (): void => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       this.scrollTarget = maxScroll > 0 ? window.scrollY / maxScroll : 0;
@@ -525,7 +536,7 @@ export class App {
     window.addEventListener('resize', updateTarget, { passive: true });
     updateTarget();
 
-    inject(DestroyRef).onDestroy(() => {
+    this.destroyRef.onDestroy(() => {
       window.removeEventListener('scroll', updateTarget);
       window.removeEventListener('resize', updateTarget);
       if (this.scrollRafId !== null) {
@@ -534,24 +545,50 @@ export class App {
     });
   }
 
+  /** Time constant of the scroll smoothing, in seconds: roughly how long the
+   * scenery takes to cover ~63% of the distance to the live scroll position.
+   * Low enough that the parallax reads as attached to the page rather than
+   * trailing it, high enough to still absorb coarse mouse-wheel steps. */
+  private static readonly SCROLL_TAU = 0.08;
+
   private runScrollEasing(): void {
     if (this.scrollRafId !== null) {
       return;
     }
 
-    const step = (): void => {
+    this.lastFrameAt = performance.now();
+
+    const step = (now: number): void => {
+      /* Frame-rate independent exponential smoothing. A fixed per-frame factor
+         would ease at a different real-world speed on a 60Hz and a 144Hz
+         display; deriving it from elapsed time makes the glide identical on
+         both.
+         `dt` is clamped at *both* ends. The upper bound stops a backgrounded
+         tab resuming with one huge jump. The lower bound matters just as much:
+         a rAF timestamp is the frame's start time, so it can predate the
+         `performance.now()` taken when the loop was scheduled. That negative
+         dt flips the sign of `exp(-dt / TAU)` and throws the scenery hundreds
+         of units the wrong way on the first frame of every scroll burst. */
+      const dt = Math.min(Math.max(now - this.lastFrameAt, 0) / 1000, 0.05);
+      this.lastFrameAt = now;
+
       const diff = this.scrollTarget - this.scrollCurrent;
       if (Math.abs(diff) < 0.0005) {
         this.scrollCurrent = this.scrollTarget;
-        this.scrollShift.set(this.scrollCurrent);
+        this.writeScrollShift();
         this.scrollRafId = null;
         return;
       }
-      this.scrollCurrent += diff * 0.08;
-      this.scrollShift.set(this.scrollCurrent);
+
+      this.scrollCurrent += diff * (1 - Math.exp(-dt / App.SCROLL_TAU));
+      this.writeScrollShift();
       this.scrollRafId = requestAnimationFrame(step);
     };
 
     this.scrollRafId = requestAnimationFrame(step);
+  }
+
+  private writeScrollShift(): void {
+    this.skyRef()?.nativeElement.style.setProperty('--scroll-shift', this.scrollCurrent.toFixed(4));
   }
 }
