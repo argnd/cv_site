@@ -29,6 +29,8 @@
     @for (star of heroStars; track $index) {
       <span
         class="star"
+        [class.star--glint]="star.variant === 'glint'"
+        [class.star--drift]="star.variant === 'drift'"
         [style.top.%]="star.top"
         [style.left.%]="star.left"
         [style.width.px]="star.size"

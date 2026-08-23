@@ -19,7 +19,7 @@ p {
   height: 8px;
   border-radius: 50%;
   border: 1px solid var(--text-faint);
-  animation: twinkle 3.2s ease-in-out infinite;
+  animation: glyph-glow 3.2s ease-in-out infinite;
 }
 
 .games__glyph span:nth-child(2) {
@@ -38,15 +38,19 @@ p {
   animation-delay: 1.2s;
 }
 
-@keyframes twinkle {
+/* Distinct from the hero star field's twinkle (which pulses via scale): this
+   is a pure glow-bloom — brightness + box-shadow spread, no size change —
+   reading as a gentle sequential "breathing light" chain rather than a
+   twinkling star. */
+@keyframes glyph-glow {
   0%,
   100% {
     opacity: 0.35;
-    transform: scale(0.85);
+    box-shadow: 0 0 0 0 transparent;
   }
   50% {
-    opacity: 0.85;
-    transform: scale(1.05);
+    opacity: 1;
+    box-shadow: 0 0 8px 2px var(--glow-soft);
   }
 }
 

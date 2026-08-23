@@ -77,6 +77,41 @@ function createShootingStar(config: ShootingStarConfig): ShootingStar {
   };
 }
 
+/** Random float in [min, max). */
+function randomBetween(min: number, max: number): number {
+  return min + Math.random() * (max - min);
+}
+
+/**
+ * Builds shooting stars with randomized (but constrained) flight paths.
+ * `.sky` is `position: fixed`, so a star's on-screen spot never changes with
+ * scroll — meaning "avoid the text" can't just mean "avoid the hero
+ * heading," it has to hold at any scroll position. The one thing that stays
+ * constant everywhere is that page copy always lives in the centered
+ * ~720px `.page` column, so each star spawns in the left/right margin
+ * outside it and is only allowed to travel further toward its own edge
+ * (angle biased away from center), never sweeping back across the middle.
+ * Zones alternate by index so a small batch doesn't randomly cluster on one
+ * side; everything else (offset, angle, timing, distance) is randomized for
+ * genuinely varied trajectories star to star.
+ */
+function generateShootingStars(count: number): ShootingStar[] {
+  return Array.from({ length: count }, (_, i) => {
+    const zone: 'left' | 'right' = i % 2 === 0 ? 'left' : 'right';
+    const left = zone === 'left' ? randomBetween(3, 20) : randomBetween(80, 97);
+    const angle = zone === 'left' ? randomBetween(105, 255) : randomBetween(-75, 75);
+
+    return createShootingStar({
+      top: randomBetween(4, 52),
+      left,
+      delay: randomBetween(0, 16),
+      duration: randomBetween(9, 13.5),
+      angle,
+      distance: randomBetween(170, 300),
+    });
+  });
+}
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -120,26 +155,32 @@ export class App {
     this.locale() === 'fr' ? footerSectionData : footerSectionEnData,
   );
 
-  protected readonly heroStars = [
-    { top: 8, left: 14, size: 2, delay: 0, duration: 4.6 },
-    { top: 16, left: 78, size: 3, delay: 0.6, duration: 5.2 },
-    { top: 28, left: 46, size: 2, delay: 1.2, duration: 3.8 },
-    { top: 11, left: 60, size: 2, delay: 1.8, duration: 4.9 },
-    { top: 38, left: 22, size: 3, delay: 0.3, duration: 5.6 },
-    { top: 5, left: 36, size: 2, delay: 2.1, duration: 4.2 },
-    { top: 21, left: 90, size: 2, delay: 1.4, duration: 3.6 },
-    { top: 46, left: 70, size: 2, delay: 0.9, duration: 5.0 },
-    { top: 14, left: 5, size: 3, delay: 2.6, duration: 4.4 },
-    { top: 33, left: 55, size: 2, delay: 1.6, duration: 3.9 },
-    { top: 3, left: 85, size: 2, delay: 0.4, duration: 4.7 },
-    { top: 24, left: 30, size: 2, delay: 2.0, duration: 5.4 },
+  /** `variant` selects one of three distinct twinkle motion signatures
+   * (see `.star`/`.star--glint`/`.star--drift` in app.css) so the field
+   * reads as varied stars rather than one shape repeated with offsets. */
+  protected readonly heroStars: Array<{
+    top: number;
+    left: number;
+    size: number;
+    delay: number;
+    duration: number;
+    variant: 'pulse' | 'glint' | 'drift';
+  }> = [
+    { top: 8, left: 14, size: 2, delay: 0, duration: 4.6, variant: 'pulse' },
+    { top: 16, left: 78, size: 3, delay: 0.6, duration: 5.2, variant: 'glint' },
+    { top: 28, left: 46, size: 2, delay: 1.2, duration: 3.8, variant: 'drift' },
+    { top: 11, left: 60, size: 2, delay: 1.8, duration: 4.9, variant: 'pulse' },
+    { top: 38, left: 22, size: 3, delay: 0.3, duration: 5.6, variant: 'glint' },
+    { top: 5, left: 36, size: 2, delay: 2.1, duration: 4.2, variant: 'drift' },
+    { top: 21, left: 90, size: 2, delay: 1.4, duration: 3.6, variant: 'pulse' },
+    { top: 46, left: 70, size: 2, delay: 0.9, duration: 5.0, variant: 'glint' },
+    { top: 14, left: 5, size: 3, delay: 2.6, duration: 4.4, variant: 'drift' },
+    { top: 33, left: 55, size: 2, delay: 1.6, duration: 3.9, variant: 'pulse' },
+    { top: 3, left: 85, size: 2, delay: 0.4, duration: 4.7, variant: 'glint' },
+    { top: 24, left: 30, size: 2, delay: 2.0, duration: 5.4, variant: 'drift' },
   ];
 
-  protected readonly shootingStars: ShootingStar[] = [
-    createShootingStar({ top: 14, left: 82, delay: 0, duration: 10, angle: 145, distance: 260 }),
-    createShootingStar({ top: 26, left: 48, delay: 4.5, duration: 12, angle: 155, distance: 230 }),
-    createShootingStar({ top: 7, left: 62, delay: 9, duration: 11, angle: 138, distance: 280 }),
-  ];
+  protected readonly shootingStars: ShootingStar[] = generateShootingStars(3);
 
   protected readonly birds = [
     { top: 18, delay: 0, duration: 26 },
