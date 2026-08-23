@@ -3,7 +3,16 @@
   position: relative;
 }
 
-:host *,
+/* `:host *` also matches child *component hosts* — they are elements of this
+   template — and `transition` is a shorthand, so this rule silently replaces
+   whatever a child declared on its own `:host`. A child's `:host` is only
+   `[_nghost]` (0,1,0) after Angular's encapsulation rewrite, while this is
+   (0,2,0), so the parent wins. `app-celestial-body` owns a multi-property
+   hand-off keyed off `.is-hidden`, and losing the un-hidden half of it left
+   the arriving body with no transition at all: it teleported into its corner
+   while the departing one still animated. Component hosts are excluded here;
+   they never paint their own colour anyway. */
+:host *:not(app-celestial-body),
 :host {
   transition:
     color var(--theme-duration) var(--ease-soft),
