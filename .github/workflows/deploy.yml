@@ -1,0 +1,80 @@
+name: Deploy to OVH
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Simulate the deploy without uploading anything'
+        type: boolean
+        default: false
+
+# One deploy at a time: the FTP sync keeps a state file on the server that
+# concurrent runs would corrupt.
+concurrency:
+  group: deploy-ovh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check required secrets
+        env:
+          FTP_SERVER: ${{ secrets.OVH_FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.OVH_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.OVH_FTP_PASSWORD }}
+        run: |
+          missing=""
+          [ -z "$FTP_SERVER" ] && missing="$missing OVH_FTP_SERVER"
+          [ -z "$FTP_USERNAME" ] && missing="$missing OVH_FTP_USERNAME"
+          [ -z "$FTP_PASSWORD" ] && missing="$missing OVH_FTP_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secret(s):$missing"
+            echo "Add them in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test -- --watch=false
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          test -f dist/cv-site/browser/index.html
+          test -f dist/cv-site/browser/.htaccess
+          ls -la dist/cv-site/browser
+
+      - name: Deploy over FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.OVH_FTP_SERVER }}
+          username: ${{ secrets.OVH_FTP_USERNAME }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./dist/cv-site/browser/
+          server-dir: ${{ vars.OVH_FTP_SERVER_DIR || 'www/' }}
+          dry-run: ${{ inputs.dry_run == true }}
+          log-level: standard

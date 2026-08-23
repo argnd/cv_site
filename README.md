@@ -2,6 +2,29 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.5.
 
+## Project structure
+
+```
+src/app/
+  app.ts / app.html / app.css     shell: locale, day/night skin, page column
+  models/                         the shapes: content.models.ts, scene.models.ts
+  content/                        localized copy (JSON) + locale detection
+  animations/                     the decorative sky
+    cloud-art.ts                  cloud silhouettes and faces (SVG paths)
+    clouds.ts birds.ts            per-element placement and timing tables
+    stars.ts  hills.ts
+    scroll-parallax.ts            eased rAF loop feeding `--scroll-shift`
+    styles/*.css                  one stylesheet per scenery system
+  components/                     one component per page section
+```
+
+`animations/styles/` is pulled in through `styleUrls` on `App`, in an order that
+matters at both ends: `app.css` defines the theme tokens the scenery reads, and
+`reduced-motion.css` strips motion back out of everything before it.
+
+Nothing under `animations/` imports Angular — the data is inert, and the motion
+itself is CSS keyframes.
+
 ## Development server
 
 To start a local development server, run:
@@ -31,7 +54,7 @@ ng generate --help
 To build the project run:
 
 ```bash
-ng build
+++++++++++++++++++++++++++ng build
 ```
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
@@ -53,6 +76,27 @@ ng e2e
 ```
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Deployment (OVHcloud shared hosting)
+
+The app is a fully static SPA, so it only needs a file host. `.github/workflows/deploy.yml`
+builds it on every push to `main` and uploads `dist/cv-site/browser/` to the hosting over FTPS.
+
+Required repository secrets (`Settings > Secrets and variables > Actions`):
+
+| Secret | Value |
+| --- | --- |
+| `OVH_FTP_SERVER` | `ftp.clusterXXX.hosting.ovh.net` (OVHcloud panel, `FTP - SSH` tab) |
+| `OVH_FTP_USERNAME` | FTP login |
+| `OVH_FTP_PASSWORD` | FTP password |
+
+Optional repository *variable* `OVH_FTP_SERVER_DIR` overrides the target folder (defaults to `www/`).
+
+`public/.htaccess` ships with the build and handles the HTTPS redirect, the SPA fallback,
+compression and cache headers on OVH's Apache 2.4.
+
+Use `Actions > Deploy to OVH > Run workflow` with `dry_run` enabled to preview a deploy
+without uploading anything.
 
 ## Additional Resources
 
