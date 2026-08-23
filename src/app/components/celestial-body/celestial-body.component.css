@@ -92,7 +92,8 @@
 
 .moon-photo,
 .granulation,
-.sunspots {
+.sunspots,
+.limb-vignette {
   position: absolute;
   inset: 0;
   transition: opacity var(--theme-duration) var(--ease-soft);
@@ -113,9 +114,10 @@
   opacity: 1;
 }
 
-/* Sun granulation: many small, low-contrast blobs — fine uniform mottling
-   reads correctly here, unlike discrete craters. (day only) */
-.granulation {
+/* Sun granulation: real photospheric granulation is a fine, all-over mottle
+   of small bright convection cells separated by darker lanes — not just dark
+   blobs — so it's built from two offset layers rather than one. (day only) */
+.granulation--dark {
   background-image:
     radial-gradient(ellipse 7% 7% at 30% 34%, var(--celestial-shadow) 0%, transparent 100%),
     radial-gradient(ellipse 6% 6% at 45% 27%, var(--celestial-shadow) 0%, transparent 100%),
@@ -130,11 +132,44 @@
   opacity: 0;
 }
 
-.sunspots {
+.granulation--bright {
   background-image:
-    radial-gradient(ellipse 4% 3% at 38% 45%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 2.5% 2% at 62% 38%, var(--celestial-shadow) 0%, transparent 100%),
-    radial-gradient(ellipse 2% 1.6% at 51% 61%, var(--celestial-shadow) 0%, transparent 100%);
+    radial-gradient(ellipse 3% 3% at 36% 30%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.6% 2.6% at 52% 24%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.8% 2.8% at 67% 33%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.4% 2.4% at 77% 48%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.6% 2.6% at 69% 61%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.6% 2.6% at 53% 66%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.6% 2.6% at 36% 57%, var(--celestial-core) 0%, transparent 100%),
+    radial-gradient(ellipse 2.2% 2.2% at 27% 41%, var(--celestial-core) 0%, transparent 100%);
+  opacity: 0;
+}
+
+/* Sunspots: a soft penumbra halo plus a small sharp-edged umbra core, like
+   real ones, rather than a single flat tone. (day only) */
+.sunspots--penumbra {
+  background-image:
+    radial-gradient(ellipse 5.4% 4.2% at 38% 45%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 3.6% 2.8% at 62% 38%, var(--celestial-shadow) 0%, transparent 100%),
+    radial-gradient(ellipse 2.8% 2.2% at 51% 61%, var(--celestial-shadow) 0%, transparent 100%);
+  opacity: 0;
+}
+
+.sunspots--umbra {
+  background-image:
+    radial-gradient(ellipse 2.2% 1.7% at 38% 45%, var(--celestial-shadow) 0%, var(--celestial-shadow) 55%, transparent 100%),
+    radial-gradient(ellipse 1.4% 1.1% at 62% 38%, var(--celestial-shadow) 0%, var(--celestial-shadow) 55%, transparent 100%),
+    radial-gradient(ellipse 1.1% 0.9% at 51% 61%, var(--celestial-shadow) 0%, var(--celestial-shadow) 55%, transparent 100%);
+  opacity: 0;
+}
+
+/* Limb darkening: real limb darkening is radially symmetric (we're looking
+   straight at a self-lit sphere, unlike the moon's one-sided reflected
+   light), so it's layered on top as its own centered vignette rather than
+   baked into `.body`'s off-center gradient — which stays untouched so its
+   day/night color transition keeps interpolating smoothly. (day only) */
+.limb-vignette {
+  background: radial-gradient(circle at 50% 50%, transparent 52%, var(--celestial-shadow) 100%);
   opacity: 0;
 }
 
@@ -142,11 +177,23 @@
   opacity: 0;
 }
 
-:host(.is-day) .granulation {
-  opacity: 0.16;
+:host(.is-day) .granulation--dark {
+  opacity: 0.07;
 }
 
-:host(.is-day) .sunspots {
+:host(.is-day) .granulation--bright {
+  opacity: 0.08;
+}
+
+:host(.is-day) .sunspots--penumbra {
+  opacity: 0.05;
+}
+
+:host(.is-day) .sunspots--umbra {
+  opacity: 0.12;
+}
+
+:host(.is-day) .limb-vignette {
   opacity: 0.5;
 }
 
@@ -155,6 +202,12 @@
 /* Sibling of `.body` (not clipped by   */
 /* its overflow:hidden) so the blur can  */
 /* bleed softly past the sphere's edge.  */
+/* Moon-only: a crescent catching light  */
+/* from one side reads as reflected      */
+/* sunlight; the sun is self-lit, so this */
+/* would look physically wrong on it —   */
+/* its limb-vignette + corona carry that */
+/* role instead. (night only)            */
 /* ---------------------------------- */
 
 .rim {
@@ -176,6 +229,10 @@
   transition:
     border-color var(--theme-duration) var(--ease-soft),
     opacity var(--theme-duration) var(--ease-soft);
+}
+
+:host(.is-day) .rim {
+  opacity: 0;
 }
 
 @media (max-width: 560px) {

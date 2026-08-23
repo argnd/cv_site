@@ -66,29 +66,126 @@
   transition: background var(--theme-duration) var(--ease-soft);
 }
 
-/* Soft drifting haze for extra depth at night; fades out during the day. */
-.sky__haze {
+/* Scroll progress (0..1, eased in TS), fed into the nebula keyframes below
+   so the parallax reads as an addition to each lobe's own idle drift rather
+   than fighting it — both live on the same `transform` via calc(). */
+@property --scroll-shift {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.sky {
+  --scroll-shift: 0;
+}
+
+/* Layered multi-hue nebula for extra depth at night; each lobe has its own
+   hue, placement, blur and drift rhythm so they read as distinct drifting
+   gas clouds rather than one flat glow. Fades out during the day. */
+.sky__nebula {
   position: absolute;
   inset: -20% -30%;
-  background:
-    radial-gradient(ellipse 55% 32% at 72% 28%, var(--glow-soft) 0%, transparent 70%),
-    radial-gradient(ellipse 45% 28% at 22% 62%, var(--glow-soft) 0%, transparent 70%);
-  filter: blur(3px);
-  opacity: 0.6;
-  animation: haze-drift 200s ease-in-out infinite alternate;
+  opacity: 0.85;
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
-.scene.is-day .sky__haze {
+.sky__nebula--violet {
+  background: radial-gradient(ellipse 58% 38% at 78% 24%, var(--nebula-violet) 0%, transparent 72%);
+  filter: blur(4px);
+  animation: nebula-drift-a 210s ease-in-out infinite alternate;
+}
+
+.sky__nebula--teal {
+  background: radial-gradient(ellipse 52% 36% at 16% 60%, var(--nebula-teal) 0%, transparent 70%);
+  filter: blur(3.5px);
+  animation: nebula-drift-b 265s ease-in-out infinite alternate;
+}
+
+.sky__nebula--rose {
+  background: radial-gradient(ellipse 42% 30% at 56% 84%, var(--nebula-rose) 0%, transparent 68%);
+  filter: blur(3px);
+  animation: nebula-drift-c 175s ease-in-out infinite;
+}
+
+.scene.is-day .sky__nebula {
   opacity: 0;
 }
 
-@keyframes haze-drift {
+@keyframes nebula-drift-a {
   0% {
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(calc(var(--scroll-shift) * -14px), calc(var(--scroll-shift) * -32px), 0)
+      rotate(calc(var(--scroll-shift) * 5deg)) scale(1);
   }
   100% {
-    transform: translate3d(-4%, 3%, 0) scale(1.08);
+    transform: translate3d(calc(-5% + var(--scroll-shift) * -14px), calc(4% + var(--scroll-shift) * -32px), 0)
+      rotate(calc(var(--scroll-shift) * 5deg)) scale(1.1);
+  }
+}
+
+@keyframes nebula-drift-b {
+  0% {
+    transform: translate3d(calc(var(--scroll-shift) * 10px), calc(var(--scroll-shift) * 24px), 0)
+      rotate(calc(var(--scroll-shift) * -4deg)) scale(1.05);
+  }
+  100% {
+    transform: translate3d(calc(4% + var(--scroll-shift) * 10px), calc(-3% + var(--scroll-shift) * 24px), 0)
+      rotate(calc(var(--scroll-shift) * -4deg)) scale(0.97);
+  }
+}
+
+@keyframes nebula-drift-c {
+  0%,
+  100% {
+    transform: translate3d(calc(var(--scroll-shift) * -8px), calc(var(--scroll-shift) * -16px), 0)
+      rotate(calc(var(--scroll-shift) * 3deg)) scale(1);
+  }
+  50% {
+    transform: translate3d(calc(-3% + var(--scroll-shift) * -8px), calc(-4% + var(--scroll-shift) * -16px), 0)
+      rotate(calc(var(--scroll-shift) * 3deg)) scale(1.06);
+  }
+}
+
+/* Fine star-dust: many small, faint specks — denser and dimmer than the
+   proper star field — to give the nebula a grainy, textured feel rather
+   than a smooth flat wash. */
+.sky__stardust {
+  position: absolute;
+  inset: -10%;
+  background-image:
+    radial-gradient(0.6px 0.6px at 8% 14%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 24% 36%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 41% 9%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 63% 28%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 82% 17%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 95% 44%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 12% 58%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 34% 71%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 52% 52%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 71% 63%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 88% 78%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 5% 90%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 27% 95%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 46% 83%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 66% 91%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 90% 6%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 58% 8%, var(--text-strong), transparent 100%),
+    radial-gradient(0.6px 0.6px at 18% 24%, var(--text-strong), transparent 100%);
+  background-size: 140px 140px;
+  opacity: 0.35;
+  animation: stardust-drift 320s linear infinite;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene.is-day .sky__stardust {
+  opacity: 0;
+}
+
+@keyframes stardust-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(140px, -140px, 0);
   }
 }
 
@@ -470,7 +567,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sky__stars,
-  .sky__haze,
+  .sky__nebula,
+  .sky__stardust,
   .star,
   .shooting-star,
   .bird,

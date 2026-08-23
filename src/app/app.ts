@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { CelestialBodyComponent } from './components/celestial-body/celestial-body.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
@@ -154,8 +154,18 @@ export class App {
 
   protected readonly isNight = signal(true);
 
+  /** Eased 0..1 scroll progress through the page, used to give the nebula a
+   * subtle parallax drift/rotation instead of sitting fully static while
+   * scrolling (the sky itself is `position: fixed`, so it needs its own cue). */
+  protected readonly scrollShift = signal(0);
+
+  private scrollTarget = 0;
+  private scrollCurrent = 0;
+  private scrollRafId: number | null = null;
+
   constructor() {
     this.syncDocumentLanguage(this.locale());
+    this.initScrollParallax();
   }
 
   protected toggleTheme(): void {
@@ -171,5 +181,54 @@ export class App {
     if (typeof document !== 'undefined') {
       document.documentElement.lang = locale;
     }
+  }
+
+  /** Tracks scroll progress (0..1) and eases it toward `scrollShift` on each
+   * frame via a self-terminating rAF loop, rather than writing scroll events
+   * straight to the signal — this smooths out the parallax so it glides
+   * instead of jittering with every scroll tick. */
+  private initScrollParallax(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const updateTarget = (): void => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      this.scrollTarget = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+      this.runScrollEasing();
+    };
+
+    window.addEventListener('scroll', updateTarget, { passive: true });
+    window.addEventListener('resize', updateTarget, { passive: true });
+    updateTarget();
+
+    inject(DestroyRef).onDestroy(() => {
+      window.removeEventListener('scroll', updateTarget);
+      window.removeEventListener('resize', updateTarget);
+      if (this.scrollRafId !== null) {
+        cancelAnimationFrame(this.scrollRafId);
+      }
+    });
+  }
+
+  private runScrollEasing(): void {
+    if (this.scrollRafId !== null) {
+      return;
+    }
+
+    const step = (): void => {
+      const diff = this.scrollTarget - this.scrollCurrent;
+      if (Math.abs(diff) < 0.0005) {
+        this.scrollCurrent = this.scrollTarget;
+        this.scrollShift.set(this.scrollCurrent);
+        this.scrollRafId = null;
+        return;
+      }
+      this.scrollCurrent += diff * 0.08;
+      this.scrollShift.set(this.scrollCurrent);
+      this.scrollRafId = requestAnimationFrame(step);
+    };
+
+    this.scrollRafId = requestAnimationFrame(step);
   }
 }

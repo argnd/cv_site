@@ -71,6 +71,21 @@
   inherits: true;
   initial-value: rgba(248, 250, 252, 0.65);
 }
+@property --nebula-violet {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(147, 130, 246, 0.24);
+}
+@property --nebula-teal {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(45, 190, 178, 0.2);
+}
+@property --nebula-rose {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(224, 122, 158, 0.18);
+}
 
 :root {
   color-scheme: dark;
@@ -96,6 +111,11 @@
   /* Glow */
   --glow-soft: rgba(248, 250, 252, 0.35);
   --glow-strong: rgba(248, 250, 252, 0.65);
+
+  /* Nebula (night only; fades out for day, so no day-mode override needed) */
+  --nebula-violet: rgba(147, 130, 246, 0.24);
+  --nebula-teal: rgba(45, 190, 178, 0.2);
+  --nebula-rose: rgba(224, 122, 158, 0.18);
 
   /* Typography tokens */
   --font-display: 'Playfair Display', Georgia, serif;

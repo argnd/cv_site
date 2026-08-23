@@ -5,9 +5,12 @@
     (localeChange)="setLocale($event)"
   />
 
-  <div class="sky" aria-hidden="true">
+  <div class="sky" aria-hidden="true" [style.--scroll-shift]="scrollShift()">
     <div class="sky__gradient"></div>
-    <div class="sky__haze"></div>
+    <div class="sky__nebula sky__nebula--violet"></div>
+    <div class="sky__nebula sky__nebula--teal"></div>
+    <div class="sky__nebula sky__nebula--rose"></div>
+    <div class="sky__stardust"></div>
     <div class="sky__stars sky__stars--far"></div>
     <div class="sky__stars sky__stars--near"></div>
 
