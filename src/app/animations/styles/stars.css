@@ -12,53 +12,146 @@
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
-/* Scroll parallax rides the standalone `translate`/`rotate` properties, never
-   the keyframes. A custom property referenced *inside* `@keyframes` forces the
-   browser to re-resolve the whole animation on the main thread every time that
-   property changes — i.e. every scroll frame — and disqualifies it from the
-   compositor. With a blur on each lobe that was the most expensive thing in
-   the scene. Keeping the keyframes constant lets them composite, and the
-   scroll offset lands in a slot the keyframes don't touch. */
+/* The scroll offset is a compositor-driven animation, not a per-frame style
+   write, and that is the whole point of this block.
+
+   `.sky` is `position: fixed`, and Firefox scrolls on the compositor (APZ)
+   independently of the main thread. Any main-thread style change during a
+   scroll forces a paint that then has to be reconciled against the compositor's
+   async scroll offset, and the fixed sky shifts by a fraction of a pixel each
+   time it happens. Against a smooth gradient that is invisible; against a field
+   of 1px stars it is exactly the judder this replaces. A scroll-driven
+   animation never reaches the main thread, so the night sky composites end to
+   end and `../scroll-parallax.ts` can stop listening at night altogether.
+
+   It also drops the ~80ms of deliberate trailing the eased JS path adds, which
+   was itself part of what read as lag: the lobes are now locked to the scroll
+   position rather than gliding toward it.
+
+   Feature-gated, but note where the gate is drawn: the `animation-name`
+   declarations sit *outside* `@supports` on purpose. Angular's style shim
+   rewrites `@keyframes` names to the component's scope and rewrites the
+   `animation`/`animation-name` declarations to match — but it does not descend
+   into `@supports`, so a name written inside the block keeps its raw spelling
+   and points at a keyframes rule that no longer exists under that name. The
+   animation then silently never runs. Only timeline-related longhands go in
+   the block; no keyframe name does.
+
+   The fallback for an engine without scroll-driven animations is therefore a
+   named animation parked at 0% — that is, the resting offset. The idle drift
+   below still plays, and the scenery loses at most 32px of decoration. */
 .sky__nebula--violet,
 .sky__nebula--teal,
 .sky__nebula--rose {
-  translate: calc(var(--scroll-shift) * var(--parallax-x))
-    calc(var(--scroll-shift) * var(--parallax-y));
-  rotate: calc(var(--scroll-shift) * var(--parallax-r));
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-play-state: paused;
 }
 
 .sky__nebula--violet {
-  background: radial-gradient(ellipse 58% 38% at 78% 24%, var(--nebula-violet) 0%, transparent 72%);
-  filter: blur(4px);
-  animation: nebula-drift-a 210s ease-in-out infinite alternate;
-  --parallax-x: -14px;
-  --parallax-y: -32px;
-  --parallax-r: 5deg;
+  animation-name: nebula-parallax-violet;
 }
 
 .sky__nebula--teal {
-  background: radial-gradient(ellipse 52% 36% at 16% 60%, var(--nebula-teal) 0%, transparent 70%);
-  filter: blur(3.5px);
-  animation: nebula-drift-b 265s ease-in-out infinite alternate;
-  --parallax-x: 10px;
-  --parallax-y: 24px;
-  --parallax-r: -4deg;
+  animation-name: nebula-parallax-teal;
 }
 
 .sky__nebula--rose {
+  animation-name: nebula-parallax-rose;
+}
+
+@supports (animation-timeline: scroll()) {
+  .sky__nebula--violet,
+  .sky__nebula--teal,
+  .sky__nebula--rose {
+    /* `auto` duration means "span the whole timeline". Longhands rather than
+       the `animation` shorthand: the shorthand resets `animation-timeline`
+       back to `auto` and would silently undo the timeline. */
+    animation-duration: auto;
+    animation-play-state: running;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* Scroll 0% -> 100% of the page maps to resting -> fully shifted. The host only
+   ever carries transform-like properties, and the lobe below only ever carries
+   `transform`, so neither box mixes a script-driven value into an animated
+   transform group — which is what Gecko refuses to keep on the compositor. */
+@keyframes nebula-parallax-violet {
+  from {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  to {
+    translate: -14px -32px;
+    rotate: 5deg;
+  }
+}
+
+@keyframes nebula-parallax-teal {
+  from {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  to {
+    translate: 10px 24px;
+    rotate: -4deg;
+  }
+}
+
+@keyframes nebula-parallax-rose {
+  from {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  to {
+    translate: -8px -16px;
+    rotate: 3deg;
+  }
+}
+
+/* The lobe itself: gradient, blur and drift. Sized to its host, so splitting
+   the box changed nothing about what is painted — the gradient percentages
+   still resolve against the same rectangle, and a filter applies in the
+   element's own coordinate space either way.
+
+   Deliberately no `will-change` on either box. Firefox ignores will-change once
+   the elements carrying it exceed three viewport areas document-wide, and these
+   three lobes alone are ~6.7 — they would blow the budget and starve the hints
+   in `hills.css`, which sit later in the document. Both boxes carry a running
+   animation, so both are promoted on their own anyway. */
+.sky__nebula-gas {
+  position: absolute;
+  inset: 0;
+}
+
+.sky__nebula--violet .sky__nebula-gas {
+  background: radial-gradient(ellipse 58% 38% at 78% 24%, var(--nebula-violet) 0%, transparent 72%);
+  filter: blur(4px);
+  animation: nebula-drift-a 210s ease-in-out infinite alternate;
+}
+
+.sky__nebula--teal .sky__nebula-gas {
+  background: radial-gradient(ellipse 52% 36% at 16% 60%, var(--nebula-teal) 0%, transparent 70%);
+  filter: blur(3.5px);
+  animation: nebula-drift-b 265s ease-in-out infinite alternate;
+}
+
+.sky__nebula--rose .sky__nebula-gas {
   background: radial-gradient(ellipse 42% 30% at 56% 84%, var(--nebula-rose) 0%, transparent 68%);
   filter: blur(3px);
   animation: nebula-drift-c 175s ease-in-out infinite;
-  --parallax-x: -8px;
-  --parallax-y: -16px;
-  --parallax-r: 3deg;
 }
 
-/* `animation-play-state` does not inherit, so every animated element needs its
-   own pause rule — gating the layer's opacity alone would leave the browser
-   compositing invisible frames for the whole time the other theme is up. */
+/* `animation-play-state` does not inherit, so the lobe has to be parked by
+   name — gating the host's opacity alone would leave the browser compositing
+   invisible frames for the whole time the other theme is up. */
 .scene.is-day .sky__nebula {
   opacity: 0;
+}
+
+.scene.is-day .sky__nebula-gas {
   animation-play-state: paused;
 }
 
@@ -184,6 +277,27 @@
   }
   to {
     transform: translate3d(-260px, -260px, 0);
+  }
+}
+
+/* Firefox steps these layers in visibly coarser increments than Blink does, so
+   the same duration reads as a jump-per-tick rather than a drift. Slowing them
+   right down there shrinks each step to match; the layers are a background wash
+   whose motion is meant to be barely perceptible anyway, so the only visible
+   difference is that it stops stuttering. Ratios between the three are kept so
+   the parallax depth ordering still reads.
+   `-moz-appearance` is the narrowest reliable Firefox-only feature query. */
+@supports (-moz-appearance: none) {
+  .sky__stardust {
+    animation-duration: 1920s;
+  }
+
+  .sky__stars--far {
+    animation-duration: 1440s;
+  }
+
+  .sky__stars--near {
+    animation-duration: 1020s;
   }
 }
 

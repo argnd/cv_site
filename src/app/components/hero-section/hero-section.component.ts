@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { HeroSectionContent } from '../../models/content.models';
-import { GAMES_PATH, navigateToSection } from '../../navigation/section-route';
+import { navigateToSection } from '../../navigation/section-route';
 
 @Component({
   selector: 'app-hero-section',
@@ -11,7 +11,8 @@ import { GAMES_PATH, navigateToSection } from '../../navigation/section-route';
 export class HeroSectionComponent {
   readonly content = input.required<HeroSectionContent>();
 
-  protected readonly gamesPath = GAMES_PATH;
+  /** The games section's URL, already localized by the shell. */
+  readonly gamesPath = input.required<string>();
 
   /**
    * The link is a real `href`, so it still opens in a new tab and still shows
@@ -20,6 +21,6 @@ export class HeroSectionComponent {
    */
   protected onProjectsClick(event: MouseEvent): void {
     event.preventDefault();
-    navigateToSection(GAMES_PATH);
+    navigateToSection(this.gamesPath());
   }
 }

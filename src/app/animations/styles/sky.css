@@ -63,15 +63,17 @@
   opacity: 1;
 }
 
-/* Scroll progress (0..1, eased in TS), fed into the nebula keyframes below
-   so the parallax reads as an addition to each lobe's own idle drift rather
-   than fighting it — both live on the same `transform` via calc(). */
+/* Eased scroll progress (0..1), written per frame by `../scroll-parallax.ts`.
+
+   Deliberately **non-inherited**. An inherited custom property rewritten 60
+   times a second forces a style re-resolve of every descendant of the element
+   it is set on, and `.sky` has a few hundred of them — clouds, birds, hills and
+   cats are all SVG trees whose every fill and stroke is a `var()` that has to
+   be substituted again on each pass. Only ~20 elements actually read this, so
+   the loop writes it to each of those directly instead; `initial-value` covers
+   everything else, including the window before the first frame. */
 @property --scroll-shift {
   syntax: '<number>';
-  inherits: true;
+  inherits: false;
   initial-value: 0;
-}
-
-.sky {
-  --scroll-shift: 0;
 }

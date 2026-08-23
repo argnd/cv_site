@@ -5,6 +5,7 @@
 @media (prefers-reduced-motion: reduce) {
   .sky__stars,
   .sky__nebula,
+  .sky__nebula-gas,
   .sky__stardust,
   .star,
   .shooting-star,
@@ -36,21 +37,15 @@
     opacity: 1;
   }
 
-  /* Scroll-driven motion is still motion — pin the scenery where it sits. */
+  /* Scroll-driven motion is still motion — pin the scenery where it sits. The
+     nebula needs no entry here: its offset is a scroll-driven *animation*, so
+     the `animation: none` rule above already stops it. */
   .cloud,
   .bird-flock,
   .hill,
   .hill-prop {
     --parallax-x: 0px;
     --parallax-y: 0px;
-  }
-
-  .sky__nebula--violet,
-  .sky__nebula--teal,
-  .sky__nebula--rose {
-    --parallax-x: 0px;
-    --parallax-y: 0px;
-    --parallax-r: 0deg;
   }
 
   /* Nothing moves any more, so the compositor layers are pure overhead. */

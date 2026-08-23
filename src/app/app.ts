@@ -4,13 +4,14 @@ import {
   Component,
   computed,
   DestroyRef,
+  DOCUMENT,
   effect,
   ElementRef,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
+import { PlatformLocation } from '@angular/common';
 import { BIRD_FLOCKS } from './animations/birds';
 import { RAINDROP_PATH } from './animations/cloud-art';
 import { createClouds, RAINDROPS } from './animations/clouds';
@@ -26,10 +27,11 @@ import { GamesSectionComponent } from './components/games-section/games-section.
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 import { LocaleSelectorComponent } from './components/locale-selector/locale-selector.component';
 import { SkillsSectionComponent } from './components/skills-section/skills-section.component';
-import { detectLocale } from './content/locale';
+import { localeFromPath, localizePath } from './content/locale';
 import { siteContent } from './content/site-content';
 import { SupportedLocale } from './models/content.models';
-import { startSectionRouting } from './navigation/section-route';
+import { GAMES_PATH, pushPath, startSectionRouting } from './navigation/section-route';
+import { syncDocumentHead } from './seo/document-head';
 
 /** Browser-chrome colour for each skin, mirroring `--sky-void`. */
 const CHROME_COLOR = { night: '#05060d', day: '#2ea8ec' } as const;
@@ -42,6 +44,7 @@ const CHROME_COLOR = { night: '#05060d', day: '#2ea8ec' } as const;
  * - `models/`     the shape of that copy, and of the scenery below
  * - `animations/` the decorative sky: its data, its motion and its stylesheets
  * - `navigation/` the one section that has a URL of its own
+ * - `seo/`        what the `<head>` says about whichever locale is on screen
  */
 @Component({
   selector: 'app-root',
@@ -73,10 +76,25 @@ const CHROME_COLOR = { night: '#05060d', day: '#2ea8ec' } as const;
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly locale = signal<SupportedLocale>(detectLocale());
+  /* Injected before anything reads them: `locale` is initialized from the URL,
+     and field initializers run top to bottom. */
+  private readonly document = inject(DOCUMENT);
+  private readonly platformLocation = inject(PlatformLocation);
+
+  /**
+   * The translation on screen, taken from the URL rather than the browser.
+   * `/` is French and `/en` English, each prerendered and indexed separately —
+   * see `content/locale.ts` for why the browser's preference is not consulted.
+   */
+  protected readonly locale = signal<SupportedLocale>(
+    localeFromPath(this.platformLocation.pathname),
+  );
 
   /** Every string on the page, for the active locale. */
   protected readonly content = computed(() => siteContent(this.locale()));
+
+  /** The games section's URL in the locale on screen: `/project` or `/en/project`. */
+  protected readonly gamesPath = computed(() => localizePath(GAMES_PATH, this.locale()));
 
   protected readonly isNight = signal(true);
 
@@ -98,16 +116,24 @@ export class App {
      outside the injection context, so `inject()` would throw there. */
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly title = inject(Title);
-  private readonly meta = inject(Meta);
-
   constructor() {
-    this.syncDocumentMeta(this.locale());
+    /* Synchronously, not in an effect: this also runs during prerendering,
+       where the head has to be complete by the time the document is
+       serialized to a file. */
+    syncDocumentHead(this.document, this.locale());
     effect(() => this.syncColorScheme(this.isNight()));
+    /* Everything the parallax loop drives is day-only scenery, and a
+       main-thread scroll listener is not free on a page whose backdrop is
+       `position: fixed` — see the class note in `animations/scroll-parallax.ts`.
+       The night sky carries its own parallax as a scroll-driven CSS animation
+       instead, so nothing is lost by switching this off. */
+    effect(() => this.parallax.setEnabled(!this.isNight()));
     afterNextRender(() => {
       this.destroyRef.onDestroy(this.parallax.start());
       /* After render, so the section it may need to scroll to exists. */
-      this.destroyRef.onDestroy(startSectionRouting());
+      this.destroyRef.onDestroy(
+        startSectionRouting((pathname) => this.applyLocale(localeFromPath(pathname))),
+      );
     });
   }
 
@@ -115,37 +141,24 @@ export class App {
     this.isNight.update((value) => !value);
   }
 
-  protected setLocale(locale: SupportedLocale): void {
-    this.locale.set(locale);
-    this.syncDocumentMeta(locale);
-  }
-
   /**
-   * Rewrites the `<head>` for the active locale: the language attribute, the
-   * title, and the three descriptions that link previews read.
-   *
-   * `index.html` ships the French wording, which is what a crawler indexes —
-   * the page renders client-side, so nothing here reaches a crawler that does
-   * not run JavaScript. This exists for the visitor who switches to English
-   * and then shares or bookmarks the page: without it the tab title and the
-   * preview card would stay French around English content.
+   * Switches translation, which is a navigation: each locale has its own
+   * indexed URL, so the address bar has to follow or a shared link would hand
+   * the reader back the language they just left. The scroll position stays put
+   * — the reader asked for other words, not another place on the page.
    */
-  private syncDocumentMeta(locale: SupportedLocale): void {
-    if (typeof document === 'undefined') {
+  protected setLocale(locale: SupportedLocale): void {
+    if (locale === this.locale()) {
       return;
     }
 
-    document.documentElement.lang = locale;
+    pushPath(localizePath(this.platformLocation.pathname, locale));
+    this.applyLocale(locale);
+  }
 
-    const { title, description, openGraphLocale } = siteContent(locale).appShell.documentMeta;
-
-    this.title.setTitle(title);
-    this.meta.updateTag({ name: 'description', content: description });
-    this.meta.updateTag({ property: 'og:title', content: title });
-    this.meta.updateTag({ property: 'og:description', content: description });
-    this.meta.updateTag({ property: 'og:locale', content: openGraphLocale });
-    this.meta.updateTag({ name: 'twitter:title', content: title });
-    this.meta.updateTag({ name: 'twitter:description', content: description });
+  private applyLocale(locale: SupportedLocale): void {
+    this.locale.set(locale);
+    syncDocumentHead(this.document, locale);
   }
 
   /**
@@ -154,12 +167,8 @@ export class App {
    * and the mobile browser chrome stay night-colored around a light page.
    */
   private syncColorScheme(isNight: boolean): void {
-    if (typeof document === 'undefined') {
-      return;
-    }
-
-    document.documentElement.style.colorScheme = isNight ? 'dark' : 'light';
-    document
+    this.document.documentElement.style.colorScheme = isNight ? 'dark' : 'light';
+    this.document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', isNight ? CHROME_COLOR.night : CHROME_COLOR.day);
   }
