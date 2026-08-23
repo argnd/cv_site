@@ -38,14 +38,14 @@
   --text-soft: #46546f;
   --text-faint: rgba(22, 35, 63, 0.55);
 
-  --celestial-core: #fff0b8;
-  --celestial-edge: #ffc233;
-  --celestial-shadow: #f0921f;
+  --celestial-core: var(--sun-core);
+  --celestial-edge: var(--sun-edge);
+  --celestial-shadow: var(--sun-shadow);
 
   /* Glow stays warm and real in day — it's the sun's light, and the halo needs
      it. What day drops is *bloom on text*, which `--bloom-*` handles. */
-  --glow-soft: rgba(255, 190, 80, 0.45);
-  --glow-strong: rgba(255, 190, 80, 0.7);
+  --glow-soft: var(--sun-glow-soft);
+  --glow-strong: var(--sun-glow-strong);
   --bloom-soft: transparent;
   --bloom-strong: transparent;
 
@@ -140,14 +140,14 @@
 /* Day-only atmosphere, layered over the (still opaque) base gradient rather
    than cross-fading with it, so the body background never bleeds through
    mid-transition. Flat-vector banding + a warm bloom anchored on the sun's
-   actual top-right position. */
+   actual upper-left position. */
 .sky__daylight {
   position: absolute;
   inset: 0;
   opacity: 0;
   background:
     radial-gradient(
-      circle 46vmax at 86% 8%,
+      circle 46vmax at 11% 16%,
       rgba(255, 226, 138, 0.85) 0%,
       rgba(255, 226, 138, 0) 60%
     ),

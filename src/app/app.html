@@ -71,7 +71,8 @@
       }
     </div>
 
-    <app-celestial-body [class.is-day]="!isNight()" />
+    <app-celestial-body class="celestial--moon" [class.is-hidden]="!isNight()" />
+    <app-celestial-body class="celestial--sun is-day" [class.is-hidden]="isNight()" />
 
     @for (star of heroStars; track $index) {
       <span

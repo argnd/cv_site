@@ -177,14 +177,32 @@
   --text-soft: #94a3b8;
   --text-faint: rgba(203, 213, 225, 0.45);
 
+  /* The moon's and the sun's own palettes, defined once. `--celestial-*` and
+     `--glow-*` below are the *scene's* current light and follow the theme (the
+     toggle thumb and the star field read them). The two celestial bodies pin
+     these directly instead, because during the cross-fade the outgoing body is
+     still on screen while the theme tokens have already flipped — an amber
+     moon, or a sun turning grey-blue as it sets. */
+  --moon-core: #f8fafc;
+  --moon-edge: #b9c2d6;
+  --moon-shadow: #7d879e;
+  --moon-glow-soft: rgba(248, 250, 252, 0.35);
+  --moon-glow-strong: rgba(248, 250, 252, 0.65);
+
+  --sun-core: #fff0b8;
+  --sun-edge: #ffc233;
+  --sun-shadow: #f0921f;
+  --sun-glow-soft: rgba(255, 190, 80, 0.45);
+  --sun-glow-strong: rgba(255, 190, 80, 0.7);
+
   /* Celestial body (moon by night, sun by day) */
-  --celestial-core: #f8fafc;
-  --celestial-edge: #b9c2d6;
-  --celestial-shadow: #7d879e;
+  --celestial-core: var(--moon-core);
+  --celestial-edge: var(--moon-edge);
+  --celestial-shadow: var(--moon-shadow);
 
   /* Glow */
-  --glow-soft: rgba(248, 250, 252, 0.35);
-  --glow-strong: rgba(248, 250, 252, 0.65);
+  --glow-soft: var(--moon-glow-soft);
+  --glow-strong: var(--moon-glow-strong);
   --bloom-soft: rgba(248, 250, 252, 0.35);
   --bloom-strong: rgba(248, 250, 252, 0.65);
 

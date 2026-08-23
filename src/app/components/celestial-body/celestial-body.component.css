@@ -1,19 +1,104 @@
+/* Two instances of this component are mounted at once — one moon, one sun, in
+   different corners — and the theme change hands off between them above the
+   top of the screen: the outgoing body climbs away and out of frame as it
+   dissolves, then the incoming one drops back down into its own corner. Both
+   lean toward the middle of the sky on the way, so the pair reads as one
+   hand-over rather than two unrelated exits.
+   A single element could not do this; it would have to slide corner to corner.
+
+   The hand-off is sequential, so each body owns half of `--theme-duration`:
+   the outgoing leg runs immediately, the incoming leg is delayed by one leg so
+   it only begins once the other has fully gone. Both are finished by the time
+   the sky cross-fade is, and at `--theme-duration: 0ms` (reduced motion) both
+   legs collapse to an instant swap. */
 :host {
+  --size: clamp(64px, 9vw, 110px);
+  --home-top: clamp(1.5rem, 6vh, 4rem);
+  --home-right: clamp(1.25rem, 8vw, 6rem);
+  --leg: calc(var(--theme-duration) / 2);
+
+  /* Climb exactly far enough to put the disc past the top edge at the very end
+     of the leg — no further. Overshooting means the body clears early and
+     spends the remainder of the leg travelling where nobody can see it. The
+     flames hang 0.75x the host size lower and never clear; they are at zero
+     opacity by then. */
+  --exit-lift: calc(var(--home-top) + var(--size));
+  --to-exit-y: calc(-1 * var(--exit-lift));
+  /* Lateral lean, signed toward the middle of the sky — the moon sits at the
+     right, so it leans left. This is the term that buys screen time: sideways
+     travel costs nothing, because the body has most of the sky to cross before
+     it runs out of room, while every pixel of climb spends its remaining
+     distance to the edge. Leaning the path over therefore slows the exit
+     without slowing the body. Both axes ride the one `translate` on one timing
+     function, which is what keeps the path a straight line. */
+  --to-exit-x: calc(-1.3 * var(--exit-lift));
+
   position: absolute;
-  top: clamp(1.5rem, 6vh, 4rem);
-  right: clamp(1.25rem, 8vw, 6rem);
-  width: clamp(64px, 9vw, 110px);
-  height: clamp(64px, 9vw, 110px);
+  top: var(--home-top);
+  right: var(--home-right);
+  width: var(--size);
+  height: var(--size);
   display: block;
-  transition: top var(--theme-duration) var(--ease-soft);
+  translate: 0 0;
+  /* Constant speed, and opacity on the same curve so the body dissolves in
+     step with how far it has travelled. Easing either one would decouple the
+     two and make the fade lead or trail the movement. */
+  transition:
+    translate var(--leg) linear var(--leg),
+    opacity var(--leg) linear var(--leg),
+    visibility 0s linear var(--leg);
 }
 
-/* The sun sits lower than the moon. `.halo` could always overflow the top of
-   the viewport unnoticed because it's a soft bloom, but the rays are
-   hard-edged, so a clipped spoke reads as a rendering bug. Dropping the disc
-   buys the radius they need. */
-:host(.is-day) {
-  top: clamp(3.5rem, 9vh, 5.5rem);
+/* Each body carries its own light rather than the scene's, so the one on its
+   way out keeps its colour for the whole hand-over. */
+:host(.celestial--moon) {
+  --celestial-core: var(--moon-core);
+  --celestial-edge: var(--moon-edge);
+  --celestial-shadow: var(--moon-shadow);
+  --glow-soft: var(--moon-glow-soft);
+  --glow-strong: var(--moon-glow-strong);
+}
+
+/* The sun sits under the locale selector on the left. Its flames reach ~0.75x
+   the host size past every edge, so `left` has to stay clear of that or the
+   sky's `overflow: hidden` shaves a spoke off — and a clipped spoke reads as a
+   rendering bug rather than a design choice. */
+:host(.celestial--sun) {
+  --home-top: clamp(4.5rem, 10vh, 6.5rem);
+  --home-left: clamp(3rem, 7vw, 5.5rem);
+  /* Mirror of the moon's lean: the sun sits at the left, so it leans right. */
+  --to-exit-x: calc(1.3 * var(--exit-lift));
+
+  top: var(--home-top);
+  right: auto;
+  left: var(--home-left);
+
+  --celestial-core: var(--sun-core);
+  --celestial-edge: var(--sun-edge);
+  --celestial-shadow: var(--sun-shadow);
+  --glow-soft: var(--sun-glow-soft);
+  --glow-strong: var(--sun-glow-strong);
+}
+
+/* Leaving: a straight climb out through the top edge, leaning toward the middle
+   of the sky, dissolving at the same even rate.
+   `visibility` is stepped at the end of the leg so the departed body stops
+   painting entirely rather than lingering as a transparent layer the
+   compositor still has to handle. */
+:host(.is-hidden) {
+  opacity: 0;
+  visibility: hidden;
+  translate: var(--to-exit-x) var(--to-exit-y);
+  transition:
+    translate var(--leg) linear,
+    opacity var(--leg) linear,
+    visibility 0s linear var(--leg);
+}
+
+:host(.is-hidden) .halo,
+:host(.is-hidden) .rays,
+:host(.is-hidden) .rays__spin {
+  animation-play-state: paused;
 }
 
 /* ---------------------------------- */
@@ -262,8 +347,7 @@
 
 @media (max-width: 560px) {
   :host {
-    width: 56px;
-    height: 56px;
+    --size: 56px;
   }
 }
 
