@@ -5,11 +5,39 @@
     <title>Armel Gandour — Portfolio</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Armel Gandour — software engineer. A calm, starlit portfolio." />
+    <meta
+      name="description"
+      content="Armel Gandour — software engineer. A calm, starlit portfolio."
+    />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#05060d" />
     <link rel="canonical" href="https://armelgandour.fr/" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Link previews. No og:image yet: the only artwork here is the moon
+         cutout, which is a pale shape on transparency and disappears against
+         the white card background most clients use. Drop a 1200x630 opaque
+         image in public/images/ and point og:image + twitter:image at it to
+         upgrade these from text cards to image cards. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Armel Gandour" />
+    <meta property="og:url" content="https://armelgandour.fr/" />
+    <meta property="og:title" content="Armel Gandour — Portfolio" />
+    <meta
+      property="og:description"
+      content="Armel Gandour — software engineer. A calm, starlit portfolio."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Armel Gandour — Portfolio" />
+    <meta
+      name="twitter:description"
+      content="Armel Gandour — software engineer. A calm, starlit portfolio."
+    />
+
+    <!-- The build inlines this stylesheet's @font-face rules into the document
+         head (Angular's `optimization.fonts.inline`), so it is not
+         render-blocking in production. Leave it as rel="stylesheet" — the
+         inliner only rewrites links declared that way. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

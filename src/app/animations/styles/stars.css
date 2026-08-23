@@ -54,8 +54,12 @@
   --parallax-r: 3deg;
 }
 
+/* `animation-play-state` does not inherit, so every animated element needs its
+   own pause rule — gating the layer's opacity alone would leave the browser
+   compositing invisible frames for the whole time the other theme is up. */
 .scene.is-day .sky__nebula {
   opacity: 0;
+  animation-play-state: paused;
 }
 
 @keyframes nebula-drift-a {
@@ -119,6 +123,7 @@
 
 .scene.is-day .sky__stardust {
   opacity: 0;
+  animation-play-state: paused;
 }
 
 @keyframes stardust-drift {
@@ -170,6 +175,7 @@
 
 .scene.is-day .sky__stars {
   opacity: 0;
+  animation-play-state: paused;
 }
 
 @keyframes drift {

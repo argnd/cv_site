@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { HeroSectionContent } from '../../models/content.models';
+import { GAMES_PATH, navigateToSection } from '../../navigation/section-route';
 
 @Component({
   selector: 'app-hero-section',
@@ -10,17 +11,15 @@ import { HeroSectionContent } from '../../models/content.models';
 export class HeroSectionComponent {
   readonly content = input.required<HeroSectionContent>();
 
+  protected readonly gamesPath = GAMES_PATH;
+
+  /**
+   * The link is a real `href`, so it still opens in a new tab and still shows
+   * its target in the status bar. A plain click is handled in-page instead, to
+   * keep the scroll and the sky where they are.
+   */
   protected onProjectsClick(event: MouseEvent): void {
     event.preventDefault();
-
-    const nextPath = '/project';
-    if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, '', nextPath);
-    }
-
-    document.getElementById('games')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+    navigateToSection(GAMES_PATH);
   }
 }

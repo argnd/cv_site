@@ -6,14 +6,23 @@
     <div class="timeline">
       <ol class="timeline__nav" role="tablist" [attr.aria-label]="content().listAriaLabel">
         @for (experience of content().items; track experience.company; let i = $index) {
-          <li>
+          <!-- The list markup is presentational: a tablist may only contain
+               tabs, so the implicit `listitem` role has to be stripped or the
+               tabs are no longer owned by the list as far as ARIA is
+               concerned. -->
+          <li role="presentation">
             <button
+              #tab
               class="timeline__node"
               [class.is-active]="selectedExperience() === i"
               (click)="selectExperience(i)"
+              (keydown)="onTabKeydown($event, i)"
               type="button"
               role="tab"
+              [id]="'experience-tab-' + i"
               [attr.aria-selected]="selectedExperience() === i"
+              aria-controls="experience-panel"
+              [attr.tabindex]="selectedExperience() === i ? 0 : -1"
             >
               <span class="timeline__dot"></span>
               <span class="timeline__label">
@@ -25,7 +34,17 @@
         }
       </ol>
 
-      <article class="timeline__detail" role="tabpanel">
+      <!-- Only the selected panel is ever rendered, so every tab points here
+           and the panel names whichever tab currently owns it. `tabindex` makes
+           it a stop of its own: tabbing out of the list lands on the details it
+           just changed, rather than skipping past them. -->
+      <article
+        class="timeline__detail"
+        role="tabpanel"
+        id="experience-panel"
+        [attr.aria-labelledby]="'experience-tab-' + selectedExperience()"
+        tabindex="0"
+      >
         <h3>{{ selectedItem().role }}</h3>
         <p class="hero__meta">{{ selectedItem().company }} · {{ selectedItem().location }}</p>
         <p class="timeline__summary">{{ selectedItem().mainData }}</p>
@@ -51,7 +70,7 @@
             type="button"
             class="link-toggle timeline__toggle"
             [attr.aria-expanded]="areHighlightsExpanded()"
-            aria-controls="experience-highlights"
+            [attr.aria-controls]="areHighlightsExpanded() ? 'experience-highlights' : null"
             (click)="toggleHighlights()"
           >
             {{ areHighlightsExpanded() ? content().collapseDetailsLabel : content().expandDetailsLabel }}

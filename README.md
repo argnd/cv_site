@@ -15,6 +15,7 @@ src/app/
     stars.ts  hills.ts
     scroll-parallax.ts            eased rAF loop feeding `--scroll-shift`
     styles/*.css                  one stylesheet per scenery system
+  navigation/                     `/project` <-> the games section, no router
   components/                     one component per page section
 ```
 

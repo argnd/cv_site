@@ -42,9 +42,17 @@
   --cloud-opacity: 0.97;
 }
 
+/* `animation-play-state` does not inherit, so the bob and the rain have to be
+   parked by name too — otherwise they keep animating behind an invisible
+   layer for as long as the night lasts. */
+.scene:not(.is-day) .cloud,
+.scene:not(.is-day) .cloud__art,
+.scene:not(.is-day) .cloud__drop {
+  animation-play-state: paused;
+}
+
 .scene:not(.is-day) .cloud {
   opacity: 0 !important;
-  animation-play-state: paused;
 }
 
 .cloud__art {

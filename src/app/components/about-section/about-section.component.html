@@ -10,11 +10,13 @@
         [innerHTML]="content().bodyExpanded"
       ></div>
     }
+    <!-- `aria-controls` only points at the panel while the panel exists;
+         `aria-expanded` carries the state the rest of the time. -->
     <button
       type="button"
       class="link-toggle about__toggle"
       [attr.aria-expanded]="isExpanded()"
-      aria-controls="about-expanded-content"
+      [attr.aria-controls]="isExpanded() ? 'about-expanded-content' : null"
       (click)="toggleExpanded()"
     >
       {{ isExpanded() ? content().collapseLabel : content().expandLabel }}

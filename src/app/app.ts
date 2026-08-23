@@ -28,6 +28,7 @@ import { SkillsSectionComponent } from './components/skills-section/skills-secti
 import { detectLocale } from './content/locale';
 import { siteContent } from './content/site-content';
 import { SupportedLocale } from './models/content.models';
+import { startSectionRouting } from './navigation/section-route';
 
 /** Browser-chrome colour for each skin, mirroring `--sky-void`. */
 const CHROME_COLOR = { night: '#05060d', day: '#2ea8ec' } as const;
@@ -39,6 +40,7 @@ const CHROME_COLOR = { night: '#05060d', day: '#2ea8ec' } as const;
  * - `content/`    the localized copy, one stable object per locale
  * - `models/`     the shape of that copy, and of the scenery below
  * - `animations/` the decorative sky: its data, its motion and its stylesheets
+ * - `navigation/` the one section that has a URL of its own
  */
 @Component({
   selector: 'app-root',
@@ -98,7 +100,11 @@ export class App {
   constructor() {
     this.syncDocumentLanguage(this.locale());
     effect(() => this.syncColorScheme(this.isNight()));
-    afterNextRender(() => this.destroyRef.onDestroy(this.parallax.start()));
+    afterNextRender(() => {
+      this.destroyRef.onDestroy(this.parallax.start());
+      /* After render, so the section it may need to scroll to exists. */
+      this.destroyRef.onDestroy(startSectionRouting());
+    });
   }
 
   protected toggleTheme(): void {

@@ -16,9 +16,16 @@
   animation-iteration-count: infinite;
 }
 
+/* `animation-play-state` does not inherit: parking the flock leaves each
+   bird's soar and wing beat running behind an invisible layer. Name them all. */
+.scene:not(.is-day) .bird-flock,
+.scene:not(.is-day) .bird,
+.scene:not(.is-day) .bird__wing {
+  animation-play-state: paused;
+}
+
 .scene:not(.is-day) .bird-flock {
   opacity: 0 !important;
-  animation-play-state: paused;
 }
 
 .bird {

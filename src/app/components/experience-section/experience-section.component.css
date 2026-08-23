@@ -71,6 +71,14 @@ h4 {
   margin: 0 auto;
 }
 
+/* The panel is a tab stop of its own (see the template), so it needs the same
+   focus ring the global rule gives buttons and links. */
+.timeline__detail:focus-visible {
+  outline: 1px solid var(--text-faint);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 .timeline__dot {
   flex: none;
   margin-top: 0.35rem;
