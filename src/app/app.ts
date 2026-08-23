@@ -230,6 +230,17 @@ type Flock = {
   members: FlockMember[];
 };
 
+/** A cat sitting on the near hill, in the gutter beside the text column. */
+type HillCat = {
+  name: string;
+  /** Jojo is a brown tabby with white, so he also gets a bib, paws and stripes;
+   * Vivi is plain grey. */
+  tabby: boolean;
+  height: number;
+  /** Inset from the right edge of the viewport. */
+  right: number;
+};
+
 type Cloud = {
   art: (typeof CLOUD_SHAPES)[keyof typeof CLOUD_SHAPES];
   face: CloudFace;
@@ -344,6 +355,11 @@ export class App {
       rest: 68,
       members: [{ dx: 0, dy: 0, width: 44, flap: 1.44, flapShift: -0.3, soar: -2.2 }],
     },
+  ];
+
+  protected readonly hillCats: HillCat[] = [
+    { name: 'vivi', tabby: false, height: 56, right: 118 },
+    { name: 'jojo', tabby: true, height: 68, right: 40 },
   ];
 
   protected readonly clouds: Cloud[] = [

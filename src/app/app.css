@@ -83,6 +83,13 @@
   --hill-far: #cbeccd;
   --hill-mid: #a8dcae;
   --hill-near: #82c98d;
+  --tree-leaf: #5aa86c;
+  --tree-bark: #a9682d;
+  --cat-grey: #98a4b6;
+  --cat-tabby: #d99a56;
+  --cat-stripe: #a9682d;
+  --cat-white: #fff8ec;
+  --cat-pink: #f2a7a0;
 }
 
 /* ---------------------------------- */
@@ -936,14 +943,18 @@
 /* Each band overshoots the fold by --hill-sink so the parallax lift can never
    drag its bottom edge into view, and overshoots left/right so the crest never
    ends mid-screen. */
+/* Each band overshoots the fold by --hill-sink and the viewport sides by
+   --hill-overhang, so neither parallax axis can ever drag an edge into view. */
 .hill {
   --hill-sink: 40px;
+  --hill-overhang: 80px;
   position: absolute;
-  left: -2%;
+  left: calc(-1 * var(--hill-overhang));
   bottom: calc(-1 * var(--hill-sink));
-  width: 104%;
+  width: calc(100% + 2 * var(--hill-overhang));
   display: block;
-  translate: 0 calc(var(--scroll-shift) * var(--parallax-y, 0px));
+  translate: calc(var(--scroll-shift) * var(--parallax-x, 0px))
+    calc(var(--scroll-shift) * var(--parallax-y, 0px));
 }
 
 /* The path runs past the viewBox on every edge except the crest, so the root
@@ -956,7 +967,8 @@
 }
 
 .hill--far {
-  height: calc(clamp(130px, 19vh, 190px) + var(--hill-sink));
+  height: calc(clamp(142px, 20vh, 202px) + var(--hill-sink));
+  --parallax-x: -16px;
   --parallax-y: -8px;
 }
 
@@ -965,7 +977,8 @@
 }
 
 .hill--mid {
-  height: calc(clamp(102px, 15vh, 150px) + var(--hill-sink));
+  height: calc(clamp(112px, 16vh, 162px) + var(--hill-sink));
+  --parallax-x: -36px;
   --parallax-y: -16px;
 }
 
@@ -974,12 +987,98 @@
 }
 
 .hill--near {
-  height: calc(clamp(74px, 11vh, 112px) + var(--hill-sink));
+  height: calc(clamp(84px, 12vh, 124px) + var(--hill-sink));
+  --parallax-x: -62px;
   --parallax-y: -26px;
 }
 
 .hill--near path {
   fill: var(--hill-near, transparent);
+}
+
+/* ---------------------------------- */
+/* Hill props (day only)               */
+/* ---------------------------------- */
+
+/* Seated on the green rather than balanced on a crest: the crest's height in px
+   shifts with the viewport, but the band below it is solid, so a fixed offset
+   from the fold always lands on grass. Carries the near band's parallax so each
+   prop travels with the ground it's standing on. */
+.hill-prop {
+  position: absolute;
+  bottom: 12px;
+  display: block;
+  height: var(--prop-h);
+  translate: calc(var(--scroll-shift) * var(--parallax-x, -62px))
+    calc(var(--scroll-shift) * var(--parallax-y, -26px));
+}
+
+/* Only ever drawn in the gutter beside the 720px text column — any narrower and
+   they would sit under the copy. */
+@media (max-width: 1099px) {
+  .hill-prop {
+    display: none;
+  }
+}
+
+.hill-prop path {
+  stroke: var(--ink);
+  stroke-width: var(--stroke-w);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.tree {
+  --prop-h: 132px;
+  left: 44px;
+  width: calc(var(--prop-h) * 0.714);
+}
+
+.tree__trunk {
+  fill: var(--tree-bark, transparent);
+}
+
+.tree__canopy {
+  fill: var(--tree-leaf, transparent);
+}
+
+.cat {
+  --cat-fur: var(--cat-grey, transparent);
+  width: var(--prop-h);
+}
+
+.cat--tabby {
+  --cat-fur: var(--cat-tabby, transparent);
+}
+
+.cat__fur {
+  fill: var(--cat-fur);
+}
+
+.cat__white {
+  fill: var(--cat-white, transparent);
+}
+
+.cat__ear {
+  fill: var(--cat-pink, transparent);
+}
+
+.cat__eye {
+  fill: var(--ink);
+}
+
+/* Markings sit inside the silhouette, so they carry their own pen weight rather
+   than the outline's. */
+.cat__stripes path {
+  fill: none;
+  stroke: var(--cat-stripe, transparent);
+  stroke-width: 2px;
+}
+
+.cat__mouth path {
+  fill: none;
+  stroke-width: 1.3px;
 }
 
 /* Scroll parallax for the drifting scenery. `translate` is a separate property
@@ -1081,7 +1180,9 @@
   /* Scroll-driven motion is still motion — pin the scenery where it sits. */
   .cloud,
   .bird-flock,
-  .hill {
+  .hill,
+  .hill-prop {
+    --parallax-x: 0px;
     --parallax-y: 0px;
   }
 

@@ -148,19 +148,76 @@
     <div class="sky__hills">
       <svg class="hill hill--far" viewBox="0 0 1200 120" preserveAspectRatio="none">
         <path
-          d="M-20 130L-20 42C70 28 130 20 200 23C280 26 330 42 410 45C490 48 545 30 620 24C700 18 760 30 830 39C900 48 960 44 1030 35C1100 26 1160 28 1220 35L1220 130Z"
+          d="M-20 130L-20 46C22 28 62 10 112 13C166 16 196 44 234 50C286 58 322 26 374 19C428 12 462 42 502 50C548 58 588 33 642 24C702 14 742 42 792 50C842 58 882 29 936 21C992 13 1032 40 1078 48C1124 56 1172 51 1220 42L1220 130Z"
         />
       </svg>
       <svg class="hill hill--mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
         <path
-          d="M-20 130L-20 48C90 37 170 30 270 35C380 41 450 55 560 57C670 59 740 43 850 40C950 37 1030 48 1110 53C1150 56 1190 54 1220 51L1220 130Z"
+          d="M-20 130L-20 44C12 33 44 24 94 26C154 28 188 54 244 62C304 70 350 39 406 30C466 21 504 49 560 60C620 71 666 41 722 32C782 23 822 50 878 60C934 69 978 45 1034 36C1096 26 1156 44 1220 55L1220 130Z"
         />
       </svg>
       <svg class="hill hill--near" viewBox="0 0 1200 120" preserveAspectRatio="none">
         <path
-          d="M-20 130L-20 50C120 39 210 46 330 51C450 56 540 43 660 41C780 39 860 51 970 55C1070 59 1150 53 1220 48L1220 130Z"
+          d="M-20 130L-20 52C44 43 104 30 176 33C258 36 308 57 390 61C470 65 530 41 612 37C694 33 752 53 832 59C902 64 962 47 1032 41C1104 35 1166 45 1220 53L1220 130Z"
         />
       </svg>
+
+      <svg class="hill-prop tree" viewBox="0 0 80 112">
+        <path class="tree__trunk" d="M31 112C30 96 29 78 32 62L48 62C51 78 50 96 49 112Z" />
+        <path
+          class="tree__canopy"
+          d="M40 2C25 2 14 10 11 21C3 26 0 37 5 47C10 57 21 63 32 61C37 67 46 68 52 63C65 65 76 56 78 43C80 32 74 22 65 18C62 8 52 2 40 2Z"
+        />
+      </svg>
+
+      @for (cat of hillCats; track cat.name) {
+        <svg
+          class="hill-prop cat"
+          [class.cat--tabby]="cat.tabby"
+          [style.--prop-h.px]="cat.height"
+          [style.right.px]="cat.right"
+          viewBox="0 0 112 112"
+        >
+          <path
+            class="cat__fur"
+            d="M74 95C92 97 103 83 97 65C94 56 86 51 82 57C80 61 83 64 86 68C91 78 86 88 74 86Z"
+          />
+          <path
+            class="cat__fur"
+            d="M37 46C28 56 22 72 23 86C24 98 34 104 52 104C70 104 80 98 81 86C82 72 76 56 67 46Z"
+          />
+          @if (cat.tabby) {
+            <g class="cat__stripes">
+              <path d="M45 21L47 32" />
+              <path d="M52 19L52 31" />
+              <path d="M59 21L57 32" />
+              <path d="M24 68C28 70.5 32 71.6 35 72" />
+              <path d="M23 82C27 84.5 31 85.6 35 86" />
+              <path d="M80 68C76 70.5 72 71.6 69 72" />
+              <path d="M81 82C77 84.5 73 85.6 69 86" />
+            </g>
+            <path
+              class="cat__white"
+              d="M52 62C42 64 36 76 37 89C38 97 44 101 52 101C60 101 66 97 67 89C68 76 62 64 52 62Z"
+            />
+            <path class="cat__white" d="M34 104C34 94 49 94 49 104Z" />
+            <path class="cat__white" d="M55 104C55 94 70 94 70 104Z" />
+          }
+          <path
+            class="cat__fur"
+            d="M33 37L30 12L49.5 26C51 25.5 53 25.5 54.5 26L74 12L71 37C72.8 43.5 72.8 51 68.2 56.5C63.6 62 57.4 64 52 64C46.6 64 40.4 62 35.8 56.5C31.2 51 31.2 43.5 33 37Z"
+          />
+          <path class="cat__ear" d="M34.5 32L32 17L46.5 27Z" />
+          <path class="cat__ear" d="M69.5 32L72 17L57.5 27Z" />
+          <circle class="cat__eye" cx="44" cy="44" r="3.6" />
+          <circle class="cat__eye" cx="60" cy="44" r="3.6" />
+          <path class="cat__ear" d="M48.5 51L55.5 51L52 56Z" />
+          <g class="cat__mouth">
+            <path d="M52 56C52 60 49 62 46 59.5" />
+            <path d="M52 56C52 60 55 62 58 59.5" />
+          </g>
+        </svg>
+      }
     </div>
   </div>
 
