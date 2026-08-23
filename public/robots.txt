@@ -34,5 +34,4 @@ Disallow: /
 User-agent: *
 Allow: /
 
-# Once the domain is registered, publish a sitemap here:
-# Sitemap: https://your-domain.tld/sitemap.xml
+Sitemap: https://armelgandour.fr/sitemap.xml
