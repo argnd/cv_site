@@ -28,11 +28,35 @@
       <article class="timeline__detail" role="tabpanel">
         <h3>{{ selectedItem().role }}</h3>
         <p class="hero__meta">{{ selectedItem().company }} · {{ selectedItem().location }}</p>
-        <ul>
-          @for (highlight of selectedItem().highlights; track highlight) {
-            <li>{{ highlight }}</li>
+        <p class="timeline__summary">{{ selectedItem().mainData }}</p>
+        <div class="timeline__environment">
+          <h4>Technical environment</h4>
+          <div class="timeline__tech-list">
+            @for (technology of selectedItem().technicalEnvironment; track technology) {
+              <span class="timeline__tech">{{ technology }}</span>
+            }
+          </div>
+        </div>
+        @if (selectedItem().highlights.length > 0) {
+          @if (areHighlightsExpanded()) {
+            <div id="experience-highlights" class="timeline__highlights">
+              <ul>
+                @for (highlight of selectedItem().highlights; track highlight) {
+                  <li>{{ highlight }}</li>
+                }
+              </ul>
+            </div>
           }
-        </ul>
+          <button
+            type="button"
+            class="timeline__toggle"
+            [attr.aria-expanded]="areHighlightsExpanded()"
+            aria-controls="experience-highlights"
+            (click)="toggleHighlights()"
+          >
+            {{ areHighlightsExpanded() ? 'Masquer les détails' : 'Afficher les détails' }}
+          </button>
+        }
       </article>
     </div>
   }

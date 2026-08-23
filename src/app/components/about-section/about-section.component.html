@@ -1,6 +1,24 @@
 <section class="section about" id="about">
   <p class="kicker">About</p>
   <h2>Under a quiet sky</h2>
-  <p class="lede">{{ content().about }}</p>
+  <div class="about__content about__content--primary" [innerHTML]="content().bodyPrimary"></div>
+  @if (content().bodyExpanded) {
+    @if (isExpanded()) {
+      <div
+        id="about-expanded-content"
+        class="about__content about__content--expanded"
+        [innerHTML]="content().bodyExpanded"
+      ></div>
+    }
+    <button
+      type="button"
+      class="about__toggle"
+      [attr.aria-expanded]="isExpanded()"
+      aria-controls="about-expanded-content"
+      (click)="toggleExpanded()"
+    >
+      {{ isExpanded() ? 'Show less' : 'Read more' }}
+    </button>
+  }
   <p class="hero__meta">{{ content().email }}</p>
 </section>

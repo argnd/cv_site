@@ -7,7 +7,10 @@ export type HeroSectionContent = {
 
 export type AboutSectionContent = {
   email: string;
-  about: string;
+  /** Sanitized through Angular's innerHTML binding, allowing basic HTML formatting in JSON content. */
+  bodyPrimary: string;
+  /** Sanitized through Angular's innerHTML binding, allowing basic HTML formatting in JSON content. */
+  bodyExpanded: string;
 };
 
 export type ExperienceItem = {
@@ -15,7 +18,9 @@ export type ExperienceItem = {
   company: string;
   period: string;
   location: string;
+  mainData: string;
   highlights: string[];
+  technicalEnvironment: string[];
 };
 
 export type EducationItem = {
@@ -25,7 +30,7 @@ export type EducationItem = {
   details: string;
 };
 
-export type GameSectionContent = {
+export type GamesSectionContent = {
   kicker: string;
   title: string;
   description: string;

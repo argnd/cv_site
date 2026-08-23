@@ -551,8 +551,7 @@
   .bird__wing,
   .cloud,
   .celestial__halo,
-  .scroll-cue span,
-  .game__glyph span {
+  .scroll-cue span {
     animation: none !important;
   }
 }

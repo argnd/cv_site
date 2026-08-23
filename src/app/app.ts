@@ -3,14 +3,14 @@ import { AboutSectionComponent } from './components/about-section/about-section.
 import { EducationSectionComponent } from './components/education-section/education-section.component';
 import { ExperienceSectionComponent } from './components/experience-section/experience-section.component';
 import { FooterSectionComponent } from './components/footer-section/footer-section.component';
-import { GameSectionComponent } from './components/game-section/game-section.component';
+import { GamesSectionComponent } from './components/games-section/games-section.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 import { SkillsSectionComponent } from './components/skills-section/skills-section.component';
 import aboutSectionData from './content/about-section.json';
 import educationSectionData from './content/education-section.json';
 import experienceSectionData from './content/experience-section.json';
 import footerSectionData from './content/footer-section.json';
-import gameSectionData from './content/game-section.json';
+import gamesSectionData from './content/games-section.json';
 import heroSectionData from './content/hero-section.json';
 import skillsSectionData from './content/skills-section.json';
 import {
@@ -18,7 +18,7 @@ import {
   EducationItem,
   ExperienceItem,
   FooterSectionContent,
-  GameSectionContent,
+  GamesSectionContent,
   HeroSectionContent,
 } from './content/content.models';
 
@@ -61,7 +61,7 @@ function createShootingStar(config: ShootingStarConfig): ShootingStar {
     EducationSectionComponent,
     ExperienceSectionComponent,
     FooterSectionComponent,
-    GameSectionComponent,
+    GamesSectionComponent,
     HeroSectionComponent,
     SkillsSectionComponent,
   ],
@@ -74,7 +74,7 @@ export class App {
   protected readonly experiences: ExperienceItem[] = experienceSectionData;
   protected readonly education: EducationItem[] = educationSectionData;
   protected readonly skills: string[] = skillsSectionData;
-  protected readonly gameContent: GameSectionContent = gameSectionData;
+  protected readonly gamesContent: GamesSectionContent = gamesSectionData;
   protected readonly footerContent: FooterSectionContent = footerSectionData;
 
   protected readonly heroStars = [

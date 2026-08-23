@@ -23,18 +23,51 @@ h2 {
   margin: 0 0 1.5rem;
 }
 
-p {
-  line-height: 1.75;
-  color: var(--text-body);
-  margin: 0 0 0.75rem;
+.hero__meta {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  margin: 0;
 }
 
-.lede {
+.about__toggle {
+  display: block;
+  width: fit-content;
+  padding: 0.2rem 0;
+  margin: 0 auto 1.5rem;
+  background: none;
+  border: 0;
+  color: #7dd3fc;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.18em;
+  transition:
+    color var(--theme-duration) var(--ease-soft),
+    text-decoration-color var(--theme-duration) var(--ease-soft);
+}
+
+.about__toggle:hover,
+.about__toggle:focus-visible {
+  color: #bae6fd;
+}
+
+.about__content--expanded {
+  margin-bottom: 0.5rem;
+}
+
+:host ::ng-deep .about__content {
+  color: var(--text-body);
   font-size: 1.06rem;
   line-height: 1.8;
 }
 
-.lede::first-letter {
+:host ::ng-deep .about__content p {
+  margin: 0 0 1rem;
+}
+
+:host ::ng-deep .about__content p:first-child::first-letter {
   font-family: var(--font-display);
   font-size: 3rem;
   float: left;
@@ -43,8 +76,45 @@ p {
   color: var(--text-strong);
 }
 
-.hero__meta {
-  font-size: 0.9rem;
-  color: var(--text-soft);
-  margin: 0;
+:host ::ng-deep .about__content h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: var(--text-strong);
+  margin: 2rem 0 0.9rem;
+}
+
+:host ::ng-deep .about__content ul {
+  margin: 0 0 1.25rem;
+  padding-left: 1.25rem;
+}
+
+:host ::ng-deep .about__content li {
+  margin-bottom: 0.65rem;
+}
+
+:host ::ng-deep .about__content li::marker {
+  color: var(--text-faint);
+}
+
+:host ::ng-deep .about__content strong {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+:host ::ng-deep .about__content em {
+  font-style: italic;
+}
+
+:host ::ng-deep .about__content a {
+  color: var(--text-strong);
+  text-decoration-color: var(--text-faint);
+  text-underline-offset: 0.16em;
+}
+
+button:focus-visible {
+  outline: 1px solid var(--text-faint);
+  outline-offset: 4px;
+  border-radius: 2px;
 }

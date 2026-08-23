@@ -9,9 +9,15 @@ import { ExperienceItem } from '../../content/content.models';
 export class ExperienceSectionComponent {
   readonly items = input.required<ExperienceItem[]>();
   protected readonly selectedExperience = signal(0);
+  protected readonly areHighlightsExpanded = signal(false);
   protected readonly selectedItem = computed(() => this.items()[this.selectedExperience()]);
 
   protected selectExperience(index: number): void {
     this.selectedExperience.set(index);
+    this.areHighlightsExpanded.set(false);
+  }
+
+  protected toggleHighlights(): void {
+    this.areHighlightsExpanded.update((value) => !value);
   }
 }

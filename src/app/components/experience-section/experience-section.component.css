@@ -1,9 +1,14 @@
 :host {
   display: block;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .section {
+  max-width: 1120px;
+  margin: 0 auto;
   padding-block: var(--space-xl);
+  padding-inline: 1.5rem;
 }
 
 .kicker {
@@ -31,6 +36,14 @@ h3 {
   font-size: 1.35rem;
 }
 
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
 .hero__meta {
   font-size: 0.9rem;
   color: var(--text-soft);
@@ -39,8 +52,8 @@ h3 {
 
 .timeline {
   display: grid;
-  grid-template-columns: minmax(0, 210px) 1fr;
-  gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: minmax(220px, 290px) minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 4rem);
   align-items: start;
 }
 
@@ -67,11 +80,17 @@ h3 {
   gap: 0.85rem;
   background: none;
   border: 0;
-  padding: 0.65rem 0.25rem;
+  padding: 0.75rem 0.4rem;
   width: 100%;
   text-align: left;
   cursor: pointer;
   color: var(--text-soft);
+}
+
+.timeline__detail {
+  min-width: 0;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .timeline__dot {
@@ -122,19 +141,74 @@ h3 {
     0 0 12px var(--glow-strong);
 }
 
-.timeline__detail ul {
+.timeline__summary {
   margin: 1rem 0 0;
-  padding-left: 1.1rem;
+  line-height: 1.75;
+  color: var(--text-body);
+}
+
+.timeline__highlights {
+  margin-top: 1.75rem;
+}
+
+.timeline__highlights ul {
+  margin: 0;
+  padding-left: 1.2rem;
 }
 
 .timeline__detail li {
-  margin-bottom: 0.6rem;
+  margin-bottom: 1rem;
   line-height: 1.7;
   color: var(--text-body);
+  white-space: pre-line;
 }
 
 .timeline__detail li::marker {
   color: var(--text-faint);
+}
+
+.timeline__environment {
+  margin-top: 1.5rem;
+}
+
+.timeline__tech-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.timeline__tech {
+  display: inline-block;
+  margin: 0 0.6rem 0.55rem 0;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--text-faint);
+  border-radius: 999px;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.timeline__toggle {
+  display: block;
+  width: fit-content;
+  margin: 1.25rem auto 0;
+  padding: 0.2rem 0;
+  background: none;
+  border: 0;
+  color: #7dd3fc;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.18em;
+  transition:
+    color var(--theme-duration) var(--ease-soft),
+    text-decoration-color var(--theme-duration) var(--ease-soft);
+}
+
+.timeline__toggle:hover,
+.timeline__toggle:focus-visible {
+  color: #bae6fd;
 }
 
 button:focus-visible {
@@ -144,6 +218,16 @@ button:focus-visible {
 }
 
 @media (max-width: 720px) {
+  :host {
+    width: auto;
+    margin-left: 0;
+  }
+
+  .section {
+    max-width: none;
+    padding-inline: 0;
+  }
+
   .timeline {
     grid-template-columns: 1fr;
   }

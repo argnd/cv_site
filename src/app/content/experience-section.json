@@ -1,35 +1,84 @@
 [
   {
-    "role": "Frontend Engineer",
-    "company": "Company A",
-    "period": "2024 - Present",
+    "role": "Développeur Senior Java / Spring",
+    "company": "Ag2r La Mondiale - Freelance",
+    "period": "2023 - Present",
+    "location": "Esvres, France",
+    "mainData": "Dans le cadre d'une refonte majeure du SI interne (contexte de transition Agile vers SAFe), conception, modernisation et développement des applications critiques liées à la Gestion Électronique de Documents (GED) entrants.",
+    "highlights": [
+      "Acquisition & Modernisation :\n• Réécriture de l'environnement d'acquisition (Spring Batch & Integration) gérant un flux critique de ~20 millions de documents/an.\n• Migration technologique majeure : de Java 8 à Java 21, et Spring 4 vers versions récentes. \n• Amélioration de la maintenabilité (remplacement du XML par la DSL Java sur Spring Integration). \n• Création d'API métier performantes (Spring Web / WebFlux).\n",
+      "Innovation & Traitement des Emails (HUBDOC/HUBMAIL) :\n• Réécriture de la brique applicative de traitement automatisé des emails métier. \n• Implémentation de MSGraph (connexion messageries) et IA via Google Vertex AI pour l'analyse des contenus.",
+      "Développement assisté par l'IA & Bonnes pratiques : \n• Intégration massive de l'IA dans les processus de développement pour accroître la productivité et optimiser la qualité du code.\n• Définition et application de bonnes pratiques de prompt engineering appliqué au code : définition stricte des scopes, optimisation de la consommation de tokens, et revue critique des propositions pour conserver une maîtrise totale de la base de code.",
+      "Infrastructure GED & Portail Utilisateur : \n• Développement de l'infrastructure (Batch & API) interfaçant le produit de GED : API d'insertion, de récupération et batchs d'extraction massive. \n• Contribution au développement des interfaces permettant aux utilisateurs métier de consulter efficacement les documents archivés."
+    ],
+    "technicalEnvironment": [
+      "Java 21",
+      "Java 8",
+      "Ecosysteme Spring (Batch, Integration DSL, Web, WebFlux)",
+      "Google Vertex AI",
+      "MSGraph API",
+      "IA generative (AI-assisted development, prompt engineering)",
+      "Docker",
+      "CI/CD (Jenkins, CloudBees)",
+      "SonarQube",
+      "Git",
+      "Methodologies Agile / SAFe"
+    ]
+  },
+  {
+    "role": "Développeur Full-Stack & IoT - ADP",
+    "company": "Atos",
+    "period": "Jan. 2023 - Oct. 2023",
+    "location": "Tours",
+    "mainData": "Mission d'innovation pour Aéroports de Paris (ADP). Conception et développement from scratch d'une solution complète de suivi de données en temps réel : Oiseaux (Birdnet), Avions(ADSB), nuisances sonores",
+    "highlights": [
+      "Développement Front-end & Cartographie : Création de l'interface utilisateur web avec Angular et intégration de la cartographie dynamique via Leaflet pour la visualisation des vols en temps réel.",
+      "Développement Back-end & Microservices : Conception d'une architecture backend performante et réactive en utilisant Java (Quarkus) et Node.js (Express).",
+      "Traitement de données (Data / Big Data) : Mise en place des traitements par lots avec Spring Batch et exploitation d'Apache Druid pour l'analyse des flux de données en temps réel.",
+      "IoT & Systèmes embarqués : Développement et déploiement de services sur micro-ordinateurs Raspberry Pi (environnement Unix / Bash) pour collecter, traiter et remonter les données télémétriques (Antennes ADSB) vers l'application de cartographie."
+    ],
+    "technicalEnvironment": [
+      "Java (Quarkus, Spring Batch)",
+      "JavaScript (Angular, Express.js)",
+      "Apache Druid",
+      "Leaflet (Cartographie)",
+      "IoT (Raspberry Pi)",
+      "Unix",
+      "Bash",
+      "Architecture Temps Réel"
+    ]
+  },
+  {
+    "role": "Développeur Full-Stack (Java / Angular) - MGEN",
+    "company": "Apside",
+    "period": "2021 - 2023",
+    "location": "Tours, France",
+    "mainData": " Au sein d'une équipe Agile, participation à la refonte complète et à l'évolution du portail web MGEN.fr (Espace Personnel et Espace Collaborateurs), une plateforme à fort trafic desservant plusieurs millions d'adhérents.",
+    "highlights": [
+      "Refonte & Développement (Stack Moderne) :\n\n•Conception et développement Full-Stack de la nouvelle architecture du site via Spring Boot (Back-end) et Angular (Front-end) dans un contexte de haute disponibilité.\n\n•Design d'API : Définition et rédaction des contrats d'interfaces d'API REST en utilisant OpenAPI / Swagger.\n\n•DevOps & Déploiement : Mise en place et gestion des pipelines d'intégration et de déploiement continus (CI/CD) avec CloudBees.",
+      "Maintenance & Amélioration Continue (Stack Historique) :\n\n•Développement et évolutions sur l'architecture existante en J2EE et PL/SQL.\n\n•Qualité logicielle : Analyse du code, respect des bonnes pratiques et réduction de la dette technique via CAST et SonarQube.\n\n•Support technique : Assurer le suivi de production et la mise à jour des scripts Batch pour garantir la stabilité des environnements."
+    ],
+    "technicalEnvironment": [
+      "Java (J2EE, Spring Boot)",
+      "Angular",
+      "PL/SQL",
+      "API REST",
+      "OpenAPI",
+      "Swagger",
+      "CloudBees",
+      "CI/CD",
+      "SonarQube",
+      "CAST",
+      "Methode Agile"
+    ]
+  },
+  {
+    "role": "Contrôleur de gestion",
+    "company": "Divers",
+    "period": "2016 - 2020",
     "location": "Paris, France",
-    "highlights": [
-      "Built responsive interfaces with Angular and TypeScript.",
-      "Improved Core Web Vitals and usability across key pages.",
-      "Collaborated with product and design to deliver new features."
-    ]
-  },
-  {
-    "role": "Full Stack Developer",
-    "company": "Company B",
-    "period": "2022 - 2024",
-    "location": "Remote",
-    "highlights": [
-      "Delivered APIs and UI features for customer-facing products.",
-      "Implemented testing strategy to reduce regressions.",
-      "Contributed to CI/CD improvements and release stability."
-    ]
-  },
-  {
-    "role": "Software Developer Intern",
-    "company": "Company C",
-    "period": "2021 - 2022",
-    "location": "Lyon, France",
-    "highlights": [
-      "Developed internal tools that streamlined team workflows.",
-      "Created reusable UI components and technical documentation.",
-      "Participated in code reviews and sprint planning."
-    ]
+    "mainData": "",
+    "highlights": [],
+    "technicalEnvironment": []
   }
 ]
