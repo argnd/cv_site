@@ -1,14 +1,20 @@
 <!doctype html>
-<html lang="en">
+<!-- `fr` matches the copy the app renders by default (see content/locale.ts:
+     anything that is not an explicit English preference gets French). The app
+     rewrites this attribute, the title and the descriptions below when the
+     visitor switches locale — but a crawler reads the served markup, so the
+     served markup has to be the French one. -->
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>Armel Gandour — Portfolio</title>
+    <title>Armel Gandour — Développeur Senior Java / Angular à Tours</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Armel Gandour — software engineer. A calm, starlit portfolio."
+      content="Armel Gandour — développeur senior Java 21 / Spring &amp; Angular à Tours. 6 ans d'expérience : Spring Batch, Spring Integration, API REST, données à fort volume."
     />
+    <meta name="author" content="Armel Gandour" />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#05060d" />
     <link rel="canonical" href="https://armelgandour.fr/" />
@@ -19,20 +25,131 @@
          the white card background most clients use. Drop a 1200x630 opaque
          image in public/images/ and point og:image + twitter:image at it to
          upgrade these from text cards to image cards. -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="profile" />
     <meta property="og:site_name" content="Armel Gandour" />
     <meta property="og:url" content="https://armelgandour.fr/" />
-    <meta property="og:title" content="Armel Gandour — Portfolio" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:title" content="Armel Gandour — Développeur Senior Java / Angular à Tours" />
     <meta
       property="og:description"
-      content="Armel Gandour — software engineer. A calm, starlit portfolio."
+      content="Armel Gandour — développeur senior Java 21 / Spring &amp; Angular à Tours. 6 ans d'expérience : Spring Batch, Spring Integration, API REST, données à fort volume."
     />
+    <meta property="profile:first_name" content="Armel" />
+    <meta property="profile:last_name" content="Gandour" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Armel Gandour — Portfolio" />
+    <meta
+      name="twitter:title"
+      content="Armel Gandour — Développeur Senior Java / Angular à Tours"
+    />
     <meta
       name="twitter:description"
-      content="Armel Gandour — software engineer. A calm, starlit portfolio."
+      content="Armel Gandour — développeur senior Java 21 / Spring &amp; Angular à Tours. 6 ans d'expérience : Spring Batch, Spring Integration, API REST, données à fort volume."
     />
+
+    <!-- Structured data, and the one part of this page a crawler can read
+         without executing JavaScript: the app renders client-side, so the
+         served <body> is an empty <app-root>. Until the build prerenders,
+         this block is the entire machine-readable description of the site.
+
+         `alternateName` is what ties the informal handles people actually
+         search for — "Armel Dev", "Gandour Dev" — to the one Person entity,
+         and `sameAs` corroborates that entity against profiles a search
+         engine already trusts. Both are the point of the block; the rest is
+         supporting detail.
+
+         Kept deliberately short next to content/skills-section.json: this
+         describes the person, not the page, so it lists what he is known for
+         rather than mirroring every chip the page renders. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://armelgandour.fr/#person",
+            "name": "Armel Gandour",
+            "alternateName": ["Armel Dev", "Gandour Dev", "A. Gandour"],
+            "givenName": "Armel",
+            "familyName": "Gandour",
+            "jobTitle": "Développeur Senior Java / Angular",
+            "description": "Développeur full stack Java / Angular avec 6 ans d'expérience, spécialisé dans la conception d'applications web performantes et le traitement de données à fort volume.",
+            "url": "https://armelgandour.fr/",
+            "email": "gandour37@gmail.com",
+            "nationality": "FR",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Tours",
+              "addressRegion": "Centre-Val de Loire",
+              "addressCountry": "FR"
+            },
+            "sameAs": ["https://www.linkedin.com/in/armel-gandour/", "https://github.com/argnd"],
+            "knowsLanguage": [
+              { "@type": "Language", "name": "Français", "alternateName": "fr" },
+              { "@type": "Language", "name": "English", "alternateName": "en" }
+            ],
+            "knowsAbout": [
+              "Java",
+              "Java 21",
+              "Spring Framework",
+              "Spring Boot",
+              "Spring Batch",
+              "Spring Integration",
+              "Spring WebFlux",
+              "Quarkus",
+              "Angular",
+              "TypeScript",
+              "JavaScript",
+              "Node.js",
+              "API REST",
+              "OpenAPI",
+              "Microservices",
+              "SQL",
+              "PL/SQL",
+              "Apache Druid",
+              "Google Vertex AI",
+              "Docker",
+              "CI/CD",
+              "Jenkins",
+              "SonarQube",
+              "Git",
+              "Méthodes Agile",
+              "SAFe"
+            ],
+            "hasOccupation": {
+              "@type": "Occupation",
+              "name": "Développeur Senior Java / Angular",
+              "occupationLocation": { "@type": "City", "name": "Tours" },
+              "skills": "Java 21, Spring Boot, Spring Batch, Spring Integration, Spring WebFlux, Angular, TypeScript, API REST, Docker, CI/CD"
+            },
+            "alumniOf": [
+              { "@type": "EducationalOrganization", "name": "CEFIM" },
+              { "@type": "EducationalOrganization", "name": "KEDGE Business School" },
+              { "@type": "EducationalOrganization", "name": "IUT Paris Descartes" }
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://armelgandour.fr/#website",
+            "url": "https://armelgandour.fr/",
+            "name": "Armel Gandour",
+            "alternateName": ["Armel Dev", "Gandour Dev"],
+            "inLanguage": "fr-FR",
+            "about": { "@id": "https://armelgandour.fr/#person" },
+            "publisher": { "@id": "https://armelgandour.fr/#person" }
+          },
+          {
+            "@type": "ProfilePage",
+            "@id": "https://armelgandour.fr/#profilepage",
+            "url": "https://armelgandour.fr/",
+            "name": "Armel Gandour — Développeur Senior Java / Angular à Tours",
+            "inLanguage": "fr-FR",
+            "isPartOf": { "@id": "https://armelgandour.fr/#website" },
+            "mainEntity": { "@id": "https://armelgandour.fr/#person" }
+          }
+        ]
+      }
+    </script>
 
     <!-- The build inlines this stylesheet's @font-face rules into the document
          head (Angular's `optimization.fonts.inline`), so it is not

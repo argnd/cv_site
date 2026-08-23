@@ -3,20 +3,23 @@
   <h2>{{ content().title }}</h2>
   <div class="about__content about__content--primary" [innerHTML]="content().bodyPrimary"></div>
   @if (content().bodyExpanded) {
-    @if (isExpanded()) {
-      <div
-        id="about-expanded-content"
-        class="about__content about__content--expanded"
-        [innerHTML]="content().bodyExpanded"
-      ></div>
-    }
-    <!-- `aria-controls` only points at the panel while the panel exists;
-         `aria-expanded` carries the state the rest of the time. -->
+    <!-- Rendered whether or not it is open, and hidden with CSS when closed.
+         The page has no server render, so this markup is also the only copy a
+         crawler can find: behind an `@if` the whole technical-keyword block —
+         the most search-relevant prose on the site — simply would not exist in
+         the DOM until someone clicked. `display: none` still keeps it out of
+         the accessibility tree and off the tab order while collapsed. -->
+    <div
+      id="about-expanded-content"
+      class="about__content about__content--expanded"
+      [class.about__content--collapsed]="!isExpanded()"
+      [innerHTML]="content().bodyExpanded"
+    ></div>
     <button
       type="button"
       class="link-toggle about__toggle"
       [attr.aria-expanded]="isExpanded()"
-      [attr.aria-controls]="isExpanded() ? 'about-expanded-content' : null"
+      aria-controls="about-expanded-content"
       (click)="toggleExpanded()"
     >
       {{ isExpanded() ? content().collapseLabel : content().expandLabel }}

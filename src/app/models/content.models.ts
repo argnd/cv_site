@@ -12,8 +12,24 @@ export type LocaleSelectorContent = {
   englishLabel: string;
 };
 
+/**
+ * What the `<head>` says about the page, per locale. The served `index.html`
+ * carries the French wording; switching locale rewrites it in place so that a
+ * shared link and a bookmarked tab both read in the language the visitor
+ * actually saw.
+ */
+export type DocumentMetaContent = {
+  /** `<title>`, `og:title`, `twitter:title`. */
+  title: string;
+  /** `<meta name="description">`, `og:description`, `twitter:description`. */
+  description: string;
+  /** `<html lang>` and `og:locale` disagree on format; this is the latter. */
+  openGraphLocale: string;
+};
+
 export type AppShellContent = {
   themeToggleAriaLabel: string;
+  documentMeta: DocumentMetaContent;
   localeSelector: LocaleSelectorContent;
 };
 

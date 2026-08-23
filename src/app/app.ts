@@ -10,6 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { BIRD_FLOCKS } from './animations/birds';
 import { RAINDROP_PATH } from './animations/cloud-art';
 import { createClouds, RAINDROPS } from './animations/clouds';
@@ -97,8 +98,11 @@ export class App {
      outside the injection context, so `inject()` would throw there. */
   private readonly destroyRef = inject(DestroyRef);
 
+  private readonly title = inject(Title);
+  private readonly meta = inject(Meta);
+
   constructor() {
-    this.syncDocumentLanguage(this.locale());
+    this.syncDocumentMeta(this.locale());
     effect(() => this.syncColorScheme(this.isNight()));
     afterNextRender(() => {
       this.destroyRef.onDestroy(this.parallax.start());
@@ -113,13 +117,35 @@ export class App {
 
   protected setLocale(locale: SupportedLocale): void {
     this.locale.set(locale);
-    this.syncDocumentLanguage(locale);
+    this.syncDocumentMeta(locale);
   }
 
-  private syncDocumentLanguage(locale: SupportedLocale): void {
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = locale;
+  /**
+   * Rewrites the `<head>` for the active locale: the language attribute, the
+   * title, and the three descriptions that link previews read.
+   *
+   * `index.html` ships the French wording, which is what a crawler indexes —
+   * the page renders client-side, so nothing here reaches a crawler that does
+   * not run JavaScript. This exists for the visitor who switches to English
+   * and then shares or bookmarks the page: without it the tab title and the
+   * preview card would stay French around English content.
+   */
+  private syncDocumentMeta(locale: SupportedLocale): void {
+    if (typeof document === 'undefined') {
+      return;
     }
+
+    document.documentElement.lang = locale;
+
+    const { title, description, openGraphLocale } = siteContent(locale).appShell.documentMeta;
+
+    this.title.setTitle(title);
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:locale', content: openGraphLocale });
+    this.meta.updateTag({ name: 'twitter:title', content: title });
+    this.meta.updateTag({ name: 'twitter:description', content: description });
   }
 
   /**

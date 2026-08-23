@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  One URL, because there is one page. `/project` resolves and scrolls to the
+  projects section, but it serves the same document and its canonical points
+  back here, so listing it would only earn a "duplicate, alternate page with
+  proper canonical tag" notice in Search Console.
+
+  `lastmod` is hand-maintained: bump it when the CV content actually changes,
+  and leave it alone for styling or scenery work. A date that moves on every
+  deploy teaches crawlers to ignore the field.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://armelgandour.fr/</loc>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>

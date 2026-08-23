@@ -10,6 +10,13 @@
   margin-bottom: 0.5rem;
 }
 
+/* `display: none` rather than a height/opacity collapse: the panel has to be
+   absent from the layout, the tab order and the accessibility tree when
+   closed, while staying in the DOM for crawlers. */
+.about__content--collapsed {
+  display: none;
+}
+
 :host ::ng-deep .about__content {
   color: var(--text-body);
   font-size: 1.06rem;
