@@ -1,1 +1,157 @@
-/* You can add global styles to this file, and also import other style files */
+/* Registering color tokens via @property enables the browser to smoothly
+   interpolate them (including inside gradients/shadows) when the day/night
+   theme class swaps their values, instead of snapping instantly. */
+@property --sky-void {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #05060d;
+}
+@property --sky-deep {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0a0e1f;
+}
+@property --sky-mid {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #10152b;
+}
+@property --sky-horizon {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #232b4d;
+}
+@property --surface-muted {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1a2140;
+}
+@property --text-strong {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f8fafc;
+}
+@property --text-body {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #cbd5e1;
+}
+@property --text-soft {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #94a3b8;
+}
+@property --text-faint {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(203, 213, 225, 0.45);
+}
+@property --celestial-core {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f8fafc;
+}
+@property --celestial-edge {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #b9c2d6;
+}
+@property --celestial-shadow {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7d879e;
+}
+@property --glow-soft {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(248, 250, 252, 0.35);
+}
+@property --glow-strong {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(248, 250, 252, 0.65);
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Sky tokens (night defaults; overridden for day in app.css .scene.is-day) */
+  --sky-void: #05060d;
+  --sky-deep: #0a0e1f;
+  --sky-mid: #10152b;
+  --sky-horizon: #232b4d;
+  --surface-muted: #1a2140;
+
+  /* Text tokens */
+  --text-strong: #f8fafc;
+  --text-body: #cbd5e1;
+  --text-soft: #94a3b8;
+  --text-faint: rgba(203, 213, 225, 0.45);
+
+  /* Celestial body (moon by night, sun by day) */
+  --celestial-core: #f8fafc;
+  --celestial-edge: #b9c2d6;
+  --celestial-shadow: #7d879e;
+
+  /* Glow */
+  --glow-soft: rgba(248, 250, 252, 0.35);
+  --glow-strong: rgba(248, 250, 252, 0.65);
+
+  /* Typography tokens */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Spacing tokens */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.75rem;
+  --space-lg: 3rem;
+  --space-xl: clamp(3rem, 8vw, 5.5rem);
+
+  /* Motion tokens */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-slow: 900ms;
+  --theme-duration: 900ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--sky-void);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background var(--theme-duration) var(--ease-soft),
+    color var(--theme-duration) var(--ease-soft);
+}
+
+body {
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(248, 250, 252, 0.22);
+  color: var(--text-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  :root {
+    --theme-duration: 0ms;
+    --duration-slow: 0ms;
+  }
+}

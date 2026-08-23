@@ -1,0 +1,128 @@
+:host {
+  display: block;
+}
+
+.hero {
+  min-height: min(70vh, 620px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin: 0 0 1rem;
+}
+
+.hero__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  color: var(--text-strong);
+  margin: 0 0 0.75rem;
+  text-shadow: 0 0 30px var(--glow-soft);
+}
+
+.hero__headline {
+  font-size: 1.15rem;
+  color: var(--text-body);
+  margin: 0 0 0.35rem;
+}
+
+.hero__meta {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+.hero__actions {
+  margin-top: 2.25rem;
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.link-glow {
+  position: relative;
+  text-decoration: none;
+  color: var(--text-strong);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  padding-block: 0.25rem;
+}
+
+.link-glow::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--text-strong);
+  box-shadow: 0 0 8px var(--glow-strong);
+  transition:
+    right var(--duration-slow) var(--ease-soft),
+    background var(--theme-duration) var(--ease-soft);
+}
+
+.link-glow:hover::after,
+.link-glow:focus-visible::after {
+  right: 0;
+}
+
+.scroll-cue {
+  margin: 3rem auto 0;
+  width: 1px;
+  height: 46px;
+  background: linear-gradient(180deg, var(--text-faint), transparent);
+  position: relative;
+}
+
+.scroll-cue span {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--text-strong);
+  box-shadow: 0 0 6px var(--glow-strong);
+  animation: cue-drop 2.4s ease-in-out infinite;
+}
+
+@keyframes cue-drop {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    top: 40px;
+    opacity: 0;
+  }
+}
+
+a:focus-visible {
+  outline: 1px solid var(--text-faint);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+@media (max-width: 560px) {
+  .hero__actions {
+    gap: 1.5rem;
+  }
+}
