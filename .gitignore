@@ -42,8 +42,3 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
-
-.idea
-.vscode
-.angular
-node_modules

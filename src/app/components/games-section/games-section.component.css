@@ -2,27 +2,6 @@
   display: block;
 }
 
-.section {
-  padding-block: var(--space-xl);
-}
-
-.kicker {
-  font-family: var(--font-body);
-  font-size: 0.76rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-  margin: 0 0 1rem;
-}
-
-h2 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.55rem, 3.4vw, 2rem);
-  color: var(--text-strong);
-  margin: 0 0 1.5rem;
-}
-
 p {
   line-height: 1.75;
   color: var(--text-body);
