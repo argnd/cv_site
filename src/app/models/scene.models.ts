@@ -145,6 +145,13 @@ export type FlockMember = {
   flapShift: number;
   /** Phase offset for the vertical soar, so members wander independently. */
   soar: number;
+  /**
+   * Dropped once the copy spans the full viewport width, like {@link Flock}'s
+   * own flag — see the narrow breakpoint in `styles/birds.css`. A V thins to a
+   * pair there rather than the whole formation going, so at least two members
+   * of a flock have to stay unmarked.
+   */
+  wideOnly?: boolean;
 };
 
 export type Flock = {

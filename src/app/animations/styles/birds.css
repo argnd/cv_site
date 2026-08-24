@@ -24,9 +24,12 @@
 
 /* One flock is marked `wideOnly` in `../birds.ts`: two crossings over
    full-width copy is traffic, one is a moment. The survivors shrink, formation
-   included — scaling the birds without their offsets would loosen the V. */
+   included — scaling the birds without their offsets would loosen the V. The
+   surviving flock's trailing member is marked too, so the V thins to a pair
+   rather than staying a three-bird smudge at 0.76 scale. */
 @media (max-width: 720px) {
-  .bird-flock--wide-only {
+  .bird-flock--wide-only,
+  .bird--wide-only {
     display: none;
   }
 

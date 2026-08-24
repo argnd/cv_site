@@ -117,6 +117,7 @@
           @for (bird of flock.members; track $index) {
             <span
               class="bird"
+              [class.bird--wide-only]="bird.wideOnly"
               [style.--bird-dx.px]="bird.dx"
               [style.--bird-dy.px]="bird.dy"
               [style.--bird-w.px]="bird.width"
