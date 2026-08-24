@@ -37,15 +37,15 @@
     opacity: 1;
   }
 
-  /* Scroll-driven motion is still motion — pin the scenery where it sits. The
-     nebula needs no entry here: its offset is a scroll-driven *animation*, so
-     the `animation: none` rule above already stops it. */
+  /* Scroll-driven motion is still motion — pin the scenery where it sits. */
   .cloud,
   .bird-flock,
   .hill,
-  .hill-prop {
+  .hill-prop,
+  .sky__nebula {
     --parallax-x: 0px;
     --parallax-y: 0px;
+    --parallax-rotate: 0deg;
   }
 
   /* Nothing moves any more, so the compositor layers are pure overhead. */

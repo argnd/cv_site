@@ -16,7 +16,7 @@ src/app/
     cloud-art.ts                  cloud silhouettes and faces (SVG paths)
     clouds.ts birds.ts            per-element placement and timing tables
     stars.ts  hills.ts
-    scroll-parallax.ts            eased rAF loop feeding `--scroll-shift`
+    scroll-parallax.ts            rAF loop feeding `--scroll-shift`
     styles/*.css                  one stylesheet per scenery system
   navigation/                     `/project` <-> the games section, no router
   seo/                            title, description, canonical and hreflang tags

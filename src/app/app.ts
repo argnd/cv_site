@@ -122,12 +122,6 @@ export class App {
        serialized to a file. */
     syncDocumentHead(this.document, this.locale());
     effect(() => this.syncColorScheme(this.isNight()));
-    /* Everything the parallax loop drives is day-only scenery, and a
-       main-thread scroll listener is not free on a page whose backdrop is
-       `position: fixed` — see the class note in `animations/scroll-parallax.ts`.
-       The night sky carries its own parallax as a scroll-driven CSS animation
-       instead, so nothing is lost by switching this off. */
-    effect(() => this.parallax.setEnabled(!this.isNight()));
     afterNextRender(() => {
       this.destroyRef.onDestroy(this.parallax.start());
       /* After render, so the section it may need to scroll to exists. */

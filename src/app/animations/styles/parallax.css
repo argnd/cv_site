@@ -1,14 +1,31 @@
-/* Scroll parallax for the *drifting* scenery — the hills and their props carry
-   theirs in `hills.css`, since those have no animation to stack on top of.
-   `--scroll-shift` is written per element, per frame, by `../scroll-parallax.ts`
-   (see the note on `@property --scroll-shift` in `sky.css` for why it is not
-   simply inherited from `.sky`).
+/* Scroll parallax: one offset rule, every layer that takes one.
 
-   `translate` is a separate property from `transform`, so it stacks on top of
-   the drift/fly keyframes instead of fighting them for the same slot — which is
-   the only reason these can have both an animation and a scroll offset. */
+   `--scroll-shift` is the page's scroll progress (0..1), written per element,
+   per frame, by `../scroll-parallax.ts` — the selector below is the same list
+   that module queries, so the two have to be kept in step. See the note on
+   `@property --scroll-shift` in `sky.css` for why it is written per element
+   rather than inherited from `.sky`.
+
+   Loaded after every stylesheet that defines these layers, so this is the one
+   place any of them picks up a scroll offset; each keeps only its own
+   `--parallax-*` distances, next to its own geometry.
+
+   `translate` and `rotate` are separate properties from `transform`, so they
+   stack on top of the drift/fly keyframes instead of fighting them for the same
+   slot — which is the only reason a layer can have both an animation and a
+   scroll offset. */
+.cloud,
+.bird-flock,
+.hill,
+.hill-prop,
+.sky__nebula {
+  translate: calc(var(--scroll-shift, 0) * var(--parallax-x, 0px))
+    calc(var(--scroll-shift, 0) * var(--parallax-y, 0px));
+  rotate: calc(var(--scroll-shift, 0) * var(--parallax-rotate, 0deg));
+}
+
 .cloud {
-  translate: 0 calc(var(--scroll-shift, 0) * var(--parallax-y, -20px));
+  --parallax-y: -20px;
 }
 
 .cloud--far {
@@ -16,5 +33,5 @@
 }
 
 .bird-flock {
-  translate: 0 calc(var(--scroll-shift, 0) * var(--parallax-y, -14px));
+  --parallax-y: -14px;
 }

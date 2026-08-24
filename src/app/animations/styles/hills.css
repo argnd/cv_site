@@ -15,7 +15,9 @@
 }
 
 /* Each band overshoots the fold by --hill-sink and the viewport sides by
-   --hill-overhang, so neither parallax axis can ever drag an edge into view. */
+   --hill-overhang, so neither parallax axis can ever drag an edge into view.
+   The offset itself is applied once, in `parallax.css`; the bands below only
+   declare how far each one travels. */
 .hill {
   --hill-sink: 40px;
   --hill-overhang: 80px;
@@ -24,8 +26,6 @@
   bottom: calc(-1 * var(--hill-sink));
   width: calc(100% + 2 * var(--hill-overhang));
   display: block;
-  translate: calc(var(--scroll-shift, 0) * var(--parallax-x, 0px))
-    calc(var(--scroll-shift, 0) * var(--parallax-y, 0px));
   /* Hills and props are the only scenery that moves *without* a running
      animation, so nothing auto-promotes them and every scroll frame repaints
      the whole band. Promoting them turns that into a compositor shift. */
@@ -77,15 +77,15 @@
 
 /* Seated on the green rather than balanced on a crest: the crest's height in px
    shifts with the viewport, but the band below it is solid, so a fixed offset
-   from the fold always lands on grass. Carries the near band's parallax so each
-   prop travels with the ground it's standing on. */
+   from the fold always lands on grass. Carries the near band's parallax
+   distances so each prop travels with the ground it's standing on. */
 .hill-prop {
   position: absolute;
   bottom: 12px;
   display: block;
   height: var(--prop-h);
-  translate: calc(var(--scroll-shift, 0) * var(--parallax-x, -62px))
-    calc(var(--scroll-shift, 0) * var(--parallax-y, -26px));
+  --parallax-x: -62px;
+  --parallax-y: -26px;
   will-change: translate;
 }
 
