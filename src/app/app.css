@@ -288,10 +288,10 @@
 /* Skin hint                           */
 /* ---------------------------------- */
 
-/* The scenery is the point of this page, and slate deliberately hangs none of
-   it — so on first load there is nothing on screen to suggest that the two
-   other skins exist. This says so once, in words, and both it and the ring
-   below go away for good the moment any skin is picked. */
+/* Slate's sky is texture, not scenery — nothing in it moves the way the moon or
+   the clouds do, so on first load there is nothing on screen to suggest the two
+   other skins exist. This says so in words, and both it and the ring below go
+   away for good the moment any skin is picked. */
 .theme-hint {
   position: fixed;
   top: calc(var(--controls-top) + var(--toggle-h) + 0.85rem);

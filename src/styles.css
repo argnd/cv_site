@@ -9,47 +9,47 @@
 @property --sky-void {
   syntax: '<color>';
   inherits: true;
-  initial-value: #182238;
+  initial-value: #22304f;
 }
 @property --sky-deep {
   syntax: '<color>';
   inherits: true;
-  initial-value: #22314f;
+  initial-value: #2e4168;
 }
 @property --sky-mid {
   syntax: '<color>';
   inherits: true;
-  initial-value: #1d2942;
+  initial-value: #273757;
 }
 @property --sky-horizon {
   syntax: '<color>';
   inherits: true;
-  initial-value: #2c3f66;
+  initial-value: #3d5786;
 }
 @property --surface-muted {
   syntax: '<color>';
   inherits: true;
-  initial-value: #26314b;
+  initial-value: #2f3e60;
 }
 @property --text-strong {
   syntax: '<color>';
   inherits: true;
-  initial-value: #eceef2;
+  initial-value: #f2f5fa;
 }
 @property --text-body {
   syntax: '<color>';
   inherits: true;
-  initial-value: #c3c9d4;
+  initial-value: #ced6e3;
 }
 @property --text-soft {
   syntax: '<color>';
   inherits: true;
-  initial-value: #99a1af;
+  initial-value: #aeb8cb;
 }
 @property --text-faint {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(198, 205, 216, 0.42);
+  initial-value: rgba(206, 214, 227, 0.45);
 }
 @property --celestial-core {
   syntax: '<color>';
@@ -96,7 +96,7 @@
 @property --thumb-ink {
   syntax: '<color>';
   inherits: true;
-  initial-value: #182238;
+  initial-value: #22304f;
 }
 @property --nebula-violet {
   syntax: '<color>';
@@ -139,27 +139,27 @@
 @property --surface-card {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(226, 232, 240, 0.035);
+  initial-value: rgba(228, 235, 246, 0.045);
 }
 @property --surface-card-edge {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(226, 232, 240, 0.1);
+  initial-value: rgba(228, 235, 246, 0.13);
 }
 @property --accent {
   syntax: '<color>';
   inherits: true;
-  initial-value: #9db3cd;
+  initial-value: #a9c2e2;
 }
 @property --accent-warm {
   syntax: '<color>';
   inherits: true;
-  initial-value: #9db3cd;
+  initial-value: #a9c2e2;
 }
 @property --glass-bg {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(24, 34, 56, 0.45);
+  initial-value: rgba(34, 48, 79, 0.5);
 }
 @property --glass-active {
   syntax: '<color>';
@@ -188,17 +188,17 @@
      way down, so the page reads as a quiet deep-blue surface rather than a
      night sky — the stars and the moon are what make it a sky, and slate hangs
      neither. */
-  --sky-void: #182238;
-  --sky-deep: #22314f;
-  --sky-mid: #1d2942;
-  --sky-horizon: #2c3f66;
-  --surface-muted: #26314b;
+  --sky-void: #22304f;
+  --sky-deep: #2e4168;
+  --sky-mid: #273757;
+  --sky-horizon: #3d5786;
+  --surface-muted: #2f3e60;
 
   /* Text tokens */
-  --text-strong: #eceef2;
-  --text-body: #c3c9d4;
-  --text-soft: #99a1af;
-  --text-faint: rgba(198, 205, 216, 0.42);
+  --text-strong: #f2f5fa;
+  --text-body: #ced6e3;
+  --text-soft: #aeb8cb;
+  --text-faint: rgba(206, 214, 227, 0.45);
 
   /* The moon's and the sun's own palettes, defined once. `--celestial-*` and
      `--glow-*` below are the *scene's* current light and follow the skin (the
@@ -218,8 +218,9 @@
   --sun-glow-soft: rgba(255, 190, 80, 0.45);
   --sun-glow-strong: rgba(255, 190, 80, 0.7);
 
-  /* Scene light. Slate hangs nothing in its sky, so these only dress the toggle
-     thumb: a brushed steel disc, and a glow faint enough to read as a rim. */
+  /* Scene light. Slate's own sky is unlit — no moon, no sun — so these dress
+     the toggle thumb: a brushed steel disc, and a glow faint enough to read as
+     a rim. */
   --celestial-core: #dfe3ea;
   --celestial-edge: #b3bac6;
   --celestial-shadow: #878f9d;
@@ -228,7 +229,17 @@
   /* No halo on slate's copy: a professional skin sets type flat. */
   --bloom-soft: transparent;
   --bloom-strong: transparent;
-  --thumb-ink: #182238;
+  --thumb-ink: #22304f;
+
+  /* Slate's own atmosphere (see `animations/styles/slate.css`; night and day
+     fade all three layers out, so neither needs an override). A drafting grid,
+     a slow cool wash drifting over it, and an edge falloff to hold the eye on
+     the column — the vignette is the one colour here that goes *down* from the
+     sky rather than up. */
+  --grid-line: rgba(180, 202, 233, 0.06);
+  --aurora-cool: rgba(122, 168, 228, 0.16);
+  --aurora-deep: rgba(70, 106, 175, 0.15);
+  --vignette-edge: rgba(9, 14, 27, 0.5);
 
   /* Nebula (night only; the other two skins fade the layer out, so neither
      needs an override) */
@@ -248,8 +259,8 @@
      percent above the sky, which is what turns a dark page into a document
      rather than a backdrop with text on it. Night clears both back to
      transparent; day inks them into a card. */
-  --surface-card: rgba(226, 232, 240, 0.035);
-  --surface-card-edge: rgba(226, 232, 240, 0.1);
+  --surface-card: rgba(228, 235, 246, 0.045);
+  --surface-card-edge: rgba(228, 235, 246, 0.13);
 
   /* Section geometry. Night keeps the copy floating with only vertical rhythm;
      slate and day turn the same block into a panel, so the rhythm moves from
@@ -276,17 +287,17 @@
      contrast-safe variant for copy, `--accent-contrast` what sits on top of a
      filled accent surface. Slate keeps it desaturated — a steel blue that
      marks links without colouring the page. */
-  --accent: #9db3cd;
-  --accent-text: #b3c5da;
-  --accent-hover: #d5e0ec;
-  --accent-contrast: #182238;
-  --accent-warm: #9db3cd;
+  --accent: #a9c2e2;
+  --accent-text: #bed4ee;
+  --accent-hover: #e0eaf7;
+  --accent-contrast: #22304f;
+  --accent-warm: #a9c2e2;
 
   /* Frosted controls (locale selector, theme toggle) */
-  --glass-bg: rgba(24, 34, 56, 0.45);
+  --glass-bg: rgba(34, 48, 79, 0.5);
   --glass-active: rgba(255, 255, 255, 0.07);
 
-  --selection-bg: rgba(157, 179, 205, 0.3);
+  --selection-bg: rgba(169, 194, 226, 0.3);
 
   /* Typography tokens */
   --font-display: 'Playfair Display', Georgia, serif;

@@ -18,7 +18,8 @@
 .bird-flock,
 .hill,
 .hill-prop,
-.sky__nebula {
+.sky__nebula,
+.sky__grid {
   translate: calc(var(--scroll-shift, 0) * var(--parallax-x, 0px))
     calc(var(--scroll-shift, 0) * var(--parallax-y, 0px));
   rotate: calc(var(--scroll-shift, 0) * var(--parallax-rotate, 0deg));

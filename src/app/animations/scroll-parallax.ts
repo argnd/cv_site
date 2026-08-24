@@ -19,7 +19,7 @@ const SCROLL_SHIFT_PROPERTY = '--scroll-shift';
  * far cheaper than that subtree walk, and they touch only elements that were
  * going to be restyled anyway.
  */
-const PARALLAX_SELECTOR = '.cloud, .bird-flock, .hill, .hill-prop, .sky__nebula';
+const PARALLAX_SELECTOR = '.cloud, .bird-flock, .hill, .hill-prop, .sky__nebula, .sky__grid';
 
 /** `.hill` and the props are SVG, so this cannot narrow to `HTMLElement`. */
 type StyledElement = Element & ElementCSSInlineStyle;

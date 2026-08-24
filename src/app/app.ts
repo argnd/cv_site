@@ -45,7 +45,7 @@ const THEME_ORDER: readonly Theme[] = ['slate', 'night', 'day'];
 
 /** Browser-chrome colour for each skin, mirroring `--sky-void`. */
 const CHROME_COLOR: Record<Theme, string> = {
-  slate: '#182238',
+  slate: '#22304f',
   night: '#05060d',
   day: '#2ea8ec',
 };
@@ -83,6 +83,7 @@ const THEME_ROTATION_MS = 30_000;
   styleUrls: [
     './app.css',
     './animations/styles/sky.css',
+    './animations/styles/slate.css',
     './animations/styles/stars.css',
     './animations/styles/birds.css',
     './animations/styles/clouds.css',
@@ -119,11 +120,11 @@ export class App {
   protected readonly themeIndex = computed(() => THEME_ORDER.indexOf(this.theme()));
 
   /**
-   * Slate hangs nothing in its sky, so a first-time reader has no way of knowing
-   * the other two skins exist — the rotation below shows them, and this says
-   * where the switch is. Any deliberate use of the control — including
-   * re-picking the skin already on screen — retires both for the rest of the
-   * visit.
+   * Slate's sky is texture rather than scenery, so a first-time reader has no
+   * way of knowing the other two skins exist — the rotation below shows them,
+   * and this says where the switch is. Any deliberate use of the control —
+   * including re-picking the skin already on screen — retires both for the rest
+   * of the visit.
    */
   private readonly themePicked = signal(false);
   protected readonly showThemeHint = computed(() => !this.themePicked());
@@ -172,7 +173,7 @@ export class App {
   }
 
   /**
-   * The two scenic skins are the reason this page is worth looking at, and slate
+   * Night and day are the two skins with something crossing the sky, and slate
    * shows neither — so the page gives itself a tour: one skin every 30s, in the
    * toggle's own order, wrapping back to slate. It runs until the reader touches
    * the control, and the thumb slides along with it, which is what makes the

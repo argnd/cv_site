@@ -3,8 +3,9 @@
    for the last two lives in `../stars.ts`.
 
    Every layer here opts *in* through `.is-night` rather than out through
-   `.is-day`: two of the three skins hang nothing in their sky, and the base
-   state has to be the quiet one so a fourth skin inherits silence too. */
+   `.is-day`: each skin hangs only its own scenery (slate's is in `slate.css`),
+   and the base state has to be the quiet one so a fourth skin inherits silence
+   too. */
 
 /* Layered multi-hue nebula for extra depth at night; each lobe has its own
    hue, placement, blur and drift rhythm so they read as distinct drifting

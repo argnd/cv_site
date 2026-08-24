@@ -34,7 +34,8 @@
    a warm horizon glow at the *top* of the viewport reads as dusk, which is why
    daylight looked like it was lit from the wrong place; day gets its own
    sun-anchored glow in `.sky__daylight` instead. Slate keeps the wash, in its
-   own neutral `--sky-horizon`: it is the only depth cue in an empty sky. */
+   own cool `--sky-horizon`, as the bottom plane of the stack it builds in
+   `slate.css`. */
 .sky__glow {
   position: absolute;
   inset: 0;

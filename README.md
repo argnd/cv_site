@@ -60,11 +60,11 @@ Adding a language means adding its prefix in `content/locale.ts`, its copy in
 
 Three of them, picked from the toggle in the top-right corner:
 
-| Skin    | Sky                                      | Copy                                  |
-| ------- | ---------------------------------------- | ------------------------------------- |
-| `slate` | empty, unlit deep navy — **the default** | panelled, flat, desaturated accent    |
-| `night` | stars, nebula, shooting stars, the moon  | floating on the sky, lit by the moon  |
-| `day`   | clouds, birds, hills, cats, the sun      | inked flat-vector cards, rounded face |
+| Skin    | Sky                                     | Copy                                  |
+| ------- | --------------------------------------- | ------------------------------------- |
+| `slate` | grid, wash, vignette — **the default**  | panelled, flat, desaturated accent    |
+| `night` | stars, nebula, shooting stars, the moon | floating on the sky, lit by the moon  |
+| `day`   | clouds, birds, hills, cats, the sun     | inked flat-vector cards, rounded face |
 
 Every colour, length and geometry token is declared once in `styles.css` under
 `:root`, and that block **is** the slate skin — so the served HTML paints the
@@ -72,17 +72,17 @@ default before Angular boots, and `@property` fallbacks agree with it.
 `.scene.is-night` and `.scene.is-day` in `app.css` are pure diffs against it;
 `.scene.is-slate` has no block of its own.
 
-The scenery follows the same rule in both directions: a night-only layer opts in
-through `.scene.is-night`, a day-only one through `.scene.is-day`, and the base
-state is an empty sky. Adding a skin therefore means one token block and no
-scenery edits.
+The scenery follows the same rule in every direction: each skin's layers opt in
+through their own `.scene.is-*` — `slate.css`, `stars.css` for night, and
+`clouds.css` / `birds.css` / `hills.css` for day — and the base state is an
+empty sky. Adding a skin therefore means one token block and one stylesheet.
 
-Slate is deliberately quiet, which also means nothing on screen hints that the
-other two exist — so the page tours itself, switching skin every 30s in the
-toggle's order, and the toggle carries a nudge (`themeToggle.hint` in
-`content/app-shell*.json`) that says where the wheel is. Both stop for good the
-first time the reader picks a skin, and neither runs under
-`prefers-reduced-motion`.
+Slate is deliberately quiet — its sky is texture, not scenery — which also means
+nothing on screen hints that the other two exist. So the page tours itself,
+switching skin every 30s in the toggle's order, and the toggle carries a nudge
+(`themeToggle.hint` in `content/app-shell*.json`) that says where the wheel is.
+Both stop for good the first time the reader picks a skin, and neither runs
+under `prefers-reduced-motion`.
 
 ## Rendering
 
