@@ -7,21 +7,24 @@
   position: relative;
 }
 
-/* `:host *` also matches child *component hosts* — they are elements of this
-   template — and `transition` is a shorthand, so this rule silently replaces
-   whatever a child declared on its own `:host`. A child's `:host` is only
-   `[_nghost]` (0,1,0) after Angular's encapsulation rewrite, while this is
-   (0,2,0), so the parent wins. `app-celestial-body` owns a multi-property
-   hand-off keyed off `.is-hidden`, and losing the un-hidden half of it left
-   the arriving body with no transition at all: it teleported into its corner
-   while the departing one still animated. Component hosts are excluded here;
-   they never paint their own colour anyway. */
-:host *:not(app-celestial-body),
-:host {
-  transition:
-    color var(--theme-duration) var(--ease-soft),
-    background-color var(--theme-duration) var(--ease-soft),
-    border-color var(--theme-duration) var(--ease-soft);
+/* The colour hand-off for the page copy, declared once on the box the copy
+   inherits from. `color` is an inherited property, so a descendant with no
+   colour of its own follows this element's *interpolated* value frame by frame
+   — one transition covers the whole document, and only an element that sets a
+   colour itself needs one of its own.
+
+   This must never be widened back to `:host *`. Angular's encapsulation rewrite
+   turns that into `[_nghost-x] *[_ngcontent-x]:not(...)`, specificity (0,2,1),
+   while every other rule in this component's stylesheets tops out at (0,2,0) —
+   so the shorthand won over all of them and *replaced* their `transition`
+   lists. The sky gradient, the daylight wash, the hills, the cloud fills, the
+   stars and the toggle thumb all snapped instead of cross-fading, and one
+   toggle armed three transitions on each of the ~400 elements in this template
+   — ~370 of them actually started, for 900ms, over a scene that was already
+   running 30 animations. */
+:host,
+.scene {
+  transition: color var(--theme-duration) var(--ease-soft);
 }
 
 /* Base text color lives on .scene (not :host) so that var(--text-body) is
@@ -246,6 +249,10 @@
   color: var(--divider-glyph);
   font-size: var(--divider-glyph-size);
   text-shadow: 0 0 8px var(--bloom-strong);
+  /* Sets its own colour rather than inheriting `.scene`'s, so it needs its own
+     hand-off. `font-size` is left out on purpose: it is a layout property and
+     the glyph is centred in a flex row that would reflow on every frame. */
+  transition: color var(--theme-duration) var(--ease-soft);
 }
 
 @media (max-width: 560px) {

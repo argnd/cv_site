@@ -48,9 +48,11 @@
     --parallax-rotate: 0deg;
   }
 
-  /* Nothing moves any more, so the compositor layers are pure overhead. */
-  .hill,
-  .hill-prop {
+  /* Nothing moves any more, so the compositor layers are pure overhead. Must
+     mirror the day-gated selector in `hills.css` — a bare `.hill` is (0,1,0)
+     and would lose to it. */
+  .scene.is-day .hill,
+  .scene.is-day .hill-prop {
     will-change: auto;
   }
 

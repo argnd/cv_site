@@ -26,9 +26,18 @@
   bottom: calc(-1 * var(--hill-sink));
   width: calc(100% + 2 * var(--hill-overhang));
   display: block;
-  /* Hills and props are the only scenery that moves *without* a running
-     animation, so nothing auto-promotes them and every scroll frame repaints
-     the whole band. Promoting them turns that into a compositor shift. */
+}
+
+/* Hills and props are the only scenery that moves *without* a running
+   animation, so nothing auto-promotes them and every scroll frame repaints the
+   whole band. Promoting them turns that into a compositor shift.
+
+   Day-gated, because `.sky__hills` is fully transparent at night and night is
+   where the page starts: Firefox stops honouring `will-change` once the
+   elements carrying it exceed ~3 viewport areas document-wide, so six invisible
+   boxes holding layers spend a budget the sky layers are already close to. */
+.scene.is-day .hill,
+.scene.is-day .hill-prop {
   will-change: translate;
 }
 
@@ -86,7 +95,6 @@
   height: var(--prop-h);
   --parallax-x: -62px;
   --parallax-y: -26px;
-  will-change: translate;
 }
 
 .hill-prop path {
