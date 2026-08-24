@@ -9,7 +9,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ```
 src/app/
-  app.ts / app.html / app.css     shell: locale, day/night skin, page column
+  app.ts / app.html / app.css     shell: locale, skin, page column
   models/                         the shapes: content.models.ts, scene.models.ts
   content/                        localized copy (JSON) + the URL <-> locale rules
   animations/                     the decorative sky
@@ -55,6 +55,34 @@ same document, different scroll position.
 
 Adding a language means adding its prefix in `content/locale.ts`, its copy in
 `content/*.json`, and its URLs to `prerender-routes.txt`.
+
+## Skins
+
+Three of them, picked from the toggle in the top-right corner:
+
+| Skin    | Sky                                     | Copy                                  |
+| ------- | --------------------------------------- | ------------------------------------- |
+| `slate` | grid, wash, vignette — **the default**  | panelled, flat, desaturated accent    |
+| `night` | stars, nebula, shooting stars, the moon | floating on the sky, lit by the moon  |
+| `day`   | clouds, birds, hills, cats, the sun     | inked flat-vector cards, rounded face |
+
+Every colour, length and geometry token is declared once in `styles.css` under
+`:root`, and that block **is** the slate skin — so the served HTML paints the
+default before Angular boots, and `@property` fallbacks agree with it.
+`.scene.is-night` and `.scene.is-day` in `app.css` are pure diffs against it;
+`.scene.is-slate` has no block of its own.
+
+The scenery follows the same rule in every direction: each skin's layers opt in
+through their own `.scene.is-*` — `slate.css`, `stars.css` for night, and
+`clouds.css` / `birds.css` / `hills.css` for day — and the base state is an
+empty sky. Adding a skin therefore means one token block and one stylesheet.
+
+Slate is deliberately quiet — its sky is texture, not scenery — which also means
+nothing on screen hints that the other two exist. So the page tours itself,
+switching skin every 30s in the toggle's order, and the toggle carries a nudge
+(`themeToggle.hint` in `content/app-shell*.json`) that says where the wheel is.
+Both stop for good the first time the reader picks a skin, and neither runs
+under `prefers-reduced-motion`.
 
 ## Rendering
 

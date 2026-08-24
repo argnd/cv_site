@@ -1,5 +1,11 @@
 {
-  "themeToggleAriaLabel": "Basculer entre le mode nuit et le mode jour",
+  "themeToggle": {
+    "label": "Ambiance",
+    "slateLabel": "Ambiance sobre",
+    "nightLabel": "Ambiance nuit",
+    "dayLabel": "Ambiance jour",
+    "hint": "Ce CV change d'ambiance tout seul. Prenez la main quand vous voulez."
+  },
   "documentMeta": {
     "title": "Armel Gandour — Développeur Senior Java / Angular à Tours",
     "description": "Armel Gandour — développeur senior Java 21 / Spring & Angular à Tours. 6 ans d'expérience : Spring Batch, Spring Integration, API REST, données à fort volume.",

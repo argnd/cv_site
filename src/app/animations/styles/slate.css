@@ -1,0 +1,107 @@
+/* Everything that only exists in slate: the drafting grid, the cool wash that
+   drifts over it, and the edge falloff around both.
+
+   Slate is the skin that has to work while somebody is actually reading a CV,
+   so its sky is texture rather than scenery — nothing crosses the screen, and
+   nothing here is ever the brightest thing in the viewport. What it buys is
+   depth: three flat planes at different distances, which is what stops a single
+   gradient from reading as a dead background.
+
+   Same opt-in rule as `stars.css`: every layer here comes in through
+   `.is-slate` and is faded out everywhere else, so the base state stays quiet.
+
+   One motion mechanism per box, deliberately. The grid takes the script-written
+   scroll offset (`translate`, via `parallax.css`) and animates nothing; the
+   aurora animates `transform` and takes no offset. Mixing the two on one
+   element is what drops a layer off the compositor in Gecko — see the note in
+   `stars.css`. */
+
+/* The drafting grid: two hairline rulings rather than a bitmap, faded out by a
+   mask that opens high on the page and closes before the edges. A full-bleed
+   grid reads as a spreadsheet; a fading one reads as paper. It is also why the
+   cell size never has to divide the viewport — nobody sees the last cell.
+
+   The copy sits over the lower half, where the ruling is nearly gone. */
+.sky__grid {
+  --grid-cell: 76px;
+  /* Scroll parallax: the grid trails the copy slightly, which is the whole
+     point of it being a plane of its own. `parallax.css` applies it. */
+  --parallax-y: -46px;
+
+  position: absolute;
+  /* Overscanned by the parallax travel plus a cell, so the ruling never runs
+     out from under its own mask as the page scrolls. */
+  inset: -80px -8px;
+  background-image:
+    repeating-linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px var(--grid-cell)),
+    repeating-linear-gradient(to bottom, var(--grid-line) 0 1px, transparent 1px var(--grid-cell));
+  mask-image: radial-gradient(
+    ellipse 88% 60% at 50% 20%,
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 54%,
+    transparent 84%
+  );
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+/* Tighter cell under the narrow column, or the ruling reads as two lines and a
+   lot of nothing. */
+@media (max-width: 720px) {
+  .sky__grid {
+    --grid-cell: 54px;
+  }
+}
+
+/* The wash: one box, two lobes painted as two radial gradients, drifting as a
+   single slow sheet. Slate gets one moving thing, not three — the skin is meant
+   to sit still while somebody reads.
+
+   Inset well past the viewport so the drift never walks a gradient edge into
+   frame, and no `filter: blur()` for the reason given in `stars.css`: a
+   radial-gradient falloff at this size is already smoother than a blur radius
+   worth paying for. No `will-change` either — the running animation promotes
+   the layer on its own, and the hints are budgeted for `hills.css`. */
+.sky__aurora {
+  position: absolute;
+  inset: -25% -20%;
+  background-image:
+    radial-gradient(ellipse 46% 34% at 22% 18%, var(--aurora-cool) 0%, transparent 70%),
+    radial-gradient(ellipse 54% 30% at 82% 46%, var(--aurora-deep) 0%, transparent 72%);
+  animation: aurora-drift 190s ease-in-out infinite alternate;
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(3%, -2.5%, 0) scale(1.08);
+  }
+}
+
+/* Edge falloff. Slate's gradient is light enough now that the corners were
+   competing with the copy for attention; this puts them back. It is the only
+   thing in the skin that goes darker than `--sky-void`. */
+.sky__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 82% 76% at 50% 42%,
+    transparent 42%,
+    var(--vignette-edge) 100%
+  );
+  transition: opacity var(--theme-duration) var(--ease-soft);
+}
+
+.scene:not(.is-slate) .sky__grid,
+.scene:not(.is-slate) .sky__aurora,
+.scene:not(.is-slate) .sky__vignette {
+  opacity: 0;
+}
+
+/* Parked by name, for the same reason the nebula parks its lobe: a layer at
+   zero opacity is still composited on every frame. */
+.scene:not(.is-slate) .sky__aurora {
+  animation-play-state: paused;
+}

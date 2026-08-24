@@ -12,6 +12,7 @@ describe('App', () => {
      leaving it there would decide the locale of whichever test ran next. */
   afterEach(() => {
     window.history.replaceState({}, '', '/');
+    vi.useRealTimers();
   });
 
   it('should create the app', () => {
@@ -101,5 +102,77 @@ describe('App', () => {
     expect(compiled.querySelector('.hero__actions a:last-of-type')?.getAttribute('href')).toBe(
       '/en/project',
     );
+  });
+
+  /* The neutral skin hangs nothing in its sky, so the nudge beside the toggle is
+     the only thing on screen saying the other two exist — and the toggle is the
+     only way to reach them. Both are easy to lose in a refactor of the control. */
+  it('should open on the neutral skin, offer three, and drop the nudge once one is picked', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const options = Array.from(
+      compiled.querySelectorAll<HTMLButtonElement>('.theme-toggle__option'),
+    );
+    expect(compiled.querySelector('.scene')?.classList.contains('is-slate')).toBe(true);
+    expect(options.map((option) => option.getAttribute('aria-pressed'))).toEqual([
+      'true',
+      'false',
+      'false',
+    ]);
+    expect(compiled.querySelector('.theme-hint')).not.toBeNull();
+
+    const [, nightOption, dayOption] = options;
+    nightOption.click();
+    await fixture.whenStable();
+
+    expect(compiled.querySelector('.scene')?.classList.contains('is-night')).toBe(true);
+    expect(document.documentElement.style.colorScheme).toBe('dark');
+    /* Said once. A reader who has used the control does not need telling. */
+    expect(compiled.querySelector('.theme-hint')).toBeNull();
+
+    dayOption.click();
+    await fixture.whenStable();
+
+    expect(compiled.querySelector('.scene')?.classList.contains('is-day')).toBe(true);
+    expect(document.documentElement.style.colorScheme).toBe('light');
+  });
+
+  /* The page tours its own skins, which is the only thing that ever changes one
+     without being asked — and it has to let go the moment the reader takes the
+     wheel, or it would drag them off whatever they picked 30s later.
+     Only the interval is faked: Angular schedules its own rendering on timers
+     too, and freezing those would deadlock `whenStable()`. */
+  it('should tour the three skins on its own until the reader picks one', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const scene = compiled.querySelector('.scene');
+    const nextSkin = async () => {
+      vi.advanceTimersByTime(30_000);
+      await fixture.whenStable();
+      return scene?.className;
+    };
+
+    expect(scene?.classList.contains('is-slate')).toBe(true);
+    expect(await nextSkin()).toContain('is-night');
+    expect(await nextSkin()).toContain('is-day');
+    /* Wraps back to the start rather than stopping at the end of the list. */
+    expect(await nextSkin()).toContain('is-slate');
+
+    const [, nightOption] = Array.from(
+      compiled.querySelectorAll<HTMLButtonElement>('.theme-toggle__option'),
+    );
+    nightOption.click();
+    await fixture.whenStable();
+
+    /* Four more turns of the wheel: a tour still running would be showing day. */
+    await nextSkin();
+    await nextSkin();
+    await nextSkin();
+    expect(await nextSkin()).toContain('is-night');
   });
 });
