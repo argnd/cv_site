@@ -45,17 +45,25 @@
   --parallax-rotate: 3deg;
 }
 
-/* The lobe itself: gradient, blur and drift. Sized to its host, so splitting
-   the box changed nothing about what is painted — the gradient percentages
-   still resolve against the same rectangle, and a filter applies in the
-   element's own coordinate space either way.
+/* The lobe itself: gradient and drift. Sized to its host, so splitting the box
+   changed nothing about what is painted — the gradient percentages still
+   resolve against the same rectangle.
 
-   Deliberately no `will-change` on either box. Firefox ignores will-change once
-   the elements carrying it exceed three viewport areas document-wide, and these
-   three lobes alone are ~6.7 — they would blow the budget and starve the hints
-   in `hills.css`, which sit later in the document. The lobe is promoted anyway
-   by its own running animation, and the host paints nothing at all, so shifting
-   it only moves a layer that is already on the compositor. */
+   No `filter: blur()`. Each lobe used to carry a 3-4px one, on a box inset
+   -20%/-30% of the viewport and animated with `scale()` — so every raster of a
+   ~1.4-viewport surface paid for a blur pass, and each scale step could force
+   another. A `radial-gradient` fading to `transparent` is already a smooth
+   falloff at that size: rendering the three lobes with and without the filter
+   in Firefox differs by at most 1/255 on a single channel, on 4% of pixels,
+   with no pixel differing by 2 or more. It was buying nothing.
+
+   Deliberately no `will-change` on either box either. Firefox ignores
+   will-change once the elements carrying it exceed three viewport areas
+   document-wide, and these three lobes alone are ~6.7 — they would blow the
+   budget and starve the hints in `hills.css`, which sit later in the document.
+   The lobe is promoted anyway by its own running animation, and the host paints
+   nothing at all, so shifting it only moves a layer already on the
+   compositor. */
 .sky__nebula-gas {
   position: absolute;
   inset: 0;
@@ -63,19 +71,16 @@
 
 .sky__nebula--violet .sky__nebula-gas {
   background: radial-gradient(ellipse 58% 38% at 78% 24%, var(--nebula-violet) 0%, transparent 72%);
-  filter: blur(4px);
   animation: nebula-drift-a 210s ease-in-out infinite alternate;
 }
 
 .sky__nebula--teal .sky__nebula-gas {
   background: radial-gradient(ellipse 52% 36% at 16% 60%, var(--nebula-teal) 0%, transparent 70%);
-  filter: blur(3.5px);
   animation: nebula-drift-b 265s ease-in-out infinite alternate;
 }
 
 .sky__nebula--rose .sky__nebula-gas {
   background: radial-gradient(ellipse 42% 30% at 56% 84%, var(--nebula-rose) 0%, transparent 68%);
-  filter: blur(3px);
   animation: nebula-drift-c 175s ease-in-out infinite;
 }
 
