@@ -34,9 +34,9 @@ import { GAMES_PATH, pushPath, startSectionRouting } from './navigation/section-
 import { syncDocumentHead } from './seo/document-head';
 
 /**
- * The three skins, in the order the toggle lays them out. `slate` is the
- * default: a neutral, unlit page that says nothing about the reader's taste,
- * with the two scenic ones a click away.
+ * The three skins, in the order the toggle lays them out. `night` is the
+ * default; `slate` is the neutral one, an unlit page that says nothing about
+ * the reader's taste.
  */
 export type Theme = 'slate' | 'night' | 'day';
 
@@ -52,6 +52,14 @@ const CHROME_COLOR: Record<Theme, string> = {
 
 /** How long each skin holds the screen while the page is cycling by itself. */
 const THEME_ROTATION_MS = 30_000;
+
+/**
+ * Master switch for the self-guided tour below. Off: the page stays on
+ * whichever skin it opened with until the reader picks another. The mechanism
+ * is kept intact behind this flag rather than deleted, so turning the tour back
+ * on is a one-line change.
+ */
+const THEME_ROTATION_ENABLED = false;
 
 /**
  * The page shell. It owns exactly three things — the locale, the skin, and the
@@ -114,17 +122,16 @@ export class App {
   /** The games section's URL in the locale on screen: `/project` or `/en/project`. */
   protected readonly gamesPath = computed(() => localizePath(GAMES_PATH, this.locale()));
 
-  protected readonly theme = signal<Theme>('slate');
+  protected readonly theme = signal<Theme>('night');
 
   /** Which stop the toggle's thumb sits on, handed to CSS as `--thumb-index`. */
   protected readonly themeIndex = computed(() => THEME_ORDER.indexOf(this.theme()));
 
   /**
-   * Slate's sky is texture rather than scenery, so a first-time reader has no
-   * way of knowing the other two skins exist — the rotation below shows them,
-   * and this says where the switch is. Any deliberate use of the control —
-   * including re-picking the skin already on screen — retires both for the rest
-   * of the visit.
+   * A reader who never notices the control never sees two thirds of the page,
+   * so the hint says where the switch is. Any deliberate use of it — including
+   * re-picking the skin already on screen — retires the hint for the rest of
+   * the visit.
    */
   private readonly themePicked = signal(false);
   protected readonly showThemeHint = computed(() => !this.themePicked());
@@ -173,11 +180,13 @@ export class App {
   }
 
   /**
-   * Night and day are the two skins with something crossing the sky, and slate
-   * shows neither — so the page gives itself a tour: one skin every 30s, in the
-   * toggle's own order, wrapping back to slate. It runs until the reader touches
-   * the control, and the thumb slides along with it, which is what makes the
-   * connection between what just changed and where to change it back.
+   * The self-guided tour: one skin every 30s, in the toggle's own order,
+   * wrapping around. The thumb slides along with it, which is what makes the
+   * connection between what just changed and where to change it back. It runs
+   * until the reader touches the control.
+   *
+   * Currently switched off at `THEME_ROTATION_ENABLED` — the page opens in
+   * night and stays there.
    *
    * Skipped for anyone who asked for reduced motion: this cross-fades the whole
    * page, unprompted, which is exactly what that setting is about. `matchMedia`
@@ -188,7 +197,8 @@ export class App {
    */
   private startThemeRotation(): () => void {
     const view = this.document.defaultView;
-    if (!view?.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    const reduced = view?.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    if (THEME_ROTATION_ENABLED && !reduced) {
       this.rotationTimer = setInterval(() => {
         const next = (THEME_ORDER.indexOf(this.theme()) + 1) % THEME_ORDER.length;
         this.theme.set(THEME_ORDER[next]);

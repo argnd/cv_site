@@ -33,7 +33,7 @@
    whole band. Promoting them turns that into a compositor shift.
 
    Day-gated, because `.sky__hills` is fully transparent in the other two skins
-   and slate is where the page starts: Firefox stops honouring `will-change`
+   and night is where the page starts: Firefox stops honouring `will-change`
    once the elements carrying it exceed ~3 viewport areas document-wide, so six
    invisible boxes holding layers spend a budget the sky layers are already
    close to. */

@@ -2,79 +2,79 @@
    interpolate them (including inside gradients/shadows) when a skin class swaps
    their values, instead of snapping instantly.
 
-   Every initial value here is the *slate* one, because slate is the skin the
+   Every initial value here is the *night* one, because night is the skin the
    page starts in: these double as the values in force before `:root` is
-   parsed, and a night-coloured fallback would flash a darker page. Keep the two
-   in step — `:root` below is the same list. */
+   parsed, and a lighter fallback would flash a paler page. Keep the two in step
+   — `:root` below is the same list. */
 @property --sky-void {
   syntax: '<color>';
   inherits: true;
-  initial-value: #22304f;
+  initial-value: #05060d;
 }
 @property --sky-deep {
   syntax: '<color>';
   inherits: true;
-  initial-value: #2e4168;
+  initial-value: #0a0e1f;
 }
 @property --sky-mid {
   syntax: '<color>';
   inherits: true;
-  initial-value: #273757;
+  initial-value: #10152b;
 }
 @property --sky-horizon {
   syntax: '<color>';
   inherits: true;
-  initial-value: #3d5786;
+  initial-value: #232b4d;
 }
 @property --surface-muted {
   syntax: '<color>';
   inherits: true;
-  initial-value: #2f3e60;
+  initial-value: #1a2140;
 }
 @property --text-strong {
   syntax: '<color>';
   inherits: true;
-  initial-value: #f2f5fa;
+  initial-value: #f8fafc;
 }
 @property --text-body {
   syntax: '<color>';
   inherits: true;
-  initial-value: #ced6e3;
+  initial-value: #cbd5e1;
 }
 @property --text-soft {
   syntax: '<color>';
   inherits: true;
-  initial-value: #aeb8cb;
+  initial-value: #94a3b8;
 }
 @property --text-faint {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(206, 214, 227, 0.45);
+  initial-value: rgba(203, 213, 225, 0.45);
 }
 @property --celestial-core {
   syntax: '<color>';
   inherits: true;
-  initial-value: #dfe3ea;
+  initial-value: #f8fafc;
 }
 @property --celestial-edge {
   syntax: '<color>';
   inherits: true;
-  initial-value: #b3bac6;
+  initial-value: #b9c2d6;
 }
 @property --celestial-shadow {
   syntax: '<color>';
   inherits: true;
-  initial-value: #878f9d;
+  initial-value: #7d879e;
 }
 @property --glow-soft {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(226, 232, 240, 0.22);
+  initial-value: rgba(248, 250, 252, 0.35);
 }
 @property --glow-strong {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(226, 232, 240, 0.4);
+  initial-value: rgba(248, 250, 252, 0.65);
 }
 /* Bloom is the *text* halo, split from `--glow-*` because a skin can keep a
    real glow in the sky (the moon and the sun both light one) while the copy
@@ -83,12 +83,12 @@
 @property --bloom-soft {
   syntax: '<color>';
   inherits: true;
-  initial-value: transparent;
+  initial-value: rgba(248, 250, 252, 0.35);
 }
 @property --bloom-strong {
   syntax: '<color>';
   inherits: true;
-  initial-value: transparent;
+  initial-value: rgba(248, 250, 252, 0.65);
 }
 /* What sits *on* the toggle thumb: the icon of the skin currently selected,
    painted over a disc that is pale in every skin. Registered because it rides
@@ -96,7 +96,7 @@
 @property --thumb-ink {
   syntax: '<color>';
   inherits: true;
-  initial-value: #22304f;
+  initial-value: #05060d;
 }
 @property --nebula-violet {
   syntax: '<color>';
@@ -139,32 +139,32 @@
 @property --surface-card {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(228, 235, 246, 0.045);
+  initial-value: rgba(226, 232, 240, 0);
 }
 @property --surface-card-edge {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(228, 235, 246, 0.13);
+  initial-value: rgba(226, 232, 240, 0);
 }
 @property --accent {
   syntax: '<color>';
   inherits: true;
-  initial-value: #a9c2e2;
+  initial-value: #7dd3fc;
 }
 @property --accent-warm {
   syntax: '<color>';
   inherits: true;
-  initial-value: #a9c2e2;
+  initial-value: #7dd3fc;
 }
 @property --glass-bg {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(34, 48, 79, 0.5);
+  initial-value: rgba(5, 6, 13, 0.3);
 }
 @property --glass-active {
   syntax: '<color>';
   inherits: true;
-  initial-value: rgba(255, 255, 255, 0.07);
+  initial-value: rgba(255, 255, 255, 0.08);
 }
 @property --stroke-w {
   syntax: '<length>';
@@ -178,27 +178,24 @@
 }
 
 /* The default skin, and the one the served HTML paints before Angular boots:
-   slate — an unlit deep navy. Night and day are the two override blocks in
-   `app.css` (`.scene.is-night`, `.scene.is-day`); anything a skin does not name
-   is taken from here. */
+   night. Slate and day are the two override blocks in `app.css`
+   (`.scene.is-slate`, `.scene.is-day`); anything a skin does not name is taken
+   from here. */
 :root {
   color-scheme: dark;
 
-  /* Sky tokens. Slate lifts the void well off black and holds one hue all the
-     way down, so the page reads as a quiet deep-blue surface rather than a
-     night sky — the stars and the moon are what make it a sky, and slate hangs
-     neither. */
-  --sky-void: #22304f;
-  --sky-deep: #2e4168;
-  --sky-mid: #273757;
-  --sky-horizon: #3d5786;
-  --surface-muted: #2f3e60;
+  /* Sky tokens */
+  --sky-void: #05060d;
+  --sky-deep: #0a0e1f;
+  --sky-mid: #10152b;
+  --sky-horizon: #232b4d;
+  --surface-muted: #1a2140;
 
   /* Text tokens */
-  --text-strong: #f2f5fa;
-  --text-body: #ced6e3;
-  --text-soft: #aeb8cb;
-  --text-faint: rgba(206, 214, 227, 0.45);
+  --text-strong: #f8fafc;
+  --text-body: #cbd5e1;
+  --text-soft: #94a3b8;
+  --text-faint: rgba(203, 213, 225, 0.45);
 
   /* The moon's and the sun's own palettes, defined once. `--celestial-*` and
      `--glow-*` below are the *scene's* current light and follow the skin (the
@@ -218,31 +215,30 @@
   --sun-glow-soft: rgba(255, 190, 80, 0.45);
   --sun-glow-strong: rgba(255, 190, 80, 0.7);
 
-  /* Scene light. Slate's own sky is unlit — no moon, no sun — so these dress
-     the toggle thumb: a brushed steel disc, and a glow faint enough to read as
-     a rim. */
-  --celestial-core: #dfe3ea;
-  --celestial-edge: #b3bac6;
-  --celestial-shadow: #878f9d;
-  --glow-soft: rgba(226, 232, 240, 0.22);
-  --glow-strong: rgba(226, 232, 240, 0.4);
-  /* No halo on slate's copy: a professional skin sets type flat. */
-  --bloom-soft: transparent;
-  --bloom-strong: transparent;
-  --thumb-ink: #22304f;
+  /* Scene light: the moon's, since night is the default. The toggle thumb and
+     the star field read these. */
+  --celestial-core: var(--moon-core);
+  --celestial-edge: var(--moon-edge);
+  --celestial-shadow: var(--moon-shadow);
+  --glow-soft: var(--moon-glow-soft);
+  --glow-strong: var(--moon-glow-strong);
+  /* The moon lights the page, so night is the one skin whose copy blooms. */
+  --bloom-soft: rgba(248, 250, 252, 0.35);
+  --bloom-strong: rgba(248, 250, 252, 0.65);
+  --thumb-ink: #05060d;
 
   /* Slate's own atmosphere (see `animations/styles/slate.css`; night and day
      fade all three layers out, so neither needs an override). A drafting grid,
      a slow cool wash drifting over it, and an edge falloff to hold the eye on
-     the column — the vignette is the one colour here that goes *down* from the
-     sky rather than up. */
+     the column — the vignette is the one colour here that goes *down* from
+     slate's sky rather than up. */
   --grid-line: rgba(180, 202, 233, 0.06);
   --aurora-cool: rgba(122, 168, 228, 0.16);
   --aurora-deep: rgba(70, 106, 175, 0.15);
   --vignette-edge: rgba(9, 14, 27, 0.5);
 
-  /* Nebula (night only; the other two skins fade the layer out, so neither
-     needs an override) */
+  /* Nebula (night only, and night is the base — the other two skins fade the
+     layer out, so neither needs an override) */
   --nebula-violet: rgba(147, 130, 246, 0.24);
   --nebula-teal: rgba(45, 190, 178, 0.2);
   --nebula-rose: rgba(224, 122, 158, 0.18);
@@ -255,19 +251,17 @@
   --shadow-offset: 0px;
   --radius-card: 20px;
 
-  /* Section surface. Slate panels the copy — a hairline and a wash a couple of
-     percent above the sky, which is what turns a dark page into a document
-     rather than a backdrop with text on it. Night clears both back to
-     transparent; day inks them into a card. */
-  --surface-card: rgba(228, 235, 246, 0.045);
-  --surface-card-edge: rgba(228, 235, 246, 0.13);
+  /* Section surface. Night lets the copy float on the sky, so both are clear;
+     slate lifts a hairline panel out of them and day inks them into a card. */
+  --surface-card: rgba(226, 232, 240, 0);
+  --surface-card-edge: rgba(226, 232, 240, 0);
 
   /* Section geometry. Night keeps the copy floating with only vertical rhythm;
      slate and day turn the same block into a panel, so the rhythm moves from
      padding to margin and inline padding appears. */
-  --section-pad-block: clamp(1.6rem, 3.4vw, 2.4rem);
-  --section-pad-inline: clamp(1.2rem, 3vw, 2rem);
-  --section-gap: clamp(0.9rem, 2.4vw, 1.5rem);
+  --section-pad-block: var(--space-xl);
+  --section-pad-inline: 0px;
+  --section-gap: 0px;
 
   /* The fixed top row (locale selector, theme toggle). Shared rather than
      repeated inline because the sun parks itself clear of this row, and the
@@ -285,19 +279,18 @@
 
   /* Accent: `--accent` is the saturated fill tone, `--accent-text` the
      contrast-safe variant for copy, `--accent-contrast` what sits on top of a
-     filled accent surface. Slate keeps it desaturated — a steel blue that
-     marks links without colouring the page. */
-  --accent: #a9c2e2;
-  --accent-text: #bed4ee;
-  --accent-hover: #e0eaf7;
-  --accent-contrast: #22304f;
-  --accent-warm: #a9c2e2;
+     filled accent surface. */
+  --accent: #7dd3fc;
+  --accent-text: #7dd3fc;
+  --accent-hover: #bae6fd;
+  --accent-contrast: #05060d;
+  --accent-warm: #7dd3fc;
 
   /* Frosted controls (locale selector, theme toggle) */
-  --glass-bg: rgba(34, 48, 79, 0.5);
-  --glass-active: rgba(255, 255, 255, 0.07);
+  --glass-bg: rgba(5, 6, 13, 0.3);
+  --glass-active: rgba(255, 255, 255, 0.08);
 
-  --selection-bg: rgba(169, 194, 226, 0.3);
+  --selection-bg: rgba(248, 250, 252, 0.22);
 
   /* Typography tokens */
   --font-display: 'Playfair Display', Georgia, serif;

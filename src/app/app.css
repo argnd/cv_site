@@ -29,9 +29,9 @@
 
 /* Base text color lives on .scene (not :host) so that var(--text-body) is
    re-evaluated against the skin class's overridden tokens. Declaring it on
-   :host would freeze it at the :root slate defaults, since :host sits
+   :host would freeze it at the :root night defaults, since :host sits
    above .scene in the tree and never sees the override — the bug
-   behind unstyled inherited text (e.g. bare <li>) staying slate-colored
+   behind unstyled inherited text (e.g. bare <li>) staying night-colored
    in daylight. */
 .scene {
   color: var(--text-body);
@@ -41,54 +41,57 @@
 /* Skins                               */
 /* ---------------------------------- */
 
-/* Three skins share one set of tokens. `:root` in `styles.css` holds slate —
-   the neutral default, and the one the served HTML paints before Angular boots
-   — so `.scene.is-slate` needs no block of its own; the two below are pure
-   diffs against it.
-   Anything a skin does not name it inherits from slate, which is why the day
+/* Three skins share one set of tokens. `:root` in `styles.css` holds night —
+   the default, and the one the served HTML paints before Angular boots — so
+   `.scene.is-night` needs no block of its own; the two below are pure diffs
+   against it.
+   Anything a skin does not name it inherits from night, which is why the day
    block is the long one: it inverts the page. */
 
-.scene.is-night {
-  --sky-void: #05060d;
-  --sky-deep: #0a0e1f;
-  --sky-mid: #10152b;
-  --sky-horizon: #232b4d;
-  --surface-muted: #1a2140;
+.scene.is-slate {
+  --sky-void: #22304f;
+  --sky-deep: #2e4168;
+  --sky-mid: #273757;
+  --sky-horizon: #3d5786;
+  --surface-muted: #2f3e60;
 
-  --text-strong: #f8fafc;
-  --text-body: #cbd5e1;
-  --text-soft: #94a3b8;
-  --text-faint: rgba(203, 213, 225, 0.45);
+  --text-strong: #f2f5fa;
+  --text-body: #ced6e3;
+  --text-soft: #aeb8cb;
+  --text-faint: rgba(206, 214, 227, 0.45);
 
-  --celestial-core: var(--moon-core);
-  --celestial-edge: var(--moon-edge);
-  --celestial-shadow: var(--moon-shadow);
+  /* Slate's sky is unlit — no moon, no sun — so these only dress the toggle
+     thumb: a brushed steel disc, and a glow faint enough to read as a rim. */
+  --celestial-core: #dfe3ea;
+  --celestial-edge: #b3bac6;
+  --celestial-shadow: #878f9d;
+  --glow-soft: rgba(226, 232, 240, 0.22);
+  --glow-strong: rgba(226, 232, 240, 0.4);
+  /* No halo on slate's copy: a professional skin sets type flat. */
+  --bloom-soft: transparent;
+  --bloom-strong: transparent;
+  --thumb-ink: #22304f;
 
-  /* The moon lights the page, so night is the one skin whose copy blooms. */
-  --glow-soft: var(--moon-glow-soft);
-  --glow-strong: var(--moon-glow-strong);
-  --bloom-soft: rgba(248, 250, 252, 0.35);
-  --bloom-strong: rgba(248, 250, 252, 0.65);
-  --thumb-ink: #05060d;
+  /* Slate panels the copy — a hairline and a wash a couple of percent above the
+     sky, which is what turns a dark page into a document rather than a backdrop
+     with text on it. The rhythm moves from padding to margin with it. */
+  --surface-card: rgba(228, 235, 246, 0.045);
+  --surface-card-edge: rgba(228, 235, 246, 0.13);
+  --section-pad-block: clamp(1.6rem, 3.4vw, 2.4rem);
+  --section-pad-inline: clamp(1.2rem, 3vw, 2rem);
+  --section-gap: clamp(0.9rem, 2.4vw, 1.5rem);
 
-  /* No panels: night lets the copy float on the sky, with vertical rhythm
-     doing the separating that slate and day get from an edge. */
-  --surface-card: rgba(226, 232, 240, 0);
-  --surface-card-edge: rgba(226, 232, 240, 0);
-  --section-pad-block: var(--space-xl);
-  --section-pad-inline: 0px;
-  --section-gap: 0px;
+  /* Desaturated — a steel blue that marks links without colouring the page. */
+  --accent: #a9c2e2;
+  --accent-text: #bed4ee;
+  --accent-hover: #e0eaf7;
+  --accent-contrast: #22304f;
+  --accent-warm: #a9c2e2;
 
-  --accent: #7dd3fc;
-  --accent-text: #7dd3fc;
-  --accent-hover: #bae6fd;
-  --accent-contrast: #05060d;
-  --accent-warm: #7dd3fc;
+  --glass-bg: rgba(34, 48, 79, 0.5);
+  --glass-active: rgba(255, 255, 255, 0.07);
 
-  --glass-bg: rgba(5, 6, 13, 0.3);
-  --glass-active: rgba(255, 255, 255, 0.08);
-
-  --selection-bg: rgba(248, 250, 252, 0.22);
+  --selection-bg: rgba(169, 194, 226, 0.3);
 }
 
 .scene.is-day {
@@ -288,10 +291,10 @@
 /* Skin hint                           */
 /* ---------------------------------- */
 
-/* Slate's sky is texture, not scenery — nothing in it moves the way the moon or
-   the clouds do, so on first load there is nothing on screen to suggest the two
-   other skins exist. This says so in words, and both it and the ring below go
-   away for good the moment any skin is picked. */
+/* On first load nothing on screen says the toggle switches anything — the moon
+   crossing the sky reads as decoration, not as one of three choices. This says
+   so in words, and both it and the ring below go away for good the moment any
+   skin is picked. */
 .theme-hint {
   position: fixed;
   top: calc(var(--controls-top) + var(--toggle-h) + 0.85rem);
@@ -302,8 +305,11 @@
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--text-faint);
   border-radius: 12px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
+  /* Opaque, not the toggle's glass: on the default skin the moon parks directly
+     behind this pill, and a 30%-alpha background let a bright disc through
+     under white copy. `--surface-muted` is per-skin and always pairs with
+     `--text-strong`. */
+  background: var(--surface-muted);
   color: var(--text-strong);
   font-size: 0.78rem;
   font-weight: 500;
@@ -353,8 +359,9 @@
 
 /* A ring pulsing out of the pill, on the toggle's own box rather than the
    track, so it can overflow the control without a second element. Its colours
-   are literals on purpose: this only ever runs on slate, and a custom property
-   inside `@keyframes` would drop the animation off the compositor. */
+   are literals on purpose: it only ever runs before a skin is picked, i.e. on
+   the default one, and a custom property inside `@keyframes` would drop the
+   animation off the compositor. */
 .theme-toggle--nudge::after {
   content: '';
   position: absolute;
