@@ -89,14 +89,6 @@
   will-change: translate;
 }
 
-/* Only ever drawn in the gutter beside the 720px text column — any narrower and
-   they would sit under the copy. */
-@media (max-width: 1099px) {
-  .hill-prop {
-    display: none;
-  }
-}
-
 .hill-prop path {
   stroke: var(--ink);
   stroke-width: var(--stroke-w);
@@ -119,9 +111,30 @@
   fill: var(--tree-leaf, transparent);
 }
 
+/* --prop-right is the per-cat inset set on the element; it stays a variable
+   rather than an inline `right` so the narrow-viewport rule below can re-anchor
+   it without fighting inline-style specificity. */
 .cat {
+  --cat-cluster-mid: 107px;
   --cat-fur: var(--cat-grey, transparent);
+  right: var(--prop-right);
   width: var(--prop-h);
+}
+
+/* Narrower than the 720px text column plus its gutters: the tree has nowhere
+   left to stand without landing under the copy, so it goes. The cats stay, but
+   re-anchored from the right edge to the middle of the fold, keeping the
+   spacing they were authored with. --cat-cluster-mid is the pair's own centre
+   measured from the right edge, so subtracting it from 50% puts that centre on
+   the midline. Must stay after the rules above — same specificity. */
+@media (max-width: 1099px) {
+  .tree {
+    display: none;
+  }
+
+  .cat {
+    right: calc(50% - var(--cat-cluster-mid) + var(--prop-right));
+  }
 }
 
 .cat--tabby {

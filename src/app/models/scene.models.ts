@@ -164,6 +164,10 @@ export type HillCat = {
    */
   tabby: boolean;
   height: number;
-  /** Inset from the right edge of the viewport. */
+  /**
+   * Inset from the right edge of the viewport, handed to the element as
+   * `--prop-right` rather than `right` so the narrow-viewport rule in
+   * `styles/hills.css` can re-anchor the pair to the middle of the fold.
+   */
   right: number;
 };
