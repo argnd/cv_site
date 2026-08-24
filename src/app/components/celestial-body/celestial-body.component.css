@@ -63,6 +63,21 @@
   --glow-strong: var(--moon-glow-strong);
 }
 
+/* The moon shares the top-right corner with the theme toggle. There is room for
+   both side by side while the sky is wide; below that the toggle closes in
+   until it bites a corner out of the disc, so the moon steps down under it —
+   the same move the sun makes for the locale selector, and derived the same
+   way, from the control tokens rather than a number tuned against one screen.
+   `--disc-reach` is the 10% every painted layer (`.body`, `.disc-outline`,
+   `.rim`) is inset by, so the *drawn* edge clears the pill, not just the host
+   box. `--exit-lift` re-derives from `--home-top`, so the exit retunes itself. */
+@media (max-width: 720px) {
+  :host(.celestial--moon) {
+    --disc-reach: calc(0.1 * var(--size));
+    --home-top: calc(var(--controls-top) + var(--toggle-h) + 0.5rem + var(--disc-reach));
+  }
+}
+
 /* The sun sits on the left, below the locale selector. Two constraints fix its
    corner, and both are expressed against the corona rather than the disc:
 

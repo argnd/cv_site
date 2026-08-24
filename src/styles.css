@@ -232,9 +232,12 @@
      repeated inline because the sun parks itself clear of this row and would
      otherwise silently drift out of alignment with it. `--controls-h` is the
      selector's rendered height, pinned as a token because it is content-driven
-     and no CSS length can read an intrinsic box. */
+     and no CSS length can read an intrinsic box. `--toggle-h` is the toggle's
+     own, shorter height: the moon shares its corner and parks clear of it once
+     the viewport is too narrow for the two to sit side by side. */
   --controls-top: clamp(1rem, 4vh, 1.75rem);
   --controls-h: 2.75rem;
+  --toggle-h: 2rem;
 
   /* Accent: `--accent` is the saturated fill tone, `--accent-text` the
      contrast-safe variant for copy, `--accent-contrast` what sits on top of a
@@ -268,6 +271,16 @@
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-slow: 900ms;
   --theme-duration: 900ms;
+}
+
+/* The toggle shrinks with the rest of the mobile chrome. It lives here rather
+   than beside the toggle's own rules because the moon's resting position is
+   derived from it, and a height only `app.css` knew about would put the two
+   back on top of each other at this width. */
+@media (max-width: 560px) {
+  :root {
+    --toggle-h: 1.625rem;
+  }
 }
 
 * {
