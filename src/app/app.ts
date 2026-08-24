@@ -50,6 +50,9 @@ const CHROME_COLOR: Record<Theme, string> = {
   day: '#2ea8ec',
 };
 
+/** How long each skin holds the screen while the page is cycling by itself. */
+const THEME_ROTATION_MS = 30_000;
+
 /**
  * The page shell. It owns exactly three things — the locale, the skin, and the
  * scroll parallax — and delegates the rest:
@@ -116,10 +119,11 @@ export class App {
   protected readonly themeIndex = computed(() => THEME_ORDER.indexOf(this.theme()));
 
   /**
-   * Nothing hangs in slate's sky, so a first-time reader has no way of knowing
-   * the other two skins exist. The nudge beside the toggle says so, and any
-   * deliberate use of the control — including re-picking the skin already on
-   * screen — retires it for the rest of the visit.
+   * Slate hangs nothing in its sky, so a first-time reader has no way of knowing
+   * the other two skins exist — the rotation below shows them, and this says
+   * where the switch is. Any deliberate use of the control — including
+   * re-picking the skin already on screen — retires both for the rest of the
+   * visit.
    */
   private readonly themePicked = signal(false);
   protected readonly showThemeHint = computed(() => !this.themePicked());
@@ -138,6 +142,8 @@ export class App {
   private readonly skyRef = viewChild<ElementRef<HTMLElement>>('sky');
   private readonly parallax = new ScrollParallax(() => this.skyRef()?.nativeElement);
 
+  private rotationTimer: ReturnType<typeof setInterval> | undefined;
+
   /* Captured here rather than inside the `afterNextRender` callback: that runs
      outside the injection context, so `inject()` would throw there. */
   private readonly destroyRef = inject(DestroyRef);
@@ -150,6 +156,7 @@ export class App {
     effect(() => this.syncColorScheme(this.theme()));
     afterNextRender(() => {
       this.destroyRef.onDestroy(this.parallax.start());
+      this.destroyRef.onDestroy(this.startThemeRotation());
       /* After render, so the section it may need to scroll to exists. */
       this.destroyRef.onDestroy(
         startSectionRouting((pathname) => this.applyLocale(localeFromPath(pathname))),
@@ -158,8 +165,41 @@ export class App {
   }
 
   protected setTheme(theme: Theme): void {
+    /* A deliberate pick ends the tour: whoever chose a skin gets to keep it. */
+    this.stopThemeRotation();
     this.themePicked.set(true);
     this.theme.set(theme);
+  }
+
+  /**
+   * The two scenic skins are the reason this page is worth looking at, and slate
+   * shows neither — so the page gives itself a tour: one skin every 30s, in the
+   * toggle's own order, wrapping back to slate. It runs until the reader touches
+   * the control, and the thumb slides along with it, which is what makes the
+   * connection between what just changed and where to change it back.
+   *
+   * Skipped for anyone who asked for reduced motion: this cross-fades the whole
+   * page, unprompted, which is exactly what that setting is about. `matchMedia`
+   * is probed rather than called, because the DOM the unit tests run in has no
+   * implementation of it.
+   *
+   * Returns its own teardown, matching `ScrollParallax.start()`.
+   */
+  private startThemeRotation(): () => void {
+    const view = this.document.defaultView;
+    if (!view?.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      this.rotationTimer = setInterval(() => {
+        const next = (THEME_ORDER.indexOf(this.theme()) + 1) % THEME_ORDER.length;
+        this.theme.set(THEME_ORDER[next]);
+      }, THEME_ROTATION_MS);
+    }
+
+    return () => this.stopThemeRotation();
+  }
+
+  private stopThemeRotation(): void {
+    clearInterval(this.rotationTimer);
+    this.rotationTimer = undefined;
   }
 
   /**

@@ -4,7 +4,7 @@
     "slateLabel": "Neutral mood",
     "nightLabel": "Night mood",
     "dayLabel": "Day mood",
-    "hint": "This CV has two other moods. Try night or day."
+    "hint": "This CV changes its mood on its own. Take over whenever you like."
   },
   "documentMeta": {
     "title": "Armel Gandour — Senior Java / Angular Developer in Tours",

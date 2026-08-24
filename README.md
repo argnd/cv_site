@@ -78,8 +78,11 @@ state is an empty sky. Adding a skin therefore means one token block and no
 scenery edits.
 
 Slate is deliberately quiet, which also means nothing on screen hints that the
-other two exist — so the toggle carries a nudge (`themeToggle.hint` in
-`content/app-shell*.json`) until the reader picks a skin for the first time.
+other two exist — so the page tours itself, switching skin every 30s in the
+toggle's order, and the toggle carries a nudge (`themeToggle.hint` in
+`content/app-shell*.json`) that says where the wheel is. Both stop for good the
+first time the reader picks a skin, and neither runs under
+`prefers-reduced-motion`.
 
 ## Rendering
 
