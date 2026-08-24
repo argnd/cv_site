@@ -17,26 +17,31 @@ User-agent: Qwantbot
 Allow: /
 
 # ---------------------------------------------------------------------------
-# AI crawlers: declined, both kinds.
+# AI crawlers: sorted by what they do with the page, not by who runs them.
 #
-# Two groups, kept apart because the trade-off is not the same:
+#   Training crawlers scrape text to feed a model. Nothing comes back — no
+#   visit, no citation, no link — and the content ends up baked into weights
+#   this site does not control. Blocked.
 #
-#   Training crawlers scrape text to train a model. Nothing comes back — no
-#   visit, no citation, no link. Blocking them costs nothing.
+#   Assistant and AI-search crawlers fetch pages to answer a question someone
+#   is asking right now, and cite the source. That is the same bargain as a
+#   search engine: a mention and a link in exchange for a read. Allowed, so
+#   that "who is Armel Gandour?" asked to ChatGPT, Claude or Perplexity finds
+#   this site.
 #
-#   Assistant/search crawlers fetch pages to answer a question being asked
-#   right now, and usually cite the source. Blocking them means "who is Armel
-#   Gandour?" asked to ChatGPT, Claude or Perplexity returns nothing about
-#   this site. That is a real loss of visibility, and it is deliberate here.
-#   To reappear in those answers, delete that second group — leaving the
-#   training group blocked.
+# Google is deliberately absent from the allowed group. Google-Extended is the
+# only token it offers and it bundles Gemini *training* with grounding, so it
+# stays blocked below. Google's own AI answers — AI Overviews and AI Mode —
+# are not governed by it: they read the ordinary Search index that Googlebot
+# builds above. No `nosnippet` or `max-snippet` is set anywhere, so the site
+# remains quotable there. On Google, the plain referencing does the work.
 #
 # robots.txt is honoured voluntarily. The operators below publish their agent
 # strings and do respect it; scrapers that do not are unaffected by any of
 # this.
 # ---------------------------------------------------------------------------
 
-# -- Training ---------------------------------------------------------------
+# -- Training: no -----------------------------------------------------------
 User-agent: GPTBot
 Disallow: /
 
@@ -109,40 +114,58 @@ Disallow: /
 User-agent: DataForSeoBot
 Disallow: /
 
-# -- Assistants and AI search ----------------------------------------------
+# -- Assistants and AI search: yes, answer-time only ------------------------
+# Every token below is documented by its operator as answering or indexing for
+# citation, not as training input. If one of them starts training on what it
+# fetches, it belongs in the group above instead.
+
+# ChatGPT: index behind ChatGPT search, and the fetch made when a user pastes
+# or asks about a link. Neither feeds model training — GPTBot does, and it is
+# blocked above.
 User-agent: OAI-SearchBot
-Disallow: /
+Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
 
+# Claude: user-initiated fetch and the citation index. ClaudeBot, the training
+# crawler, stays blocked above.
 User-agent: Claude-User
-Disallow: /
+Allow: /
 
 User-agent: Claude-SearchBot
-Disallow: /
+Allow: /
 
 User-agent: PerplexityBot
-Disallow: /
+Allow: /
 
 User-agent: Perplexity-User
-Disallow: /
+Allow: /
 
 User-agent: YouBot
-Disallow: /
+Allow: /
 
 User-agent: MistralAI-User
-Disallow: /
+Allow: /
 
 User-agent: DuckAssistBot
-Disallow: /
+Allow: /
+
+# Meta AI following a link on a user's behalf. Meta-ExternalAgent, which
+# collects training data, stays blocked above.
+User-agent: Meta-ExternalFetcher
+Allow: /
 
 User-agent: Bytespider-Search
-Disallow: /
+Allow: /
 
 # ---------------------------------------------------------------------------
 
+# Everything not named above. Content-Signal states the same policy in one
+# machine-readable line, for agents that read it instead of matching tokens:
+# index it, quote it in an answer, do not train on it. https://contentsignals.org
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /
 
 Sitemap: https://armelgandour.fr/sitemap.xml

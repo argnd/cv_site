@@ -156,9 +156,11 @@ must point at a folder the site owns exclusively.
 prerendered page without a trailing-slash redirect, compression and cache headers on
 OVH's Apache 2.4.
 
-`public/robots.txt` blocks AI crawlers in two groups — training and assistant/search —
-so the second can be re-allowed on its own if appearing in AI answers becomes worth more
-than the traffic it diverts.
+`public/robots.txt` sorts AI crawlers by what they do with the page: crawlers that
+answer a live question and cite the source are allowed, crawlers that collect
+training data are blocked. Google sits outside both lists — `Google-Extended` bundles
+Gemini training with grounding so it stays blocked, and Google's AI Overviews read the
+ordinary Search index instead, which `Googlebot` is free to build.
 
 Use `Actions > Deploy to OVH > Run workflow` with `dry_run` enabled to preview a deploy
 without uploading anything.
