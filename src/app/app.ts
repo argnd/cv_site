@@ -134,7 +134,7 @@ export class App {
    * the visit.
    */
   private readonly themePicked = signal(false);
-  protected readonly showThemeHint = computed(() => !this.themePicked());
+  protected readonly showThemeHint = computed(() => false);
 
   /* Decorative scenery. Tables that never change are module constants shared by
      every instance; the two with randomized timing are rebuilt here, so each
