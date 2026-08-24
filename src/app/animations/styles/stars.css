@@ -1,10 +1,14 @@
 /* Everything that only exists at night: nebula, star dust, the two repeating
    star fields, the hand-placed twinkling stars, and the shooting stars. Data
-   for the last two lives in `../stars.ts`. */
+   for the last two lives in `../stars.ts`.
+
+   Every layer here opts *in* through `.is-night` rather than out through
+   `.is-day`: two of the three skins hang nothing in their sky, and the base
+   state has to be the quiet one so a fourth skin inherits silence too. */
 
 /* Layered multi-hue nebula for extra depth at night; each lobe has its own
    hue, placement, blur and drift rhythm so they read as distinct drifting
-   gas clouds rather than one flat glow. Fades out during the day. */
+   gas clouds rather than one flat glow. Fades out in every other skin. */
 .sky__nebula {
   position: absolute;
   inset: -20% -30%;
@@ -86,12 +90,12 @@
 
 /* `animation-play-state` does not inherit, so the lobe has to be parked by
    name — gating the host's opacity alone would leave the browser compositing
-   invisible frames for the whole time the other theme is up. */
-.scene.is-day .sky__nebula {
+   invisible frames for the whole time another skin is up. */
+.scene:not(.is-night) .sky__nebula {
   opacity: 0;
 }
 
-.scene.is-day .sky__nebula-gas {
+.scene:not(.is-night) .sky__nebula-gas {
   animation-play-state: paused;
 }
 
@@ -154,7 +158,7 @@
   transition: opacity var(--theme-duration) var(--ease-soft);
 }
 
-.scene.is-day .sky__stardust {
+.scene:not(.is-night) .sky__stardust {
   opacity: 0;
   animation-play-state: paused;
 }
@@ -206,7 +210,7 @@
   animation: drift 170s linear infinite reverse;
 }
 
-.scene.is-day .sky__stars {
+.scene:not(.is-night) .sky__stars {
   opacity: 0;
   animation-play-state: paused;
 }
@@ -254,7 +258,7 @@
     background var(--theme-duration) var(--ease-soft);
 }
 
-.scene.is-day .star {
+.scene:not(.is-night) .star {
   opacity: 0 !important;
   animation-play-state: paused;
 }
@@ -353,7 +357,7 @@
   transform: rotate(var(--trail-angle, 325deg));
 }
 
-.scene.is-day .shooting-star {
+.scene:not(.is-night) .shooting-star {
   opacity: 0 !important;
   animation-play-state: paused;
 }

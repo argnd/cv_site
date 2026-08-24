@@ -27,8 +27,24 @@ export type DocumentMetaContent = {
   openGraphLocale: string;
 };
 
+/**
+ * Names for the three skins the toggle switches between, plus the nudge that
+ * points a first-time reader at the control. The order the labels are declared
+ * in is the order the toggle lays its stops out.
+ */
+export type ThemeToggleContent = {
+  /** Names the control as a whole, for assistive technology. */
+  label: string;
+  /** The neutral default skin. */
+  slateLabel: string;
+  nightLabel: string;
+  dayLabel: string;
+  /** Shown beside the toggle until the reader picks a skin. */
+  hint: string;
+};
+
 export type AppShellContent = {
-  themeToggleAriaLabel: string;
+  themeToggle: ThemeToggleContent;
   documentMeta: DocumentMetaContent;
   localeSelector: LocaleSelectorContent;
 };

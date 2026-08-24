@@ -1,5 +1,5 @@
-/* The app shell: theme tokens, the day/night toggle and the page column.
-   The animated scenery this file's tokens feed is split by system under
+/* The app shell: skin tokens, the three-position skin toggle and the page
+   column. The animated scenery this file's tokens feed is split by system under
    `animations/styles/`, and pulled in by `styleUrls` in `app.ts`. */
 
 :host {
@@ -28,18 +28,68 @@
 }
 
 /* Base text color lives on .scene (not :host) so that var(--text-body) is
-   re-evaluated against .scene.is-day's overridden tokens. Declaring it on
-   :host would freeze it at the :root night defaults, since :host sits
-   above .scene in the tree and never sees the .is-day override — the bug
-   behind unstyled inherited text (e.g. bare <li>) staying night-colored
+   re-evaluated against the skin class's overridden tokens. Declaring it on
+   :host would freeze it at the :root slate defaults, since :host sits
+   above .scene in the tree and never sees the override — the bug
+   behind unstyled inherited text (e.g. bare <li>) staying slate-colored
    in daylight. */
 .scene {
   color: var(--text-body);
 }
 
 /* ---------------------------------- */
-/* Day / night theme override         */
+/* Skins                               */
 /* ---------------------------------- */
+
+/* Three skins share one set of tokens. `:root` in `styles.css` holds slate —
+   the neutral default, and the one the served HTML paints before Angular boots
+   — so `.scene.is-slate` needs no block of its own; the two below are pure
+   diffs against it.
+   Anything a skin does not name it inherits from slate, which is why the day
+   block is the long one: it inverts the page. */
+
+.scene.is-night {
+  --sky-void: #05060d;
+  --sky-deep: #0a0e1f;
+  --sky-mid: #10152b;
+  --sky-horizon: #232b4d;
+  --surface-muted: #1a2140;
+
+  --text-strong: #f8fafc;
+  --text-body: #cbd5e1;
+  --text-soft: #94a3b8;
+  --text-faint: rgba(203, 213, 225, 0.45);
+
+  --celestial-core: var(--moon-core);
+  --celestial-edge: var(--moon-edge);
+  --celestial-shadow: var(--moon-shadow);
+
+  /* The moon lights the page, so night is the one skin whose copy blooms. */
+  --glow-soft: var(--moon-glow-soft);
+  --glow-strong: var(--moon-glow-strong);
+  --bloom-soft: rgba(248, 250, 252, 0.35);
+  --bloom-strong: rgba(248, 250, 252, 0.65);
+  --thumb-ink: #05060d;
+
+  /* No panels: night lets the copy float on the sky, with vertical rhythm
+     doing the separating that slate and day get from an edge. */
+  --surface-card: rgba(226, 232, 240, 0);
+  --surface-card-edge: rgba(226, 232, 240, 0);
+  --section-pad-block: var(--space-xl);
+  --section-pad-inline: 0px;
+  --section-gap: 0px;
+
+  --accent: #7dd3fc;
+  --accent-text: #7dd3fc;
+  --accent-hover: #bae6fd;
+  --accent-contrast: #05060d;
+  --accent-warm: #7dd3fc;
+
+  --glass-bg: rgba(5, 6, 13, 0.3);
+  --glass-active: rgba(255, 255, 255, 0.08);
+
+  --selection-bg: rgba(248, 250, 252, 0.22);
+}
 
 .scene.is-day {
   --sky-void: #dff4ff;
@@ -67,6 +117,9 @@
 
   --ink: #16233f;
   --ink-soft: rgba(22, 35, 63, 0.45);
+  /* The sun's disc is the palest thing in the toggle, so the icon riding it
+     takes the same navy as the page's ink. */
+  --thumb-ink: #16233f;
   /* Deliberately below the ink it echoes: at full navy the offset slab reads as
      a second outline, and five stacked cards turn the column into a wall of it.
      Letting the sky through keeps each card lifted without the mass. */
@@ -123,21 +176,33 @@
 }
 
 /* ---------------------------------- */
-/* Theme toggle                        */
+/* Skin toggle                         */
 /* ---------------------------------- */
 
+/* Three positions rather than a switch, because a switch can only ever say
+   "the other one": with a third skin the reader has to be able to see all
+   three and pick, not cycle blind. The thumb is one disc that slides between
+   the cells — it carries the scene's current light (`--celestial-*`), so it is
+   also a preview of what the page is about to become.
+
+   Geometry comes from `--toggle-w` / `--toggle-h` in `styles.css`: the moon
+   parks itself clear of this pill and re-derives from both. */
 .theme-toggle {
+  --toggle-pad: 3px;
+  --toggle-thumb: 26px;
+  /* Travel between neighbouring cells: the free width, halved, because two
+     gaps separate the three stops. */
+  --toggle-step: calc((var(--toggle-w) - 2 * var(--toggle-pad) - var(--toggle-thumb)) / 2);
+
   position: fixed;
   top: var(--controls-top);
-  right: clamp(1rem, 5vw, 2rem);
+  right: var(--controls-inline);
   z-index: 5;
-  width: 64px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: var(--toggle-w);
   height: var(--toggle-h);
-  padding: 0;
-  border: 0;
   border-radius: 999px;
-  cursor: pointer;
-  background: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -152,10 +217,10 @@
 
 .theme-toggle__thumb {
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 26px;
-  height: 26px;
+  top: var(--toggle-pad);
+  left: var(--toggle-pad);
+  width: var(--toggle-thumb);
+  height: var(--toggle-thumb);
   border-radius: 50%;
   background: radial-gradient(
     circle at 35% 30%,
@@ -164,14 +229,163 @@
     var(--celestial-shadow) 100%
   );
   box-shadow: 0 0 12px var(--glow-soft);
-  transform: translateX(0);
+  /* `--thumb-index` is bound in the template (0, 1, 2) rather than derived from
+     the skin class, so the stops stay a single arithmetic rule instead of one
+     rule per skin repeated at every breakpoint. */
+  transform: translateX(calc(var(--thumb-index, 0) * var(--toggle-step)));
   transition:
     transform var(--theme-duration) var(--ease-soft),
     background var(--theme-duration) var(--ease-soft);
 }
 
-.scene.is-day .theme-toggle__thumb {
-  transform: translateX(32px);
+/* Positioned, so it stacks above the absolutely positioned thumb it sits on
+   — otherwise the disc would paint over the icon of the selected skin. */
+.theme-toggle__option {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--theme-duration) var(--ease-soft);
+}
+
+.theme-toggle__option:hover,
+.theme-toggle__option:focus-visible {
+  color: var(--text-strong);
+}
+
+/* The selected cell is the one under the thumb, so its icon flips to the dark
+   side of the palette. */
+.theme-toggle__option.is-active {
+  color: var(--thumb-ink);
+}
+
+.theme-toggle__icon {
+  width: 15px;
+  height: 15px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The moon glyph is a solid crescent rather than an outline: at 15px an outlined
+   crescent closes up into a blob. */
+.theme-toggle__icon--night {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ---------------------------------- */
+/* Skin hint                           */
+/* ---------------------------------- */
+
+/* The scenery is the point of this page, and slate deliberately hangs none of
+   it — so on first load there is nothing on screen to suggest that the two
+   other skins exist. This says so once, in words, and both it and the ring
+   below go away for good the moment any skin is picked. */
+.theme-hint {
+  position: fixed;
+  top: calc(var(--controls-top) + var(--toggle-h) + 0.85rem);
+  right: var(--controls-inline);
+  z-index: 5;
+  max-width: min(15rem, calc(100vw - 2 * var(--controls-inline)));
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--text-faint);
+  border-radius: 12px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  color: var(--text-strong);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: right;
+  animation:
+    hint-appear 600ms var(--ease-soft) both,
+    hint-bob 3.2s ease-in-out 600ms infinite;
+}
+
+/* Points back at the pill it is talking about. Anchored on the toggle's own
+   width, so it keeps aiming at the middle of the control at every breakpoint. */
+.theme-hint::before {
+  content: '';
+  position: absolute;
+  right: calc(var(--toggle-w) / 2 - 5px);
+  top: -5px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid var(--text-faint);
+  border-left: 1px solid var(--text-faint);
+  border-radius: 2px 0 0 0;
+  background: var(--glass-bg);
+  transform: rotate(45deg);
+}
+
+@keyframes hint-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hint-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* A ring pulsing out of the pill, on the toggle's own box rather than the
+   track, so it can overflow the control without a second element. Its colours
+   are literals on purpose: this only ever runs on slate, and a custom property
+   inside `@keyframes` would drop the animation off the compositor. */
+.theme-toggle--nudge::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid rgba(211, 224, 236, 0.85);
+  border-radius: 999px;
+  pointer-events: none;
+  animation: toggle-nudge 2.4s ease-out infinite;
+}
+
+@keyframes toggle-nudge {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.94);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(1.22);
+  }
+}
+
+/* The hint is a nudge, not scenery, so it survives `reduced-motion` — only its
+   motion goes. Both elements are legible at rest: the pulse is decoration on a
+   control that is already outlined, and the pill's own keyframes end where its
+   static styles already put it. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-hint,
+  .theme-toggle--nudge::after {
+    animation: none;
+  }
 }
 
 /* ---------------------------------- */
@@ -256,17 +470,19 @@
 }
 
 @media (max-width: 560px) {
-  /* Height comes from `--toggle-h` in `styles.css` — the moon reads it too. */
+  /* The pill's own box comes from `--toggle-w` / `--toggle-h` in `styles.css`
+     — the moon reads both — so only what sits inside it is set here. */
   .theme-toggle {
-    width: 52px;
+    --toggle-thumb: 20px;
   }
 
-  .theme-toggle__thumb {
-    width: 20px;
-    height: 20px;
+  .theme-toggle__icon {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.1;
   }
 
-  .scene.is-day .theme-toggle__thumb {
-    transform: translateX(26px);
+  .theme-hint {
+    font-size: 0.72rem;
   }
 }

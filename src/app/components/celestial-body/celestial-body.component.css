@@ -61,19 +61,33 @@
   --celestial-shadow: var(--moon-shadow);
   --glow-soft: var(--moon-glow-soft);
   --glow-strong: var(--moon-glow-strong);
+
+  /* `--disc-reach` is the 10% every painted layer (`.body`, `.disc-outline`,
+     `.rim`) is inset by, so what the two rules below clear is the *drawn* edge
+     rather than the host box. */
+  --disc-reach: calc(0.1 * var(--size));
+  /* The moon shares the top-right corner with the skin toggle, whose pill holds
+     three positions and so reaches a good way across that corner. Park the disc
+     left of it rather than tangent to it, and derive the offset from the same
+     control tokens the pill is placed with — the corner then retunes itself if
+     the toggle ever gains or loses a stop, instead of the disc quietly
+     reappearing underneath it. The hand-tuned corner stays on as a floor, for
+     the case where the control tokens ever shrink below it. */
+  --home-right: max(
+    clamp(1.25rem, 8vw, 6rem),
+    calc(var(--controls-inline) + var(--toggle-w) + 0.4rem + var(--disc-reach))
+  );
 }
 
-/* The moon shares the top-right corner with the theme toggle. There is room for
-   both side by side while the sky is wide; below that the toggle closes in
-   until it bites a corner out of the disc, so the moon steps down under it —
-   the same move the sun makes for the locale selector, and derived the same
-   way, from the control tokens rather than a number tuned against one screen.
-   `--disc-reach` is the 10% every painted layer (`.body`, `.disc-outline`,
-   `.rim`) is inset by, so the *drawn* edge clears the pill, not just the host
-   box. `--exit-lift` re-derives from `--home-top`, so the exit retunes itself. */
+/* Below this width the corner runs out of room for the two side by side — the
+   disc would have to sit so far left it hangs over the middle of the fold — so
+   the moon steps down under the pill instead, the same move the sun makes for
+   the locale selector and derived the same way, from the control tokens rather
+   than a number tuned against one screen. `--exit-lift` re-derives from
+   `--home-top`, so the exit retunes itself with it. */
 @media (max-width: 720px) {
   :host(.celestial--moon) {
-    --disc-reach: calc(0.1 * var(--size));
+    --home-right: clamp(1.25rem, 8vw, 6rem);
     --home-top: calc(var(--controls-top) + var(--toggle-h) + 0.5rem + var(--disc-reach));
   }
 }

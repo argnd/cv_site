@@ -65,7 +65,7 @@
 
 /* `animation-play-state` does not inherit, so the bob and the rain have to be
    parked by name too — otherwise they keep animating behind an invisible
-   layer for as long as the night lasts. */
+   layer for as long as a skin other than day is up. */
 .scene:not(.is-day) .cloud,
 .scene:not(.is-day) .cloud__art,
 .scene:not(.is-day) .cloud__drop {

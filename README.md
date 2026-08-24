@@ -9,7 +9,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ```
 src/app/
-  app.ts / app.html / app.css     shell: locale, day/night skin, page column
+  app.ts / app.html / app.css     shell: locale, skin, page column
   models/                         the shapes: content.models.ts, scene.models.ts
   content/                        localized copy (JSON) + the URL <-> locale rules
   animations/                     the decorative sky
@@ -55,6 +55,31 @@ same document, different scroll position.
 
 Adding a language means adding its prefix in `content/locale.ts`, its copy in
 `content/*.json`, and its URLs to `prerender-routes.txt`.
+
+## Skins
+
+Three of them, picked from the toggle in the top-right corner:
+
+| Skin    | Sky                                      | Copy                                  |
+| ------- | ---------------------------------------- | ------------------------------------- |
+| `slate` | empty, unlit deep navy — **the default** | panelled, flat, desaturated accent    |
+| `night` | stars, nebula, shooting stars, the moon  | floating on the sky, lit by the moon  |
+| `day`   | clouds, birds, hills, cats, the sun      | inked flat-vector cards, rounded face |
+
+Every colour, length and geometry token is declared once in `styles.css` under
+`:root`, and that block **is** the slate skin — so the served HTML paints the
+default before Angular boots, and `@property` fallbacks agree with it.
+`.scene.is-night` and `.scene.is-day` in `app.css` are pure diffs against it;
+`.scene.is-slate` has no block of its own.
+
+The scenery follows the same rule in both directions: a night-only layer opts in
+through `.scene.is-night`, a day-only one through `.scene.is-day`, and the base
+state is an empty sky. Adding a skin therefore means one token block and no
+scenery edits.
+
+Slate is deliberately quiet, which also means nothing on screen hints that the
+other two exist — so the toggle carries a nudge (`themeToggle.hint` in
+`content/app-shell*.json`) until the reader picks a skin for the first time.
 
 ## Rendering
 

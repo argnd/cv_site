@@ -1,4 +1,9 @@
-<div class="scene" [class.is-day]="!isNight()">
+<div
+  class="scene"
+  [class.is-slate]="theme() === 'slate'"
+  [class.is-night]="theme() === 'night'"
+  [class.is-day]="theme() === 'day'"
+>
   <app-locale-selector
     [currentLocale]="locale()"
     [content]="content().appShell.localeSelector"
@@ -74,8 +79,8 @@
       }
     </div>
 
-    <app-celestial-body class="celestial--moon" [class.is-hidden]="!isNight()" />
-    <app-celestial-body class="celestial--sun is-day" [class.is-hidden]="isNight()" />
+    <app-celestial-body class="celestial--moon" [class.is-hidden]="theme() !== 'night'" />
+    <app-celestial-body class="celestial--sun is-day" [class.is-hidden]="theme() !== 'day'" />
 
     @for (star of heroStars; track $index) {
       <span
@@ -227,17 +232,75 @@
     </div>
   </div>
 
-  <button
-    type="button"
+  <!-- Three stops, not a switch: with a third skin the reader has to see the
+       options rather than cycle blind through them. The thumb is a single disc
+       sliding between the cells, and `--thumb-index` is which cell it stops on
+       — see `.theme-toggle` in `app.css`. -->
+  <div
     class="theme-toggle"
-    role="switch"
-    [attr.aria-checked]="!isNight()"
-    [attr.aria-label]="content().appShell.themeToggleAriaLabel"
-    (click)="toggleTheme()"
+    [class.theme-toggle--nudge]="showThemeHint()"
+    [style.--thumb-index]="themeIndex()"
+    role="group"
+    [attr.aria-label]="content().appShell.themeToggle.label"
+    [attr.aria-describedby]="showThemeHint() ? 'theme-hint' : null"
   >
     <span class="theme-toggle__track" aria-hidden="true"></span>
     <span class="theme-toggle__thumb" aria-hidden="true"></span>
-  </button>
+
+    <button
+      type="button"
+      class="theme-toggle__option"
+      [class.is-active]="theme() === 'slate'"
+      [attr.aria-pressed]="theme() === 'slate'"
+      [attr.aria-label]="content().appShell.themeToggle.slateLabel"
+      [attr.title]="content().appShell.themeToggle.slateLabel"
+      (click)="setTheme('slate')"
+    >
+      <svg class="theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="4.5" width="16" height="15" rx="3" />
+        <path d="M8 10h8M8 14h5" />
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="theme-toggle__option"
+      [class.is-active]="theme() === 'night'"
+      [attr.aria-pressed]="theme() === 'night'"
+      [attr.aria-label]="content().appShell.themeToggle.nightLabel"
+      [attr.title]="content().appShell.themeToggle.nightLabel"
+      (click)="setTheme('night')"
+    >
+      <svg
+        class="theme-toggle__icon theme-toggle__icon--night"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M20.2 14.9A8.6 8.6 0 0 1 9.1 3.8 8.6 8.6 0 1 0 20.2 15Z" />
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="theme-toggle__option"
+      [class.is-active]="theme() === 'day'"
+      [attr.aria-pressed]="theme() === 'day'"
+      [attr.aria-label]="content().appShell.themeToggle.dayLabel"
+      [attr.title]="content().appShell.themeToggle.dayLabel"
+      (click)="setTheme('day')"
+    >
+      <svg class="theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2" />
+        <path
+          d="M12 2.4v2.3M12 19.3v2.3M2.4 12h2.3M19.3 12h2.3M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"
+        />
+      </svg>
+    </button>
+  </div>
+
+  @if (showThemeHint()) {
+    <p class="theme-hint" id="theme-hint">{{ content().appShell.themeToggle.hint }}</p>
+  }
 
   <main class="page">
     <app-hero-section [content]="content().hero" [gamesPath]="gamesPath()" />

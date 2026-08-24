@@ -1,5 +1,11 @@
 {
-  "themeToggleAriaLabel": "Switch between night and day mode",
+  "themeToggle": {
+    "label": "Mood",
+    "slateLabel": "Neutral mood",
+    "nightLabel": "Night mood",
+    "dayLabel": "Day mood",
+    "hint": "This CV has two other moods. Try night or day."
+  },
   "documentMeta": {
     "title": "Armel Gandour — Senior Java / Angular Developer in Tours",
     "description": "Armel Gandour — senior Java 21 / Spring & Angular developer based in Tours, France. 6 years of experience: Spring Batch, Spring Integration, REST APIs, high-volume data.",

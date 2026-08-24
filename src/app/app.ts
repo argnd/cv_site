@@ -33,12 +33,26 @@ import { SupportedLocale } from './models/content.models';
 import { GAMES_PATH, pushPath, startSectionRouting } from './navigation/section-route';
 import { syncDocumentHead } from './seo/document-head';
 
+/**
+ * The three skins, in the order the toggle lays them out. `slate` is the
+ * default: a neutral, unlit page that says nothing about the reader's taste,
+ * with the two scenic ones a click away.
+ */
+export type Theme = 'slate' | 'night' | 'day';
+
+/** The toggle's stops, left to right; a skin's index here is the thumb's. */
+const THEME_ORDER: readonly Theme[] = ['slate', 'night', 'day'];
+
 /** Browser-chrome colour for each skin, mirroring `--sky-void`. */
-const CHROME_COLOR = { night: '#05060d', day: '#2ea8ec' } as const;
+const CHROME_COLOR: Record<Theme, string> = {
+  slate: '#182238',
+  night: '#05060d',
+  day: '#2ea8ec',
+};
 
 /**
- * The page shell. It owns exactly three things — the locale, the day/night
- * skin, and the scroll parallax — and delegates the rest:
+ * The page shell. It owns exactly three things — the locale, the skin, and the
+ * scroll parallax — and delegates the rest:
  *
  * - `content/`    the localized copy, one stable object per locale
  * - `models/`     the shape of that copy, and of the scenery below
@@ -96,7 +110,19 @@ export class App {
   /** The games section's URL in the locale on screen: `/project` or `/en/project`. */
   protected readonly gamesPath = computed(() => localizePath(GAMES_PATH, this.locale()));
 
-  protected readonly isNight = signal(true);
+  protected readonly theme = signal<Theme>('slate');
+
+  /** Which stop the toggle's thumb sits on, handed to CSS as `--thumb-index`. */
+  protected readonly themeIndex = computed(() => THEME_ORDER.indexOf(this.theme()));
+
+  /**
+   * Nothing hangs in slate's sky, so a first-time reader has no way of knowing
+   * the other two skins exist. The nudge beside the toggle says so, and any
+   * deliberate use of the control — including re-picking the skin already on
+   * screen — retires it for the rest of the visit.
+   */
+  private readonly themePicked = signal(false);
+  protected readonly showThemeHint = computed(() => !this.themePicked());
 
   /* Decorative scenery. Tables that never change are module constants shared by
      every instance; the two with randomized timing are rebuilt here, so each
@@ -121,7 +147,7 @@ export class App {
        where the head has to be complete by the time the document is
        serialized to a file. */
     syncDocumentHead(this.document, this.locale());
-    effect(() => this.syncColorScheme(this.isNight()));
+    effect(() => this.syncColorScheme(this.theme()));
     afterNextRender(() => {
       this.destroyRef.onDestroy(this.parallax.start());
       /* After render, so the section it may need to scroll to exists. */
@@ -131,8 +157,9 @@ export class App {
     });
   }
 
-  protected toggleTheme(): void {
-    this.isNight.update((value) => !value);
+  protected setTheme(theme: Theme): void {
+    this.themePicked.set(true);
+    this.theme.set(theme);
   }
 
   /**
@@ -160,10 +187,10 @@ export class App {
    * root `color-scheme` stays `dark` in daylight, so scrollbars, form controls
    * and the mobile browser chrome stay night-colored around a light page.
    */
-  private syncColorScheme(isNight: boolean): void {
-    this.document.documentElement.style.colorScheme = isNight ? 'dark' : 'light';
+  private syncColorScheme(theme: Theme): void {
+    this.document.documentElement.style.colorScheme = theme === 'day' ? 'light' : 'dark';
     this.document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', isNight ? CHROME_COLOR.night : CHROME_COLOR.day);
+      ?.setAttribute('content', CHROME_COLOR[theme]);
   }
 }
