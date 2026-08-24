@@ -14,6 +14,25 @@
   animation-name: bird-fly;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  /* Seconds from `../birds.ts`, scaled here rather than bound as
+     `animation-delay` / `animation-duration` so the narrow-viewport rule below
+     isn't fighting an inline style. */
+  animation-delay: calc(var(--flock-delay) * var(--sky-tempo, 1));
+  animation-duration: calc(var(--flock-duration) * var(--sky-tempo, 1));
+  --bird-scale: 1;
+}
+
+/* One flock is marked `wideOnly` in `../birds.ts`: two crossings over
+   full-width copy is traffic, one is a moment. The survivors shrink, formation
+   included — scaling the birds without their offsets would loosen the V. */
+@media (max-width: 720px) {
+  .bird-flock--wide-only {
+    display: none;
+  }
+
+  .bird-flock {
+    --bird-scale: 0.76;
+  }
 }
 
 /* `animation-play-state` does not inherit: parking the flock leaves each
@@ -30,7 +49,9 @@
 
 .bird {
   position: absolute;
-  width: var(--bird-w, 44px);
+  left: calc(var(--bird-dx, 0px) * var(--bird-scale, 1));
+  top: calc(var(--bird-dy, 0px) * var(--bird-scale, 1));
+  width: calc(var(--bird-w, 44px) * var(--bird-scale, 1));
   animation: bird-soar 7s var(--ease-soft) infinite;
 }
 

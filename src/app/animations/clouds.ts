@@ -6,11 +6,18 @@ import { randomBetween } from './random';
  * `cloud-drift-rare` parks the storm cloud until 82% of its 300s cycle, so the
  * drift itself only starts this far in. Offsetting the delay by it lands the
  * first pass a few seconds after load — a rare cloud nobody ever sees is a
- * wasted one — and every pass after that is one per 5-minute cycle.
+ * wasted one — and every pass after that is one per 5-minute cycle. Delay and
+ * duration are both scaled by `--sky-tempo`, so a slower sky stretches that
+ * cycle without moving the first pass anywhere else in it.
  */
 const RARE_CLOUD_PARKED_SECONDS = 246;
 
-/** Static clouds, in draw order. The storm cloud is appended by {@link createClouds}. */
+/**
+ * Static clouds, in draw order. The storm cloud is appended by
+ * {@link createClouds}. The three left unmarked are what a narrow viewport
+ * keeps: one per band of the sky, near / far / near, so thinning the set out
+ * still leaves depth in it.
+ */
 const DRIFTING_CLOUDS: readonly Cloud[] = [
   {
     art: CLOUD_SHAPES.wide,
@@ -44,6 +51,7 @@ const DRIFTING_CLOUDS: readonly Cloud[] = [
     duration: 150,
     bob: -9,
     rest: 88,
+    wideOnly: true,
   },
   {
     art: CLOUD_SHAPES.low,
@@ -66,6 +74,7 @@ const DRIFTING_CLOUDS: readonly Cloud[] = [
     duration: 141,
     bob: -11,
     rest: 50,
+    wideOnly: true,
   },
   {
     art: CLOUD_SHAPES.puff,
@@ -77,6 +86,7 @@ const DRIFTING_CLOUDS: readonly Cloud[] = [
     duration: 190,
     bob: -6.5,
     rest: 76,
+    wideOnly: true,
   },
 ];
 

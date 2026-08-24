@@ -1,6 +1,10 @@
 import { Flock } from '../models/scene.models';
 
-/** The birds that cross the daytime sky: one trio in a V, one lone straggler. */
+/**
+ * The birds that cross the daytime sky: one trio in a V, one lone straggler.
+ * The straggler is the one a narrow viewport drops — the V is the shape worth
+ * keeping, and one crossing at a time is plenty over full-width copy.
+ */
 export const BIRD_FLOCKS: readonly Flock[] = [
   {
     top: 16,
@@ -18,6 +22,7 @@ export const BIRD_FLOCKS: readonly Flock[] = [
     delay: 13,
     duration: 31,
     rest: 68,
+    wideOnly: true,
     members: [{ dx: 0, dy: 0, width: 44, flap: 1.44, flapShift: -0.3, soar: -2.2 }],
   },
 ];

@@ -7,6 +7,20 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  /* Multiplier on the drift delay *and* duration of every day layer. Scaling
+     both together slows the sky down without shifting anything out of phase —
+     the clouds keep their spacing and the storm cloud still arrives the same
+     fraction of a cycle after load. */
+  --sky-tempo: 1;
+}
+
+/* Under the 720px column the copy runs edge to edge, so the scenery has no
+   gutter left to live in: the day layers drop their crowd and shrink (see
+   `clouds.css` and `birds.css`), and what is left crosses at a calmer pace. */
+@media (max-width: 720px) {
+  .sky {
+    --sky-tempo: 1.4;
+  }
 }
 
 .sky__gradient {

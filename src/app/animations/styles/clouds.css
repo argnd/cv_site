@@ -34,12 +34,33 @@
 .cloud {
   position: absolute;
   left: -220px;
-  width: calc(190px * var(--cloud-scale, 1));
+  width: calc(var(--cloud-w) * var(--cloud-scale, 1));
   opacity: 0;
   animation-name: cloud-drift;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  /* Both come from `../clouds.ts` as plain seconds and are scaled here rather
+     than bound as `animation-delay` / `animation-duration` directly, so the
+     narrow-viewport tempo below isn't fighting an inline style. */
+  animation-delay: calc(var(--cloud-delay) * var(--sky-tempo, 1));
+  animation-duration: calc(var(--cloud-duration) * var(--sky-tempo, 1));
+  --cloud-w: 190px;
   --cloud-opacity: 0.97;
+}
+
+/* Three of the six drifting clouds are marked `wideOnly` in `../clouds.ts`:
+   with the copy spanning the full width there is no clear sky left to read them
+   against, and six outlines over body text is a busy backdrop rather than a
+   friendly one. The rest come down a size, which also keeps their faces off
+   the text. */
+@media (max-width: 720px) {
+  .cloud--wide-only {
+    display: none;
+  }
+
+  .cloud {
+    --cloud-w: 138px;
+  }
 }
 
 /* `animation-play-state` does not inherit, so the bob and the rain have to be

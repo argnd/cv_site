@@ -25,11 +25,12 @@
           [class.cloud--far]="cloud.depth === 'far'"
           [class.cloud--rare]="cloud.rare"
           [class.cloud--rain]="cloud.rain"
+          [class.cloud--wide-only]="cloud.wideOnly"
           [style.top.%]="cloud.top"
           [style.--cloud-scale]="cloud.scale"
           [style.--cloud-rest]="cloud.rest + '%'"
-          [style.animationDelay.s]="cloud.delay"
-          [style.animationDuration.s]="cloud.duration"
+          [style.--cloud-delay.s]="cloud.delay"
+          [style.--cloud-duration.s]="cloud.duration"
         >
           <svg class="cloud__art" viewBox="0 0 200 96" [style.animationDelay.s]="cloud.bob">
             <path class="cloud__body" [attr.d]="cloud.art.d" />
@@ -107,16 +108,17 @@
       @for (flock of flocks; track $index) {
         <span
           class="bird-flock"
+          [class.bird-flock--wide-only]="flock.wideOnly"
           [style.top.%]="flock.top"
           [style.--flock-rest]="flock.rest + '%'"
-          [style.animationDelay.s]="flock.delay"
-          [style.animationDuration.s]="flock.duration"
+          [style.--flock-delay.s]="flock.delay"
+          [style.--flock-duration.s]="flock.duration"
         >
           @for (bird of flock.members; track $index) {
             <span
               class="bird"
-              [style.left.px]="bird.dx"
-              [style.top.px]="bird.dy"
+              [style.--bird-dx.px]="bird.dx"
+              [style.--bird-dy.px]="bird.dy"
               [style.--bird-w.px]="bird.width"
               [style.--bird-flap]="bird.flap + 's'"
               [style.--bird-flap-shift]="bird.flapShift + 's'"

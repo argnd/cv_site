@@ -68,6 +68,12 @@ export type Cloud = {
   /** Where the cloud parks when motion is reduced, in % of the viewport width. */
   rest: number;
   /**
+   * Dropped once the copy spans the full viewport width — see the narrow
+   * breakpoint in `styles/clouds.css`. Marks the clouds the sky can lose
+   * without leaving a hole: never two neighbours, and never the only near one.
+   */
+  wideOnly?: boolean;
+  /**
    * Spends most of its cycle parked off-screen rather than drifting the whole
    * time, so it shows up as an occasional event instead of a fixture.
    */
@@ -148,6 +154,12 @@ export type Flock = {
   duration: number;
   /** Where the flock parks when motion is reduced, in % of the viewport width. */
   rest: number;
+  /**
+   * Dropped once the copy spans the full viewport width — see the narrow
+   * breakpoint in `styles/birds.css`. One flock has to stay unmarked, or the
+   * day sky loses its birds entirely.
+   */
+  wideOnly?: boolean;
   members: FlockMember[];
 };
 
