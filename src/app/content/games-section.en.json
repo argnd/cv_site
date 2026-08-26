@@ -12,6 +12,11 @@
       "title": "Perlin Noise map",
       "description": "A visualization of Perlin noise, a type of gradient noise used in computer graphics to create textures and natural-looking patterns.",
       "link": "https://argnd.github.io/Bruit-Perlin/"
+    },
+    {
+      "title": "WIP",
+      "description": "Adventure where you are the hero, narrated by AI. GCP cloud run & vertex AI",
+      "link": "https://argnd.com"
     }
   ]
 }

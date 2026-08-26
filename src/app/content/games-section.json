@@ -12,6 +12,11 @@
       "title": "Carte de bruit de Perlin",
       "description": "Une visualisation du bruit de Perlin, un type de bruit de gradient utilisé en infographie pour créer des textures et des motifs naturels.",
       "link": "https://argnd.github.io/Bruit-Perlin/"
+    },
+    {
+      "title": "WIP",
+      "description": "Aventure ou vous êtes le héros, narée par IA. GCP cloud run & vertex IA",
+      "link": "https://argnd.com"
     }
   ]
 }
