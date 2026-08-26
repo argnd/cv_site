@@ -115,6 +115,11 @@ export type GamesSectionContent = {
   kicker: string;
   title: string;
   description: string;
+  elements: {
+    title: string;
+    description: string;
+    link: string;
+  }[];
 };
 
 export type FooterSectionContent = {

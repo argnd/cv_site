@@ -5,7 +5,7 @@
   <div *ngFor="let element of content().elements" class="game">
     <h3>{{ element.title }}</h3>
     <p>{{ element.description }}</p>
-    <a [href]="element.link" target="_blank" rel="noopener noreferrer">Play</a>
+    <a class="link-toggle timeline__toggle" [href]="element.link" target="_blank" rel="noopener noreferrer">{{ element.title }}</a>
   </div>
   <div class="games__glyph" aria-hidden="true">
     <span></span><span></span><span></span><span></span><span></span>

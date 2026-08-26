@@ -5,8 +5,13 @@
   "elements": [
     {
       "title": "Creatures",
-      "description": "A simple app that allows you to create and interact with creatures.",
+      "description": "A simple app that allows you to create and interact with creatures : ",
       "link": "https://argnd.github.io/Creatures/"
+    },
+    {
+      "title": "Perlin Noise map",
+      "description": "A visualization of Perlin noise, a type of gradient noise used in computer graphics to create textures and natural-looking patterns.",
+      "link": "https://argnd.github.io/Bruit-Perlin/"
     }
   ]
 }
