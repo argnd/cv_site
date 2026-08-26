@@ -1,5 +1,12 @@
 {
   "kicker": "Projects",
   "title": "Interactive projects",
-  "description": "Creatures : https://argnd.github.io/Creatures/ An older version of an app \"similar\" to this one"
+  "description": "This section will host interactive projects and small games built around visualization, data, and user experience.",
+  "elements": [
+    {
+      "title": "Creatures",
+      "description": "A simple app that allows you to create and interact with creatures.",
+      "link": "https://argnd.github.io/Creatures/"
+    }
+  ]
 }

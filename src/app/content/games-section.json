@@ -1,5 +1,12 @@
 {
   "kicker": "Projets",
   "title": "Projets interactifs",
-  "description": "Creatures : https://argnd.github.io/Creatures/ Une version ancienne d'une app \"similaire\" à celle ci"
+  "description": "Cette section accueillera des projets interactifs et des mini-jeux développés autour de la visualisation, de la donnée et de l'expérience utilisateur.",
+  "elements": [
+    {
+      "title": "Creatures",
+      "description": "Une application simple qui vous permet de créer et d'interagir avec des créatures.",
+      "link": "https://argnd.github.io/Creatures/"
+    }
+  ]
 }
