@@ -4,6 +4,11 @@
   "description": "This section will host interactive projects and small games built around visualization, data, and user experience.",
   "elements": [
     {
+      "title": "Interactive text rpg",
+      "description": "Interactive text rpg -  Complex architecture (gcp infa, iam, cloud run, vertex ai, cloud storage, cloud sql, cloud build, secret manager, cloud logging, cloud monitoring)",
+      "link": "https://argnd.com"
+    },
+    {
       "title": "Creatures",
       "description": "A simple app that allows you to create and interact with creatures : ",
       "link": "https://argnd.github.io/Creatures/"
@@ -12,11 +17,6 @@
       "title": "Perlin Noise map",
       "description": "A visualization of Perlin noise, a type of gradient noise used in computer graphics to create textures and natural-looking patterns.",
       "link": "https://argnd.github.io/Bruit-Perlin/"
-    },
-    {
-      "title": "WIP",
-      "description": "Adventure where you are the hero, narrated by AI. GCP cloud run & vertex AI",
-      "link": "https://argnd.com"
     }
   ]
 }

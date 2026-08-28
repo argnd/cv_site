@@ -4,6 +4,11 @@
   "description": "Cette section accueillera des projets interactifs et des mini-jeux développés autour de la visualisation, de la donnée et de l'expérience utilisateur.",
   "elements": [
     {
+      "title": "Rpg textuel interactif",
+      "description": "Rpg textuel interactif - architecture complexe (gcp infa, iam, cloud run, vertex ai, cloud storage, cloud sql, cloud build, secret manager, cloud logging, cloud monitoring)",
+      "link": "https://argnd.com"
+    },
+    {
       "title": "Creatures",
       "description": "Une application simple qui vous permet de créer et d'interagir avec des créatures : ",
       "link": "https://argnd.github.io/Creatures/"
@@ -12,11 +17,6 @@
       "title": "Carte de bruit de Perlin",
       "description": "Une visualisation du bruit de Perlin, un type de bruit de gradient utilisé en infographie pour créer des textures et des motifs naturels.",
       "link": "https://argnd.github.io/Bruit-Perlin/"
-    },
-    {
-      "title": "WIP",
-      "description": "Aventure ou vous êtes le héros, narée par IA. GCP cloud run & vertex IA",
-      "link": "https://argnd.com"
     }
   ]
 }
