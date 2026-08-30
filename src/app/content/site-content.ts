@@ -3,6 +3,8 @@ import aboutSectionEn from './about-section.en.json';
 import aboutSectionFr from './about-section.json';
 import appShellEn from './app-shell.en.json';
 import appShellFr from './app-shell.json';
+import armelBotSectionEn from './armelbot-section.en.json';
+import armelBotSectionFr from './armelbot-section.json';
 import educationSectionEn from './education-section.en.json';
 import educationSectionFr from './education-section.json';
 import experienceSectionEn from './experience-section.en.json';
@@ -25,6 +27,7 @@ const SITE_CONTENT: Record<SupportedLocale, SiteContent> = {
   fr: {
     appShell: appShellFr,
     hero: heroSectionFr,
+    armelBot: armelBotSectionFr,
     about: aboutSectionFr,
     experience: experienceSectionFr,
     education: educationSectionFr,
@@ -35,6 +38,7 @@ const SITE_CONTENT: Record<SupportedLocale, SiteContent> = {
   en: {
     appShell: appShellEn,
     hero: heroSectionEn,
+    armelBot: armelBotSectionEn,
     about: aboutSectionEn,
     experience: experienceSectionEn,
     education: educationSectionEn,

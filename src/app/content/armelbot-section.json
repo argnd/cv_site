@@ -1,0 +1,23 @@
+{
+  "title": "Posez-moi une question",
+  "lead": "ArmelBot répond à ma place : parcours, compétences, projets. Connectez-vous avec Google pour ouvrir le pupitre.",
+  "signInHint": "Connexion Google uniquement, le temps de la conversation. Aucune donnée n'est conservée sur ce site.",
+  "signInError": "Le bouton de connexion Google n'a pas pu se charger. Vérifiez votre connexion ou votre bloqueur de scripts.",
+  "signedInAs": "Connecté en tant que",
+  "signOutLabel": "Se déconnecter",
+  "questionLabel": "Votre question",
+  "questionPlaceholder": "Sur quoi voulez-vous en savoir plus ?",
+  "answerLabel": "Réponse",
+  "answerPlaceholder": "La réponse s'affichera ici.",
+  "submitLabel": "Envoyer",
+  "pendingLabel": "Réflexion…",
+  "charactersLabel": "caractères",
+  "errors": {
+    "unauthorized": "Session Google expirée. Reconnectez-vous pour continuer.",
+    "forbidden": "Ce compte n'a pas accès à ArmelBot.",
+    "quota": "Quota quotidien atteint. Réessayez demain.",
+    "server": "ArmelBot est indisponible pour le moment. Réessayez dans un instant.",
+    "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+    "expired": "Session Google expirée. Reconnectez-vous pour continuer."
+  }
+}

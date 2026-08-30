@@ -1,0 +1,23 @@
+{
+  "title": "Ask me anything",
+  "lead": "ArmelBot answers in my place: background, skills, projects. Sign in with Google to open the console.",
+  "signInHint": "Google sign-in only, for the length of the conversation. Nothing is stored on this site.",
+  "signInError": "The Google sign-in button could not load. Check your connection or your script blocker.",
+  "signedInAs": "Signed in as",
+  "signOutLabel": "Sign out",
+  "questionLabel": "Your question",
+  "questionPlaceholder": "What would you like to know more about?",
+  "answerLabel": "Answer",
+  "answerPlaceholder": "The answer will appear here.",
+  "submitLabel": "Send",
+  "pendingLabel": "Thinking…",
+  "charactersLabel": "characters",
+  "errors": {
+    "unauthorized": "Google session expired. Sign in again to continue.",
+    "forbidden": "This account has no access to ArmelBot.",
+    "quota": "Daily quota reached. Try again tomorrow.",
+    "server": "ArmelBot is unavailable right now. Try again in a moment.",
+    "network": "Could not reach the server. Check your connection.",
+    "expired": "Google session expired. Sign in again to continue."
+  }
+}

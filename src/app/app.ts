@@ -19,6 +19,7 @@ import { HILL_CATS } from './animations/hills';
 import { ScrollParallax } from './animations/scroll-parallax';
 import { createShootingStars, HERO_STARS } from './animations/stars';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
+import { ArmelBotSectionComponent } from './components/armelbot-section/armelbot-section.component';
 import { CelestialBodyComponent } from './components/celestial-body/celestial-body.component';
 import { EducationSectionComponent } from './components/education-section/education-section.component';
 import { ExperienceSectionComponent } from './components/experience-section/experience-section.component';
@@ -76,6 +77,7 @@ const THEME_ROTATION_ENABLED = false;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AboutSectionComponent,
+    ArmelBotSectionComponent,
     CelestialBodyComponent,
     EducationSectionComponent,
     ExperienceSectionComponent,

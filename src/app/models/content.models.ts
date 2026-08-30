@@ -59,6 +59,37 @@ export type HeroSectionContent = {
   gamesLinkLabel: string;
 };
 
+/** Every message the ArmelBot console can put on screen, keyed by failure. */
+export type ArmelBotErrorContent = {
+  unauthorized: string;
+  forbidden: string;
+  quota: string;
+  server: string;
+  network: string;
+  expired: string;
+};
+
+/**
+ * The Google-gated question console under the hero. The sign-in button itself
+ * is drawn by Google, so only what surrounds it is translated here.
+ */
+export type ArmelBotSectionContent = {
+  title: string;
+  lead: string;
+  signInHint: string;
+  signInError: string;
+  signedInAs: string;
+  signOutLabel: string;
+  questionLabel: string;
+  questionPlaceholder: string;
+  answerLabel: string;
+  answerPlaceholder: string;
+  submitLabel: string;
+  pendingLabel: string;
+  charactersLabel: string;
+  errors: ArmelBotErrorContent;
+};
+
 export type AboutSectionContent = {
   kicker: string;
   title: string;
@@ -130,6 +161,7 @@ export type FooterSectionContent = {
 export type SiteContent = {
   appShell: AppShellContent;
   hero: HeroSectionContent;
+  armelBot: ArmelBotSectionContent;
   about: AboutSectionContent;
   experience: ExperienceSectionContent;
   education: EducationSectionContent;

@@ -1,0 +1,84 @@
+<section class="armelbot" aria-labelledby="armelbot-title">
+  <h2 class="armelbot__title" id="armelbot-title">{{ content().title }}</h2>
+  <p class="armelbot__lead">{{ content().lead }}</p>
+
+  @if (credential(); as user) {
+    <div class="console">
+      <header class="console__head">
+        <svg class="console__mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2.4 13.9 9.6 21.1 11.5 13.9 13.4 12 20.6 10.1 13.4 2.9 11.5 10.1 9.6Z" />
+        </svg>
+        <label class="console__label" for="armelbot-question">{{ content().questionLabel }}</label>
+        <span class="console__session">
+          <span class="console__who">{{ content().signedInAs }} {{ user.name }}</span>
+          <button type="button" class="link-toggle console__signout" (click)="signOut()">
+            {{ content().signOutLabel }}
+          </button>
+        </span>
+      </header>
+
+      <textarea
+        #field
+        id="armelbot-question"
+        class="console__field"
+        rows="4"
+        [value]="question()"
+        [placeholder]="content().questionPlaceholder"
+        [disabled]="pending()"
+        (input)="onQuestionInput($event)"
+        (keydown.enter)="onEnter($event)"
+        (keydown.control.enter)="submit()"
+        (keydown.meta.enter)="submit()"
+      ></textarea>
+
+      <div class="console__flourish" aria-hidden="true">
+        <span class="console__rule"></span>
+        <span class="console__glyph">✦</span>
+        <span class="console__rule console__rule--end"></span>
+      </div>
+
+      <p class="console__label console__label--answer" id="armelbot-answer">
+        {{ content().answerLabel }}
+      </p>
+      <!-- The answer keeps the model's own line breaks (`white-space: pre-wrap`),
+           which also preserves the template's indentation — hence the tags
+           closing flush against the interpolation, and the ignore that stops
+           the formatter from putting the whitespace back. -->
+      <!-- prettier-ignore -->
+      <div
+        class="console__answer"
+        [class.is-empty]="answer() === ''"
+        role="region"
+        aria-labelledby="armelbot-answer"
+        aria-live="polite"
+        tabindex="0"
+      >{{ answer() === '' ? content().answerPlaceholder : answer() }}</div>
+
+      <footer class="console__foot">
+        <span class="console__count" [class.is-visible]="question().length > 0">
+          {{ question().length }} {{ content().charactersLabel }}
+        </span>
+        <button
+          type="button"
+          class="console__send"
+          [disabled]="pending() || question().trim() === ''"
+          (click)="submit()"
+        >
+          {{ pending() ? content().pendingLabel : content().submitLabel }}
+        </button>
+      </footer>
+    </div>
+  } @else {
+    <div class="armelbot__gate">
+      <div class="armelbot__button" #signInButton></div>
+      <p class="armelbot__hint">{{ content().signInHint }}</p>
+      @if (signInFailed()) {
+        <p class="armelbot__notice" role="alert">{{ content().signInError }}</p>
+      }
+    </div>
+  }
+
+  @if (errorMessage(); as message) {
+    <p class="armelbot__notice" role="alert">{{ message }}</p>
+  }
+</section>

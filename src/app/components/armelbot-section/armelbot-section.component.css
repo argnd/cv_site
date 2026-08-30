@@ -1,0 +1,325 @@
+:host {
+  display: block;
+  margin-block: 0.5rem var(--space-lg);
+}
+
+.armelbot {
+  --console-surface: rgba(26, 33, 64, 0.5);
+  --console-edge: rgba(203, 213, 225, 0.16);
+  --console-field: rgba(5, 6, 13, 0.42);
+  --console-field-edge: rgba(203, 213, 225, 0.12);
+  --console-lift: 0 18px 44px rgba(5, 6, 13, 0.45);
+  --gsi-edge: var(--text-faint);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Slate lifts the same panel out of an unlit sky, day inks it into the cream
+   card the rest of the page uses — same tokens the `.section` idiom reads. */
+:host-context(.scene.is-slate) .armelbot {
+  --console-surface: rgba(228, 235, 246, 0.05);
+  --console-edge: rgba(228, 235, 246, 0.16);
+  --console-field: rgba(16, 24, 44, 0.4);
+  --console-field-edge: rgba(228, 235, 246, 0.14);
+  --console-lift: 0 14px 32px rgba(12, 18, 34, 0.35);
+}
+
+:host-context(.scene.is-day) .armelbot {
+  --console-surface: var(--surface-card);
+  --console-edge: var(--surface-card-edge);
+  --console-field: #ffffff;
+  --console-field-edge: var(--ink-soft);
+  --console-lift: var(--shadow-offset) var(--shadow-offset) 0 var(--shadow-hard);
+  --gsi-edge: var(--ink);
+}
+
+.armelbot__title {
+  margin-bottom: 0.75rem;
+}
+
+.armelbot__lead {
+  max-width: 46ch;
+  margin: 0 0 1.75rem;
+  color: var(--text-body);
+  line-height: 1.7;
+}
+
+/* ---------------------------------- */
+/* Sign-in gate                        */
+/* ---------------------------------- */
+
+.armelbot__gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.armelbot__button {
+  min-height: 44px;
+}
+
+/* Google draws its own button, as ordinary DOM injected after Angular has
+   stamped this component's scoping attributes — so it is only reachable
+   through `::ng-deep`, and never by Google's own generated class names, which
+   is why the selectors below lean on `[role="button"]` and on what the element
+   contains instead.
+
+   Only the frame is retouched: the slab of Google grey is dropped for the
+   page's own outline, which follows the skin like every other control here.
+   The four-colour G is left exactly as Google draws it.
+
+   The `transition` is load-bearing and has to stay on this one line: Google's
+   own stylesheet transitions `border-color`, and that transition never settles
+   here, because the colour it is chasing is a skin token that keeps moving
+   under it for the whole cross-fade — the border ends up stuck on the outgoing
+   skin. Declaring our own list drops `border-color` out of it, and the token's
+   `@property` interpolation (see `styles.css`) cross-fades the outline by
+   itself. What remains transitioned is the hover fill, which no skin change
+   touches. */
+:host ::ng-deep .armelbot__button div[role='button'] {
+  background: transparent;
+  border: 1px solid var(--gsi-edge);
+  box-shadow: none;
+  color: var(--text-strong);
+  transition: background-color 200ms var(--ease-soft);
+}
+
+:host ::ng-deep .armelbot__button div[role='button']:hover,
+:host ::ng-deep .armelbot__button div[role='button']:focus-visible {
+  background: var(--glass-active);
+  border-color: var(--accent);
+}
+
+:host ::ng-deep .armelbot__button div[role='button'] span {
+  color: var(--text-strong);
+}
+
+/* The white disc Google plates its mark on, matched by what it wraps rather
+   than by its generated class name. It is there to keep the G legible on a
+   solid fill; with no fill left there is nothing for it to do but punch a hole
+   in the outline, and the four-colour mark carries enough contrast on its own
+   in all three skins. */
+:host ::ng-deep .armelbot__button div[role='button'] div:has(svg) {
+  background: transparent;
+}
+
+.armelbot__hint {
+  max-width: 42ch;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.armelbot__notice {
+  max-width: 46ch;
+  margin: 1rem 0 0;
+  color: var(--accent-text);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+/* ---------------------------------- */
+/* Console                             */
+/* ---------------------------------- */
+
+.console {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+  text-align: left;
+  background: var(--console-surface);
+  border: max(1px, var(--stroke-w)) solid var(--console-edge);
+  border-radius: var(--radius-card);
+  box-shadow: var(--console-lift);
+  transition:
+    background-color var(--theme-duration) var(--ease-soft),
+    border-color var(--theme-duration) var(--ease-soft),
+    box-shadow var(--theme-duration) var(--ease-soft);
+}
+
+.console__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.console__mark {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: var(--accent);
+  filter: drop-shadow(0 0 6px var(--bloom-soft));
+}
+
+.console__label {
+  color: var(--text-strong);
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  font-size: 1rem;
+  letter-spacing: var(--heading-tracking);
+}
+
+.console__label--answer {
+  margin: 0;
+}
+
+.console__session {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-left: auto;
+  font-size: 0.76rem;
+}
+
+.console__who {
+  color: var(--text-soft);
+}
+
+.console__signout {
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+.console__field {
+  width: 100%;
+  min-height: 108px;
+  padding: 0.85rem 1rem;
+  background: var(--console-field);
+  border: max(1px, var(--stroke-w)) solid var(--console-field-edge);
+  border-radius: calc(var(--radius-card) * 0.5);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: 0.96rem;
+  line-height: 1.7;
+  resize: none;
+  caret-color: var(--accent);
+  transition:
+    background-color var(--theme-duration) var(--ease-soft),
+    border-color var(--theme-duration) var(--ease-soft),
+    box-shadow var(--duration-slow) var(--ease-soft);
+}
+
+.console__field::placeholder {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.console__field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--glass-active);
+}
+
+.console__field:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.console__flourish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  opacity: 0.8;
+}
+
+.console__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--text-faint));
+}
+
+.console__rule--end {
+  background: linear-gradient(90deg, var(--text-faint), transparent);
+}
+
+.console__glyph {
+  flex: none;
+  line-height: 1;
+  color: var(--text-strong);
+  font-size: 0.62rem;
+  text-shadow: 0 0 8px var(--bloom-strong);
+}
+
+.console__answer {
+  max-height: 20rem;
+  overflow-y: auto;
+  padding: 0.85rem 1rem;
+  background: var(--console-field);
+  border: max(1px, var(--stroke-w)) solid var(--console-field-edge);
+  border-radius: calc(var(--radius-card) * 0.5);
+  color: var(--text-body);
+  font-size: 0.96rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  transition:
+    background-color var(--theme-duration) var(--ease-soft),
+    border-color var(--theme-duration) var(--ease-soft);
+}
+
+.console__answer.is-empty {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.console__foot {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.console__count {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-soft);
+}
+
+.console__count.is-visible {
+  opacity: 1;
+}
+
+.console__send {
+  margin-left: auto;
+  padding: 0.6rem 1.6rem;
+  background: var(--accent);
+  border: max(0px, var(--stroke-w)) solid var(--ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--shadow-hard);
+  color: var(--accent-contrast);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background-color var(--theme-duration) var(--ease-soft),
+    color var(--theme-duration) var(--ease-soft),
+    opacity var(--duration-slow) var(--ease-soft);
+}
+
+.console__send:hover:not(:disabled),
+.console__send:focus-visible:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.console__send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .console__session {
+    width: 100%;
+    margin-left: 0;
+  }
+}
