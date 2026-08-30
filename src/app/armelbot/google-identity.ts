@@ -112,9 +112,18 @@ function readCredential(token: string | undefined): GoogleCredential | null {
   }
 }
 
+/**
+ * The two liveries Google will draw the button in. Passing one of these is the
+ * only styling that survives the swap to the FedCM iframe: it travels as a
+ * query parameter on the frame's own URL, so Google applies it on its side of
+ * a boundary the page's CSS cannot cross.
+ */
+export type SignInButtonTheme = 'filled_black' | 'outline';
+
 export function renderSignInButton(
   parent: HTMLElement,
   locale: string,
+  theme: SignInButtonTheme,
   onCredential: (credential: GoogleCredential) => void,
 ): Promise<void> {
   return loadIdentityApi(locale).then((id) => {
@@ -142,7 +151,7 @@ export function renderSignInButton(
 
     id.renderButton(parent, {
       type: 'standard',
-      theme: 'filled_black',
+      theme,
       size: 'large',
       shape: 'pill',
       text: 'signin_with',

@@ -16,8 +16,16 @@ import {
   Exchange,
   MAX_EXCHANGES,
 } from '../../armelbot/armelbot.client';
-import { forgetSignIn, GoogleCredential, renderSignInButton } from '../../armelbot/google-identity';
+import {
+  forgetSignIn,
+  GoogleCredential,
+  renderSignInButton,
+  SignInButtonTheme,
+} from '../../armelbot/google-identity';
 import { ArmelBotSectionContent, SupportedLocale } from '../../models/content.models';
+/* Type-only: `app.ts` imports this component, so a value import here would
+   close the cycle. */
+import type { Theme } from '../../app';
 
 /** Past this the field scrolls instead of growing. */
 const FIELD_MAX_HEIGHT = 320;
@@ -35,6 +43,17 @@ export class ArmelBotSectionComponent {
 
   /** Google draws its own button, and it has to be drawn in the page's language. */
   readonly locale = input.required<SupportedLocale>();
+
+  /**
+   * The skin on screen. Only the sign-in button reads it, and only to pick
+   * which of Google's two liveries to ask for — day gets the white one. The
+   * rest of this component follows the skin through CSS like everything else.
+   */
+  readonly skin = input.required<Theme>();
+
+  private readonly buttonTheme = computed<SignInButtonTheme>(() =>
+    this.skin() === 'day' ? 'outline' : 'filled_black',
+  );
 
   protected readonly credential = signal<GoogleCredential | null>(null);
   protected readonly signInFailed = signal(false);
@@ -58,6 +77,7 @@ export class ArmelBotSectionComponent {
 
   private renderedInto: HTMLElement | null = null;
   private renderedLocale: SupportedLocale | null = null;
+  private renderedTheme: SignInButtonTheme | null = null;
 
   /** Sent back with every question, so follow-ups keep their context. */
   private exchanges: Exchange[] = [];
@@ -66,26 +86,35 @@ export class ArmelBotSectionComponent {
     afterNextRender(() => this.browserReady.set(true));
 
     /* The host element is destroyed on sign-out and recreated on the next
-       sign-in, so the button is re-rendered whenever the element or the
-       language it is drawn in changes — and only then. */
+       sign-in, so the button is re-rendered whenever the element, the language
+       or the livery it is drawn in changes — and only then. Google owns the
+       drawing, so switching skins means asking it to draw the thing again. */
     effect(() => {
       const host = this.signInButton()?.nativeElement ?? null;
       const locale = this.locale();
+      const theme = this.buttonTheme();
 
       if (!this.browserReady() || host === null) {
         return;
       }
-      if (host === this.renderedInto && locale === this.renderedLocale) {
+      if (
+        host === this.renderedInto &&
+        locale === this.renderedLocale &&
+        theme === this.renderedTheme
+      ) {
         return;
       }
 
       this.renderedInto = host;
       this.renderedLocale = locale;
+      this.renderedTheme = theme;
 
-      renderSignInButton(host, locale, (credential) => this.onCredential(credential)).catch(() => {
-        this.renderedInto = null;
-        this.signInFailed.set(true);
-      });
+      renderSignInButton(host, locale, theme, (credential) => this.onCredential(credential)).catch(
+        () => {
+          this.renderedInto = null;
+          this.signInFailed.set(true);
+        },
+      );
     });
   }
 
