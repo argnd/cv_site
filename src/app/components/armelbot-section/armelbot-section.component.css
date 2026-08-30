@@ -9,7 +9,6 @@
   --console-field: rgba(5, 6, 13, 0.42);
   --console-field-edge: rgba(203, 213, 225, 0.12);
   --console-lift: 0 18px 44px rgba(5, 6, 13, 0.45);
-  --gsi-edge: var(--text-faint);
 
   display: flex;
   flex-direction: column;
@@ -33,7 +32,6 @@
   --console-field: #ffffff;
   --console-field-edge: var(--ink-soft);
   --console-lift: var(--shadow-offset) var(--shadow-offset) 0 var(--shadow-hard);
-  --gsi-edge: var(--ink);
 }
 
 .armelbot__title {
@@ -62,49 +60,31 @@
   min-height: 44px;
 }
 
-/* Google draws its own button, as ordinary DOM injected after Angular has
-   stamped this component's scoping attributes — so it is only reachable
-   through `::ng-deep`, and never by Google's own generated class names, which
-   is why the selectors below lean on `[role="button"]` and on what the element
-   contains instead.
+/* The sign-in button is the one thing on this page that does not follow the
+   skin, and that is a decision rather than an oversight.
 
-   Only the frame is retouched: the slab of Google grey is dropped for the
-   page's own outline, which follows the skin like every other control here.
-   The four-colour G is left exactly as Google draws it.
+   Google renders it twice. First as ordinary DOM in this page, which is
+   styleable and was styled here — transparent, with the page's own outline.
+   Then, a moment after first paint, the client throws that away and swaps in a
+   cross-origin `accounts.google.com/gsi/button` iframe instead: its FedCM
+   rendering, which the `use_fedcm_for_*` opt-outs do not prevent (tried, and
+   measured on production). Nothing inside that frame is reachable from here,
+   so from the swap onwards the button is Google's and cannot be themed at all.
 
-   The `transition` is load-bearing and has to stay on this one line: Google's
-   own stylesheet transitions `border-color`, and that transition never settles
-   here, because the colour it is chasing is a skin token that keeps moving
-   under it for the whole cross-fade — the border ends up stuck on the outgoing
-   skin. Declaring our own list drops `border-color` out of it, and the token's
-   `@property` interpolation (see `styles.css`) cross-fades the outline by
-   itself. What remains transitioned is the hover fill, which no skin change
-   touches. */
-:host ::ng-deep .armelbot__button div[role='button'] {
-  background: transparent;
-  border: 1px solid var(--gsi-edge);
-  box-shadow: none;
-  color: var(--text-strong);
-  transition: background-color 200ms var(--ease-soft);
-}
+   Styling only the first second bought a themed button that then jumped to
+   Google's, so the styling is gone: both halves now look the same and the swap
+   is invisible. What is left is the frame's own white canvas, which is the
+   white slab that showed up in production and never on localhost, where the
+   swap does not happen.
 
-:host ::ng-deep .armelbot__button div[role='button']:hover,
-:host ::ng-deep .armelbot__button div[role='button']:focus-visible {
-  background: var(--glass-active);
-  border-color: var(--accent);
-}
-
-:host ::ng-deep .armelbot__button div[role='button'] span {
-  color: var(--text-strong);
-}
-
-/* The white disc Google plates its mark on, matched by what it wraps rather
-   than by its generated class name. It is there to keep the G legible on a
-   solid fill; with no fill left there is nothing for it to do but punch a hole
-   in the outline, and the four-colour mark carries enough contrast on its own
-   in all three skins. */
-:host ::ng-deep .armelbot__button div[role='button'] div:has(svg) {
-  background: transparent;
+   That canvas can still be cut back to the button it contains. The frame
+   overshoots on every side by exactly its own negative margins — Google sets
+   `margin: -2px -10px` on it inline — and that overshoot *is* the white area,
+   so clipping those four edges away leaves the button alone, still clickable,
+   with nothing spare around it. The two lengths below mirror those margins: if
+   a white edge ever reappears, they are what to re-measure. */
+:host ::ng-deep .armelbot__button iframe[src*='gsi/button'] {
+  clip-path: inset(2px 10px round 999px);
 }
 
 .armelbot__hint {
