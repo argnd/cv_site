@@ -112,18 +112,9 @@ function readCredential(token: string | undefined): GoogleCredential | null {
   }
 }
 
-/**
- * The two liveries Google will draw the button in. Passing one of these is the
- * only styling that survives the swap to the FedCM iframe: it travels as a
- * query parameter on the frame's own URL, so Google applies it on its side of
- * a boundary the page's CSS cannot cross.
- */
-export type SignInButtonTheme = 'filled_black' | 'outline';
-
 export function renderSignInButton(
   parent: HTMLElement,
   locale: string,
-  theme: SignInButtonTheme,
   onCredential: (credential: GoogleCredential) => void,
 ): Promise<void> {
   return loadIdentityApi(locale).then((id) => {
@@ -149,9 +140,21 @@ export function renderSignInButton(
        would otherwise leave the previous button in place. */
     parent.replaceChildren();
 
+    /* These options are the only styling that reaches the button once Google
+       swaps it into the FedCM iframe — they travel as query parameters on the
+       frame's own URL, so Google applies them on its side of a boundary the
+       page's CSS cannot cross.
+
+       `outline` is the one livery without a white plate under the four-colour
+       mark: the filled themes put the G on a white disc, which Google's own
+       brand rules require on a solid fill, and on the night sky that disc
+       reads as a white ring stuck inside a dark pill. `outline` makes the
+       whole button white instead, so the mark sits flat on it and there is no
+       stray white left anywhere. It is therefore the same in all three skins —
+       see the stylesheet for why the button does not follow them. */
     id.renderButton(parent, {
       type: 'standard',
-      theme,
+      theme: 'outline',
       size: 'large',
       shape: 'pill',
       text: 'signin_with',
