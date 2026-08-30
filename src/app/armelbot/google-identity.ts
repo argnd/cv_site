@@ -11,7 +11,9 @@ interface GoogleIdApi {
     client_id: string;
     callback: (response: CredentialResponse) => void;
     auto_select?: boolean;
-    cancel_on_tap_outside?: boolean;
+    itp_support?: boolean;
+    use_fedcm_for_prompt?: boolean;
+    use_fedcm_for_button?: boolean;
   }): void;
   renderButton(parent: HTMLElement, options: Record<string, string>): void;
   disableAutoSelect(): void;
@@ -128,7 +130,24 @@ export function renderSignInButton(
         }
       },
       auto_select: false,
-      cancel_on_tap_outside: true,
+      /* The three flags below all say the same thing: stay off FedCM.
+         Left to itself, the client sometimes draws the button inside a
+         cross-origin `accounts.google.com/gsi/button` iframe instead of into
+         this page — and an iframe is opaque to the page's CSS, so the outline
+         treatment below vanishes and Google's own white-backed button shows
+         through as a white slab on the night sky. It is intermittent, decided
+         once when the client boots, which is why it never appeared on
+         localhost. `use_fedcm_for_button` is Google's opt-out from exactly
+         that rendering; the other two match what gm_front runs in production
+         against this same client id, where the button has never framed itself.
+
+         This is a stay of execution, not a fix: Google is migrating Sign in
+         with Google to FedCM and these opt-outs are scheduled to go. When they
+         do, the button becomes an iframe for good and no CSS here can reach
+         it. */
+      itp_support: false,
+      use_fedcm_for_prompt: false,
+      use_fedcm_for_button: false,
     });
 
     /* `renderButton` appends rather than replaces, so signing out and back in
