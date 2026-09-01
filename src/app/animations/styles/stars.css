@@ -166,10 +166,10 @@
 
 @keyframes stardust-drift {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: rotate(0.03deg) translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(140px, -140px, 0);
+    transform: rotate(0.03deg) translate3d(140px, -140px, 0);
   }
 }
 
@@ -218,31 +218,10 @@
 
 @keyframes drift {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: rotate(0.03deg) translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-260px, -260px, 0);
-  }
-}
-
-/* Firefox steps these layers in visibly coarser increments than Blink does, so
-   the same duration reads as a jump-per-tick rather than a drift. Slowing them
-   right down there shrinks each step to match; the layers are a background wash
-   whose motion is meant to be barely perceptible anyway, so the only visible
-   difference is that it stops stuttering. Ratios between the three are kept so
-   the parallax depth ordering still reads.
-   `-moz-appearance` is the narrowest reliable Firefox-only feature query. */
-@supports (-moz-appearance: none) {
-  .sky__stardust {
-    animation-duration: 1920s;
-  }
-
-  .sky__stars--far {
-    animation-duration: 1440s;
-  }
-
-  .sky__stars--near {
-    animation-duration: 1020s;
+    transform: rotate(0.03deg) translate3d(-260px, -260px, 0);
   }
 }
 
