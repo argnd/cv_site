@@ -204,9 +204,9 @@
           />
           @if (cat.tabby) {
             <g class="cat__stripes">
-              <path d="M45 21L47 32" />
-              <path d="M52 19L52 31" />
-              <path d="M59 21L57 32" />
+              <path d="M84.5 60.5C87.5 63 91 63.5 94 62" />
+              <path d="M88.5 73C91 74.5 93.5 74 96.5 72" />
+              <path d="M87 84.5C90 85.5 93 85 95.5 83.5" />
               <path d="M24 68C28 70.5 32 71.6 35 72" />
               <path d="M23 82C27 84.5 31 85.6 35 86" />
               <path d="M80 68C76 70.5 72 71.6 69 72" />
@@ -214,7 +214,7 @@
             </g>
             <path
               class="cat__white"
-              d="M52 62C42 64 36 76 37 89C38 97 44 101 52 101C60 101 66 97 67 89C68 76 62 64 52 62Z"
+              d="M52 62C41 64 33.5 75 34.5 89C35.5 97 43 101 52 101C61 101 68.5 97 69.5 89C70.5 75 63 64 52 62Z"
             />
             <path class="cat__white" d="M34 104C34 94 49 94 49 104Z" />
             <path class="cat__white" d="M55 104C55 94 70 94 70 104Z" />
@@ -225,6 +225,17 @@
           />
           <path class="cat__ear" d="M34.5 32L32 17L46.5 27Z" />
           <path class="cat__ear" d="M69.5 32L72 17L57.5 27Z" />
+          @if (cat.tabby) {
+            <g class="cat__stripes">
+              <path d="M46.5 29.5L45.5 37.5" />
+              <path d="M52 28L52 37" />
+              <path d="M57.5 29.5L58.5 37.5" />
+            </g>
+            <path
+              class="cat__white"
+              d="M52 51.5C48.5 49 44 50 41.5 55C43.8 60.5 47.4 63.4 52 63.4C56.6 63.4 60.2 60.5 62.5 55C60 50 55.5 49 52 51.5Z"
+            />
+          }
           <circle class="cat__eye" cx="44" cy="44" r="3.6" />
           <circle class="cat__eye" cx="60" cy="44" r="3.6" />
           <path class="cat__ear" d="M48.5 51L55.5 51L52 56Z" />

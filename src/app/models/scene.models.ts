@@ -178,8 +178,8 @@ export type Flock = {
 export type HillCat = {
   name: string;
   /**
-   * Jojo is a brown tabby with white, so he also gets a bib, paws and stripes;
-   * Vivi is plain grey.
+   * Jojo is a grey-brown tabby with white, so he also gets a bib, muzzle,
+   * paws, forehead stripes and tail rings; Vivi is plain grey.
    */
   tabby: boolean;
   height: number;
